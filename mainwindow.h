@@ -5,6 +5,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QMessageBox>
+#include <QStandardItemModel>
 #include "pm3process.h"
 
 QT_BEGIN_NAMESPACE
@@ -34,5 +35,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     PM3Process* pm3;
+    QStandardItemModel* dataModel;
+    QStandardItemModel* keyModel;
 };
 #endif // MAINWINDOW_H

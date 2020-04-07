@@ -14,6 +14,36 @@ MainWindow::MainWindow(QWidget *parent)
     {
         ui->portBox->addItem(port);
     }
+
+    dataModel=new QStandardItemModel;
+    dataModel->setColumnCount(3);
+    dataModel->setRowCount(64);
+    dataModel->setHorizontalHeaderItem(0,new QStandardItem("Sector"));
+    dataModel->setHorizontalHeaderItem(1,new QStandardItem("Block"));
+    dataModel->setHorizontalHeaderItem(2,new QStandardItem("Data"));
+    for(int i=0;i<64;i++)
+        dataModel->setItem(i,1,new QStandardItem(QString::number(i)));
+    for(int i=0;i<16;i++)
+        dataModel->setItem(i*4,0,new QStandardItem(QString::number(i)));
+    ui->dataView->setModel(dataModel);
+    ui->dataView->verticalHeader()->setVisible(false);
+    ui->dataView->setColumnWidth(0,50);
+    ui->dataView->setColumnWidth(1,40);
+    ui->dataView->setColumnWidth(2,400);
+
+    keyModel=new QStandardItemModel;
+    keyModel->setColumnCount(3);
+    keyModel->setRowCount(16);
+    keyModel->setHorizontalHeaderItem(0,new QStandardItem("Sector"));
+    keyModel->setHorizontalHeaderItem(1,new QStandardItem("KeyA"));
+    keyModel->setHorizontalHeaderItem(2,new QStandardItem("KeyB"));
+    for(int i=0;i<16;i++)
+        keyModel->setItem(i,0,new QStandardItem(QString::number(i)));
+    ui->keyView->setModel(keyModel);
+    ui->keyView->verticalHeader()->setVisible(false);
+    ui->keyView->setColumnWidth(0,50);
+    ui->keyView->setColumnWidth(1,200);
+    ui->keyView->setColumnWidth(2,200);
 }
 
 MainWindow::~MainWindow()
