@@ -7,13 +7,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     pm3=new PM3Process;
+    mifare=new Mifare;
     connect(pm3,&PM3Process::readyRead,this,&MainWindow::refresh);
     connect(ui->commandEdit,&QLineEdit::editingFinished,this,&MainWindow::sendMSG);
-    ui->portBox->addItem("");
-    foreach(QString port,pm3->findPort())
-    {
-        ui->portBox->addItem(port);
-    }
+
 
     dataModel=new QStandardItemModel;
     dataModel->setColumnCount(3);
@@ -70,7 +67,7 @@ void MainWindow::on_sendButton_clicked()
 
 void MainWindow::refresh()
 {
-    QByteArray btay=pm3->readLine();
+    QString btay=pm3->readLine();
     while(btay!="")
     {
         qDebug()<<btay;
@@ -94,4 +91,14 @@ void MainWindow::on_disconnectButton_clicked()
 void MainWindow::on_clearButton_clicked()
 {
     ui->outputEdit->clear();
+}
+
+void MainWindow::on_portButton_clicked()
+{
+    ui->portBox->clear();
+    ui->portBox->addItem("");
+    foreach(QString port,pm3->findPort())
+    {
+        ui->portBox->addItem(port);
+    }
 }

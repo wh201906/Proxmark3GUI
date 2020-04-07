@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QStandardItemModel>
 #include "pm3process.h"
+#include "mifare.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,9 +33,12 @@ private slots:
     void on_clearButton_clicked();
 
     void sendMSG();
+    void on_portButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     PM3Process* pm3;
+    Mifare* mifare;
     QStandardItemModel* dataModel;
     QStandardItemModel* keyModel;
 };
