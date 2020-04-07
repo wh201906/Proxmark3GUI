@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QProcess>
 #include <QDebug>
+#include <QMessageBox>
 #include "pm3process.h"
 
 QT_BEGIN_NAMESPACE
@@ -18,13 +19,18 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void refresh();
 private slots:
-    void on_pushButton_clicked();
+    void on_connectButton_clicked();
 
-    void on_pushButton_2_clicked();
+    void on_sendButton_clicked();
 
-    void on_pushButton_3_clicked();
+    void on_disconnectButton_clicked();
 
+    void on_clearButton_clicked();
+
+    void sendMSG();
 private:
     Ui::MainWindow *ui;
     PM3Process* pm3;

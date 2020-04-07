@@ -2,14 +2,28 @@
 
 PM3Process::PM3Process(QObject* parent): QProcess(parent)
 {
-
+    setProcessChannelMode(PM3Process::MergedChannels);
 }
 
-bool PM3Process::init(const QString path, const QString port)
+QStringList PM3Process::findPort()
 {
-    bool success=true;
-    this->start(path, QStringList(port));
-    qDebug()<<waitForStarted();
-    qDebug()<<waitForReadyRead(3000);
-        return true;
+    QSerialPort serial;
+    QStringList retList;
+    foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        serial.setPort(info);
+        if(serial.open(QIODevice::ReadWrite))
+        {
+            retList<<info.portName();
+            serial.close();
+        }
+    }
+    return retList;
+}
+
+bool PM3Process::start(const QString path, const QString port)
+{
+    // using "-f" option to make the client output flushed after every print.
+    QProcess::start(path, QStringList()<<port<<"-f",QProcess::Unbuffered|QProcess::ReadWrite);
+    return waitForStarted();
 }
