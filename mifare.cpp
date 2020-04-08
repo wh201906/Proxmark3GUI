@@ -11,6 +11,9 @@ void Mifare::processData(const QString str)
     if(isProcessingData)
     {
         if(inputType==FROM_RDBL)
+        {
+
+        }
     }
 }
 void Mifare::processKey(const QString str)

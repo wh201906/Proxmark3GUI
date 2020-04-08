@@ -1,4 +1,6 @@
 ﻿#include "mainwindow.h"
+#include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -41,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->keyView->setColumnWidth(0,50);
     ui->keyView->setColumnWidth(1,200);
     ui->keyView->setColumnWidth(2,200);
+
+    on_moreFuncCheckBox_stateChanged(0);
+    on_portButton_clicked();
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +65,8 @@ void MainWindow::on_connectButton_clicked()
 
 void MainWindow::on_sendButton_clicked()
 {
+    if(ui->CMDHistoryWidget->count()==0 || ui->CMDHistoryWidget->item(ui->CMDHistoryWidget->count()-1)->text()!=ui->commandEdit->text())
+        ui->CMDHistoryWidget->addItem(ui->commandEdit->text());
     qDebug()<<(ui->commandEdit->text().toLocal8Bit());
     pm3->write((ui->commandEdit->text()+"\r\n").toLocal8Bit());
     pm3->waitForBytesWritten(3000);
@@ -101,4 +108,35 @@ void MainWindow::on_portButton_clicked()
     {
         ui->portBox->addItem(port);
     }
+}
+
+void MainWindow::on_moreFuncCheckBox_stateChanged(int arg1)
+{
+    if(ui->moreFuncCheckBox->isChecked())
+    {
+        ui->CMDTreeView->setVisible(true);
+        ui->CMDTreeLabel->setVisible(true);
+        ui->CMDHistoryWidget->setVisible(true);
+        ui->CMDHistoryLabel->setVisible(true);
+        ui->clearHistoryButton->setVisible(true);
+    }
+    else
+    {
+        ui->CMDTreeView->setVisible(false);
+        ui->CMDTreeLabel->setVisible(false);
+        ui->CMDHistoryWidget->setVisible(false);
+        ui->CMDHistoryLabel->setVisible(false);
+        ui->clearHistoryButton->setVisible(false);
+    }
+}
+
+void MainWindow::on_clearHistoryButton_clicked()
+{
+    ui->CMDHistoryWidget->clear();
+}
+
+void MainWindow::on_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    ui->commandEdit->setText(item->text());
+    ui->commandEdit->setFocus();
 }

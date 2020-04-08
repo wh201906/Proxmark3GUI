@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QStandardItemModel>
+#include <QListWidgetItem>
 #include "pm3process.h"
 #include "mifare.h"
 
@@ -34,6 +35,12 @@ private slots:
 
     void sendMSG();
     void on_portButton_clicked();
+
+    void on_moreFuncCheckBox_stateChanged(int arg1);
+
+    void on_clearHistoryButton_clicked();
+
+    void on_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;
