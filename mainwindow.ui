@@ -218,13 +218,13 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>520</width>
-          <height>194</height>
+          <width>651</width>
+          <height>271</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QTableView" name="dataView">
+          <widget class="QTableWidget" name="MFDataWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>2</horstretch>
@@ -240,7 +240,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QTableView" name="keyView">
+          <widget class="QTableWidget" name="MFKeyWidget">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>1</horstretch>
@@ -294,13 +294,21 @@
              </widget>
             </item>
             <item>
-             <widget class="QTreeView" name="CMDTreeView">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>1</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <widget class="QTreeWidget" name="CMDTreeWidget">
+              <property name="minimumSize">
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
               </property>
+              <property name="columnCount">
+               <number>1</number>
+              </property>
+              <column>
+               <property name="text">
+                <string>1</string>
+               </property>
+              </column>
              </widget>
             </item>
             <item>

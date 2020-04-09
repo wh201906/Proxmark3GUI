@@ -12,40 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     mifare=new Mifare;
     connect(pm3,&PM3Process::readyRead,this,&MainWindow::refresh);
     connect(ui->commandEdit,&QLineEdit::editingFinished,this,&MainWindow::sendMSG);
-
-
-    dataModel=new QStandardItemModel;
-    dataModel->setColumnCount(3);
-    dataModel->setRowCount(64);
-    dataModel->setHorizontalHeaderItem(0,new QStandardItem("Sector"));
-    dataModel->setHorizontalHeaderItem(1,new QStandardItem("Block"));
-    dataModel->setHorizontalHeaderItem(2,new QStandardItem("Data"));
-    for(int i=0;i<64;i++)
-        dataModel->setItem(i,1,new QStandardItem(QString::number(i)));
-    for(int i=0;i<16;i++)
-        dataModel->setItem(i*4,0,new QStandardItem(QString::number(i)));
-    ui->dataView->setModel(dataModel);
-    ui->dataView->verticalHeader()->setVisible(false);
-    ui->dataView->setColumnWidth(0,50);
-    ui->dataView->setColumnWidth(1,40);
-    ui->dataView->setColumnWidth(2,400);
-
-    keyModel=new QStandardItemModel;
-    keyModel->setColumnCount(3);
-    keyModel->setRowCount(16);
-    keyModel->setHorizontalHeaderItem(0,new QStandardItem("Sector"));
-    keyModel->setHorizontalHeaderItem(1,new QStandardItem("KeyA"));
-    keyModel->setHorizontalHeaderItem(2,new QStandardItem("KeyB"));
-    for(int i=0;i<16;i++)
-        keyModel->setItem(i,0,new QStandardItem(QString::number(i)));
-    ui->keyView->setModel(keyModel);
-    ui->keyView->verticalHeader()->setVisible(false);
-    ui->keyView->setColumnWidth(0,50);
-    ui->keyView->setColumnWidth(1,200);
-    ui->keyView->setColumnWidth(2,200);
-
-    on_moreFuncCheckBox_stateChanged(0);
-    on_portButton_clicked();
+    uiInit();
 }
 
 MainWindow::~MainWindow()
@@ -114,7 +81,7 @@ void MainWindow::on_moreFuncCheckBox_stateChanged(int arg1)
 {
     if(ui->moreFuncCheckBox->isChecked())
     {
-        ui->CMDTreeView->setVisible(true);
+        ui->CMDTreeWidget->setVisible(true);
         ui->CMDTreeLabel->setVisible(true);
         ui->CMDHistoryWidget->setVisible(true);
         ui->CMDHistoryLabel->setVisible(true);
@@ -122,7 +89,7 @@ void MainWindow::on_moreFuncCheckBox_stateChanged(int arg1)
     }
     else
     {
-        ui->CMDTreeView->setVisible(false);
+        ui->CMDTreeWidget->setVisible(false);
         ui->CMDTreeLabel->setVisible(false);
         ui->CMDHistoryWidget->setVisible(false);
         ui->CMDHistoryLabel->setVisible(false);
@@ -139,4 +106,36 @@ void MainWindow::on_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item)
 {
     ui->commandEdit->setText(item->text());
     ui->commandEdit->setFocus();
+}
+
+void MainWindow::uiInit()
+{
+    ui->MFDataWidget->setColumnCount(3);
+    ui->MFDataWidget->setRowCount(64);
+    ui->MFDataWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Sector"));
+    ui->MFDataWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Block"));
+    ui->MFDataWidget->setHorizontalHeaderItem(2,new QTableWidgetItem("Data"));
+    for(int i=0;i<64;i++)
+        ui->MFDataWidget->setItem(i,1,new QTableWidgetItem(QString::number(i)));
+    for(int i=0;i<16;i++)
+        ui->MFDataWidget->setItem(i*4,0,new QTableWidgetItem(QString::number(i)));
+    ui->MFDataWidget->verticalHeader()->setVisible(false);
+    ui->MFDataWidget->setColumnWidth(0,50);
+    ui->MFDataWidget->setColumnWidth(1,40);
+    ui->MFDataWidget->setColumnWidth(2,400);
+
+    ui->MFKeyWidget->setColumnCount(3);
+    ui->MFKeyWidget->setRowCount(16);
+    ui->MFKeyWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Sector"));
+    ui->MFKeyWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("KeyA"));
+    ui->MFKeyWidget->setHorizontalHeaderItem(2,new QTableWidgetItem("KeyB"));
+    for(int i=0;i<16;i++)
+        ui->MFKeyWidget->setItem(i,0,new QTableWidgetItem(QString::number(i)));
+    ui->MFKeyWidget->verticalHeader()->setVisible(false);
+    ui->MFKeyWidget->setColumnWidth(0,50);
+    ui->MFKeyWidget->setColumnWidth(1,200);
+    ui->MFKeyWidget->setColumnWidth(2,200);
+
+    on_moreFuncCheckBox_stateChanged(0);
+    on_portButton_clicked();
 }

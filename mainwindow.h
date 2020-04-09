@@ -5,7 +5,6 @@
 #include <QProcess>
 #include <QDebug>
 #include <QMessageBox>
-#include <QStandardItemModel>
 #include <QListWidgetItem>
 #include "pm3process.h"
 #include "mifare.h"
@@ -46,7 +45,6 @@ private:
     Ui::MainWindow *ui;
     PM3Process* pm3;
     Mifare* mifare;
-    QStandardItemModel* dataModel;
-    QStandardItemModel* keyModel;
+    void uiInit();
 };
 #endif // MAINWINDOW_H
