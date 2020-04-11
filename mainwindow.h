@@ -41,6 +41,8 @@ private slots:
 
     void on_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item);
 
+    void on_MFChkButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     PM3Process* pm3;

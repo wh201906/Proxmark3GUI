@@ -14,6 +14,12 @@ public:
     explicit PM3Process(QObject* parent=nullptr);
     bool start(const QString path, const QString port);
     QStringList findPort();
+    QByteArray readLine(qint64 maxlen = 0);
+    void setRequiringOutput(bool st);
+    QString getRequiredOutput();
+private:
+    bool isRequiringOutput;
+    QString* requiredOutput;
 };
 
 #endif // PM3PROCESS_H

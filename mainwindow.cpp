@@ -139,3 +139,22 @@ void MainWindow::uiInit()
     on_moreFuncCheckBox_stateChanged(0);
     on_portButton_clicked();
 }
+
+void MainWindow::on_MFChkButton_clicked()
+{
+    pm3->setRequiringOutput(true);
+    ui->commandEdit->setText("hf mf chk *1 ?");
+    on_sendButton_clicked();
+    while(pm3->waitForReadyRead(5000))
+        ;
+    QString result=pm3->getRequiredOutput();
+     pm3->setRequiringOutput(false);
+    result=result.mid(result.indexOf("|---|----------------|----------------|"));
+    QStringList keys=result.split("\r\n");
+    for(int i=0;i<16;i++)
+    {
+        ui->MFKeyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
+        ui->MFKeyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(24,12).trimmed().toUpper()));
+    }
+    qDebug()<<"***********\n"<<keys<<"***********\n";
+}
