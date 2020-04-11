@@ -43,6 +43,8 @@ private slots:
 
     void on_MFChkButton_clicked();
 
+    void on_MFNestedButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     PM3Process* pm3;
