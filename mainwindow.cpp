@@ -20,6 +20,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// ******************** basic functions ********************
+
+// *********************************************************
 
 void MainWindow::on_connectButton_clicked()
 {
@@ -110,31 +113,31 @@ void MainWindow::on_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item)
 
 void MainWindow::uiInit()
 {
-    ui->MFDataWidget->setColumnCount(3);
-    ui->MFDataWidget->setRowCount(64);
-    ui->MFDataWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Sector"));
-    ui->MFDataWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Block"));
-    ui->MFDataWidget->setHorizontalHeaderItem(2,new QTableWidgetItem("Data"));
+    ui->MF_dataWidget->setColumnCount(3);
+    ui->MF_dataWidget->setRowCount(64);
+    ui->MF_dataWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Sector"));
+    ui->MF_dataWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Block"));
+    ui->MF_dataWidget->setHorizontalHeaderItem(2,new QTableWidgetItem("Data"));
     for(int i=0;i<64;i++)
-        ui->MFDataWidget->setItem(i,1,new QTableWidgetItem(QString::number(i)));
+        ui->MF_dataWidget->setItem(i,1,new QTableWidgetItem(QString::number(i)));
     for(int i=0;i<16;i++)
-        ui->MFDataWidget->setItem(i*4,0,new QTableWidgetItem(QString::number(i)));
-    ui->MFDataWidget->verticalHeader()->setVisible(false);
-    ui->MFDataWidget->setColumnWidth(0,50);
-    ui->MFDataWidget->setColumnWidth(1,40);
-    ui->MFDataWidget->setColumnWidth(2,400);
+        ui->MF_dataWidget->setItem(i*4,0,new QTableWidgetItem(QString::number(i)));
+    ui->MF_dataWidget->verticalHeader()->setVisible(false);
+    ui->MF_dataWidget->setColumnWidth(0,50);
+    ui->MF_dataWidget->setColumnWidth(1,40);
+    ui->MF_dataWidget->setColumnWidth(2,400);
 
-    ui->MFKeyWidget->setColumnCount(3);
-    ui->MFKeyWidget->setRowCount(16);
-    ui->MFKeyWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Sector"));
-    ui->MFKeyWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("KeyA"));
-    ui->MFKeyWidget->setHorizontalHeaderItem(2,new QTableWidgetItem("KeyB"));
+    ui->MF_keyWidget->setColumnCount(3);
+    ui->MF_keyWidget->setRowCount(16);
+    ui->MF_keyWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Sector"));
+    ui->MF_keyWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("KeyA"));
+    ui->MF_keyWidget->setHorizontalHeaderItem(2,new QTableWidgetItem("KeyB"));
     for(int i=0;i<16;i++)
-        ui->MFKeyWidget->setItem(i,0,new QTableWidgetItem(QString::number(i)));
-    ui->MFKeyWidget->verticalHeader()->setVisible(false);
-    ui->MFKeyWidget->setColumnWidth(0,50);
-    ui->MFKeyWidget->setColumnWidth(1,200);
-    ui->MFKeyWidget->setColumnWidth(2,200);
+        ui->MF_keyWidget->setItem(i,0,new QTableWidgetItem(QString::number(i)));
+    ui->MF_keyWidget->verticalHeader()->setVisible(false);
+    ui->MF_keyWidget->setColumnWidth(0,50);
+    ui->MF_keyWidget->setColumnWidth(1,200);
+    ui->MF_keyWidget->setColumnWidth(2,200);
 
     on_moreFuncCheckBox_stateChanged(0);
     on_portButton_clicked();
@@ -153,8 +156,8 @@ void MainWindow::on_MFChkButton_clicked()
     QStringList keys=result.split("\r\n");
     for(int i=0;i<16;i++)
     {
-        ui->MFKeyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
-        ui->MFKeyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(24,12).trimmed().toUpper()));
+        ui->MF_keyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
+        ui->MF_keyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(24,12).trimmed().toUpper()));
     }
     qDebug()<<"***********\n"<<keys<<"***********\n";
 }
@@ -172,8 +175,10 @@ void MainWindow::on_MFNestedButton_clicked()
     QStringList keys=result.split("\r\n");
     for(int i=0;i<16;i++)
     {
-        ui->MFKeyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
-        ui->MFKeyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(28,12).trimmed().toUpper()));
+        if(keys[i+3].at(23)=='1')
+            ui->MF_keyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
+        if(keys[i+3].at(44)=='1')
+            ui->MF_keyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(28,12).trimmed().toUpper()));
     }
     qDebug()<<"***********\n"<<keys<<"***********\n";
 }
