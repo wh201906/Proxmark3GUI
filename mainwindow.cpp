@@ -1,6 +1,4 @@
 ﻿#include "mainwindow.h"
-#include "mainwindow.h"
-#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -11,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     pm3=new PM3Process;
     mifare=new Mifare;
     connect(pm3,&PM3Process::readyRead,this,&MainWindow::refresh);
-    connect(ui->commandEdit,&QLineEdit::editingFinished,this,&MainWindow::sendMSG);
+    connect(ui->Raw_CMDEdit,&QLineEdit::editingFinished,this,&MainWindow::sendMSG);
     uiInit();
 }
 
@@ -22,25 +20,146 @@ MainWindow::~MainWindow()
 
 // ******************** basic functions ********************
 
-// *********************************************************
-
-void MainWindow::on_connectButton_clicked()
+void MainWindow::on_PM3_refreshPortButton_clicked()
 {
-    QString port=ui->portBox->currentText();
+    ui->PM3_portBox->clear();
+    ui->PM3_portBox->addItem("");
+    foreach(QString port,pm3->findPort())
+    {
+        ui->PM3_portBox->addItem(port);
+    }
+}
+
+void MainWindow::on_PM3_connectButton_clicked()
+{
+    QString port=ui->PM3_portBox->currentText();
     if(port=="")
         QMessageBox::information(NULL, "Info", "Plz choose a port first", QMessageBox::Ok);
     else
-        qDebug()<<pm3->start(ui->PM3PathEdit->text(),port);
+        qDebug()<<pm3->start(ui->PM3_pathEdit->text(),port);
 }
 
-void MainWindow::on_sendButton_clicked()
+void MainWindow::on_PM3_disconnectButton_clicked()
 {
-    if(ui->CMDHistoryWidget->count()==0 || ui->CMDHistoryWidget->item(ui->CMDHistoryWidget->count()-1)->text()!=ui->commandEdit->text())
-        ui->CMDHistoryWidget->addItem(ui->commandEdit->text());
-    qDebug()<<(ui->commandEdit->text().toLocal8Bit());
-    pm3->write((ui->commandEdit->text()+"\r\n").toLocal8Bit());
+    pm3->kill();
+}
+
+// *********************************************************
+
+// ******************** raw command ********************
+
+void MainWindow::on_Raw_sendCMDButton_clicked()
+{
+    if(ui->Raw_CMDHistoryWidget->count()==0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count()-1)->text()!=ui->Raw_CMDEdit->text())
+        ui->Raw_CMDHistoryWidget->addItem(ui->Raw_CMDEdit->text());
+    qDebug()<<(ui->Raw_CMDEdit->text().toLocal8Bit());
+    pm3->write((ui->Raw_CMDEdit->text()+"\r\n").toLocal8Bit());
     pm3->waitForBytesWritten(3000);
 }
+
+void MainWindow::on_Raw_clearOutputButton_clicked()
+{
+    ui->Raw_outputEdit->clear();
+}
+
+void MainWindow::on_Raw_moreFuncCheckBox_stateChanged(int arg1)
+{
+    if(ui->Raw_moreFuncCheckBox->isChecked())
+    {
+        ui->Raw_CMDTreeWidget->setVisible(true);
+        ui->Raw_CMDTreeLabel->setVisible(true);
+        ui->Raw_CMDHistoryWidget->setVisible(true);
+        ui->Raw_CMDHistoryLabel->setVisible(true);
+        ui->Raw_clearHistoryButton->setVisible(true);
+    }
+    else
+    {
+        ui->Raw_CMDTreeWidget->setVisible(false);
+        ui->Raw_CMDTreeLabel->setVisible(false);
+        ui->Raw_CMDHistoryWidget->setVisible(false);
+        ui->Raw_CMDHistoryLabel->setVisible(false);
+        ui->Raw_clearHistoryButton->setVisible(false);
+    }
+}
+
+void MainWindow::on_Raw_clearHistoryButton_clicked()
+{
+    ui->Raw_CMDHistoryWidget->clear();
+}
+
+void MainWindow::on_Raw_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    ui->Raw_CMDEdit->setText(item->text());
+    ui->Raw_CMDEdit->setFocus();
+}
+
+// *****************************************************
+
+// ******************** mifare ********************
+
+void MainWindow::on_MF_Attack_chkButton_clicked()
+{
+    pm3->setRequiringOutput(true);
+    ui->Raw_CMDEdit->setText("hf mf chk *1 ?");
+    on_Raw_sendCMDButton_clicked();
+    while(pm3->waitForReadyRead(5000))
+        ;
+    QString result=pm3->getRequiredOutput();
+     pm3->setRequiringOutput(false);
+    result=result.mid(result.indexOf("|---|----------------|----------------|"));
+    QStringList keys=result.split("\r\n");
+    for(int i=0;i<16;i++)
+    {
+        ui->MF_keyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
+        ui->MF_keyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(24,12).trimmed().toUpper()));
+    }
+    qDebug()<<"***********\n"<<keys<<"***********\n";
+}
+
+void MainWindow::on_MF_Attack_nestedButton_clicked()
+{
+    pm3->setRequiringOutput(true);
+    ui->Raw_CMDEdit->setText("hf mf nested 1 *");
+    on_Raw_sendCMDButton_clicked();
+    while(pm3->waitForReadyRead(5000))
+        ;
+    QString result=pm3->getRequiredOutput();
+     pm3->setRequiringOutput(false);
+    result=result.mid(result.indexOf("|---|----------------|---|----------------|---|"));
+    QStringList keys=result.split("\r\n");
+    for(int i=0;i<16;i++)
+    {
+        if(keys[i+3].at(23)=='1')
+            ui->MF_keyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
+        if(keys[i+3].at(44)=='1')
+            ui->MF_keyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(28,12).trimmed().toUpper()));
+    }
+    qDebug()<<"***********\n"<<keys<<"***********\n";
+}
+
+void MainWindow::on_MF_Attack_hardnestedButton_clicked()
+{
+
+}
+
+void MainWindow::on_MF_Attack_sniffButton_clicked()
+{
+    ui->Raw_CMDEdit->setText("hf mf sniff");
+    on_Raw_sendCMDButton_clicked();
+    ui->funcTab->setCurrentIndex(1);
+}
+
+void MainWindow::on_MF_Attack_listButton_clicked()
+{
+    ui->Raw_CMDEdit->setText("hf list mf");
+    on_Raw_sendCMDButton_clicked();
+    ui->funcTab->setCurrentIndex(1);
+}
+
+// ************************************************
+
+
+// ******************** other ********************
 
 void MainWindow::refresh()
 {
@@ -48,71 +167,30 @@ void MainWindow::refresh()
     while(btay!="")
     {
         qDebug()<<btay;
-        ui->outputEdit->insertPlainText(btay);
+        ui->Raw_outputEdit->insertPlainText(btay);
         btay=pm3->readLine();
     }
-    ui->outputEdit->moveCursor(QTextCursor::End);
+    ui->Raw_outputEdit->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::sendMSG()
 {
-    if(ui->commandEdit->hasFocus())
-        on_sendButton_clicked();
-}
-
-void MainWindow::on_disconnectButton_clicked()
-{
-    pm3->kill();
-}
-
-void MainWindow::on_clearButton_clicked()
-{
-    ui->outputEdit->clear();
-}
-
-void MainWindow::on_portButton_clicked()
-{
-    ui->portBox->clear();
-    ui->portBox->addItem("");
-    foreach(QString port,pm3->findPort())
-    {
-        ui->portBox->addItem(port);
-    }
-}
-
-void MainWindow::on_moreFuncCheckBox_stateChanged(int arg1)
-{
-    if(ui->moreFuncCheckBox->isChecked())
-    {
-        ui->CMDTreeWidget->setVisible(true);
-        ui->CMDTreeLabel->setVisible(true);
-        ui->CMDHistoryWidget->setVisible(true);
-        ui->CMDHistoryLabel->setVisible(true);
-        ui->clearHistoryButton->setVisible(true);
-    }
-    else
-    {
-        ui->CMDTreeWidget->setVisible(false);
-        ui->CMDTreeLabel->setVisible(false);
-        ui->CMDHistoryWidget->setVisible(false);
-        ui->CMDHistoryLabel->setVisible(false);
-        ui->clearHistoryButton->setVisible(false);
-    }
-}
-
-void MainWindow::on_clearHistoryButton_clicked()
-{
-    ui->CMDHistoryWidget->clear();
-}
-
-void MainWindow::on_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item)
-{
-    ui->commandEdit->setText(item->text());
-    ui->commandEdit->setFocus();
+    if(ui->Raw_CMDEdit->hasFocus())
+        on_Raw_sendCMDButton_clicked();
 }
 
 void MainWindow::uiInit()
 {
+    connectStatusBar=new QLabel(this);
+    programStatusBar=new QLabel(this);
+    PM3VersionBar=new QLabel(this);
+    setStatusBar(connectStatusBar,"Not Connected");
+    setStatusBar(programStatusBar,"Idle");
+    setStatusBar(PM3VersionBar,"");
+    ui->statusbar->addPermanentWidget(PM3VersionBar,1);
+    ui->statusbar->addPermanentWidget(connectStatusBar,1);
+    ui->statusbar->addPermanentWidget(programStatusBar,1);
+
     ui->MF_dataWidget->setColumnCount(3);
     ui->MF_dataWidget->setRowCount(64);
     ui->MF_dataWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Sector"));
@@ -139,46 +217,25 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->setColumnWidth(1,200);
     ui->MF_keyWidget->setColumnWidth(2,200);
 
-    on_moreFuncCheckBox_stateChanged(0);
-    on_portButton_clicked();
+    on_Raw_moreFuncCheckBox_stateChanged(0);
+    on_PM3_refreshPortButton_clicked();
 }
 
-void MainWindow::on_MFChkButton_clicked()
+void MainWindow::setStatusBar(QLabel* target,const QString & text)
 {
-    pm3->setRequiringOutput(true);
-    ui->commandEdit->setText("hf mf chk *1 ?");
-    on_sendButton_clicked();
-    while(pm3->waitForReadyRead(5000))
-        ;
-    QString result=pm3->getRequiredOutput();
-     pm3->setRequiringOutput(false);
-    result=result.mid(result.indexOf("|---|----------------|----------------|"));
-    QStringList keys=result.split("\r\n");
-    for(int i=0;i<16;i++)
-    {
-        ui->MF_keyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
-        ui->MF_keyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(24,12).trimmed().toUpper()));
-    }
-    qDebug()<<"***********\n"<<keys<<"***********\n";
+    if(target==PM3VersionBar)
+        target->setText("Version:"+text);
+    else if(target==connectStatusBar)
+        target->setText("Connecton State:"+text);
+    else if(target==programStatusBar)
+        target->setText("Program State:"+text);
 }
 
-void MainWindow::on_MFNestedButton_clicked()
-{
-    pm3->setRequiringOutput(true);
-    ui->commandEdit->setText("hf mf nested 1 *");
-    on_sendButton_clicked();
-    while(pm3->waitForReadyRead(5000))
-        ;
-    QString result=pm3->getRequiredOutput();
-     pm3->setRequiringOutput(false);
-    result=result.mid(result.indexOf("|---|----------------|---|----------------|---|"));
-    QStringList keys=result.split("\r\n");
-    for(int i=0;i<16;i++)
-    {
-        if(keys[i+3].at(23)=='1')
-            ui->MF_keyWidget->setItem(i,1,new QTableWidgetItem(keys[i+3].mid(7,12).trimmed().toUpper()));
-        if(keys[i+3].at(44)=='1')
-            ui->MF_keyWidget->setItem(i,2,new QTableWidgetItem(keys[i+3].mid(28,12).trimmed().toUpper()));
-    }
-    qDebug()<<"***********\n"<<keys<<"***********\n";
-}
+// ***********************************************
+
+
+
+
+
+
+

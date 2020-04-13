@@ -788,7 +788,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <widget class="QLabel" name="CMDTreeLabel">
+             <widget class="QLabel" name="Raw_CMDTreeLabel">
               <property name="text">
                <string>Command List:</string>
               </property>
@@ -813,7 +813,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="CMDHistoryLabel">
+             <widget class="QLabel" name="Raw_CMDHistoryLabel">
               <property name="text">
                <string>History:</string>
               </property>
@@ -899,7 +899,11 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="sizeGripEnabled">
+    <bool>true</bool>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
