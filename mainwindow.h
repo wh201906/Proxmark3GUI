@@ -8,6 +8,7 @@
 #include <QListWidgetItem>
 #include "pm3process.h"
 #include "mifare.h"
+#include "mf_attack_hardnesteddialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,6 +25,7 @@ public:
 public slots:
     void refresh();
     void setStatusBar(QLabel* target,const QString & text);
+    void execCMD(QString cmd, bool gotoRawTab);
 private slots:
 
     void on_PM3_connectButton_clicked();

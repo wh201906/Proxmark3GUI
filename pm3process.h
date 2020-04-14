@@ -17,6 +17,7 @@ public:
     QByteArray readLine(qint64 maxlen = 0);
     void setRequiringOutput(bool st);
     QString getRequiredOutput();
+    bool waitForReadyRead(int msecs = 3000);
 private:
     bool isRequiringOutput;
     QString* requiredOutput;

@@ -36,7 +36,18 @@ void MainWindow::on_PM3_connectButton_clicked()
     if(port=="")
         QMessageBox::information(NULL, "Info", "Plz choose a port first", QMessageBox::Ok);
     else
+    {
+        pm3->setRequiringOutput(true);
         qDebug()<<pm3->start(ui->PM3_pathEdit->text(),port);
+        while(pm3->waitForReadyRead())
+            ;
+        QString result=pm3->getRequiredOutput();
+        pm3->setRequiringOutput(false);
+        result=result.mid(result.indexOf("os: "));
+        result=result.left(result.indexOf("\r\n"));
+        result=result.mid(3,result.lastIndexOf(" ")-3);
+        setStatusBar(PM3VersionBar,result);
+    }
 }
 
 void MainWindow::on_PM3_disconnectButton_clicked()
@@ -100,12 +111,12 @@ void MainWindow::on_Raw_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item
 void MainWindow::on_MF_Attack_chkButton_clicked()
 {
     pm3->setRequiringOutput(true);
-    ui->Raw_CMDEdit->setText("hf mf chk *1 ?");
+    execCMD("hf mf chk *1 ?",false);
     on_Raw_sendCMDButton_clicked();
-    while(pm3->waitForReadyRead(5000))
+    while(pm3->waitForReadyRead())
         ;
     QString result=pm3->getRequiredOutput();
-     pm3->setRequiringOutput(false);
+    pm3->setRequiringOutput(false);
     result=result.mid(result.indexOf("|---|----------------|----------------|"));
     QStringList keys=result.split("\r\n");
     for(int i=0;i<16;i++)
@@ -119,9 +130,8 @@ void MainWindow::on_MF_Attack_chkButton_clicked()
 void MainWindow::on_MF_Attack_nestedButton_clicked()
 {
     pm3->setRequiringOutput(true);
-    ui->Raw_CMDEdit->setText("hf mf nested 1 *");
-    on_Raw_sendCMDButton_clicked();
-    while(pm3->waitForReadyRead(5000))
+    execCMD("hf mf nested 1 *",false);
+    while(pm3->waitForReadyRead())
         ;
     QString result=pm3->getRequiredOutput();
      pm3->setRequiringOutput(false);
@@ -139,21 +149,19 @@ void MainWindow::on_MF_Attack_nestedButton_clicked()
 
 void MainWindow::on_MF_Attack_hardnestedButton_clicked()
 {
-
+    MF_Attack_hardnestedDialog dialog;
+    connect(&dialog,&MF_Attack_hardnestedDialog::sendCMD,this,&MainWindow::execCMD);
+    dialog.exec();
 }
 
 void MainWindow::on_MF_Attack_sniffButton_clicked()
 {
-    ui->Raw_CMDEdit->setText("hf mf sniff");
-    on_Raw_sendCMDButton_clicked();
-    ui->funcTab->setCurrentIndex(1);
+    execCMD("hf mf sniff",true);
 }
 
 void MainWindow::on_MF_Attack_listButton_clicked()
 {
-    ui->Raw_CMDEdit->setText("hf list mf");
-    on_Raw_sendCMDButton_clicked();
-    ui->funcTab->setCurrentIndex(1);
+    execCMD("hf list mf",true);
 }
 
 // ************************************************
@@ -231,11 +239,11 @@ void MainWindow::setStatusBar(QLabel* target,const QString & text)
         target->setText("Program State:"+text);
 }
 
+void MainWindow::execCMD(QString cmd,bool gotoRawTab)
+{
+    ui->Raw_CMDEdit->setText(cmd);
+    on_Raw_sendCMDButton_clicked();
+    if(gotoRawTab)
+        ui->funcTab->setCurrentIndex(1);
+}
 // ***********************************************
-
-
-
-
-
-
-

@@ -18,16 +18,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    mf_attack_hardnesteddialog.cpp \
     mifare.cpp \
     pm3process.cpp
 
 HEADERS += \
     mainwindow.h \
+    mf_attack_hardnesteddialog.h \
     mifare.h \
     pm3process.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    mf_attack_hardnesteddialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

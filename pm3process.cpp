@@ -48,3 +48,8 @@ QString PM3Process::getRequiredOutput()
 {
     return *requiredOutput;
 }
+
+bool PM3Process::waitForReadyRead(int msecs)
+{
+    return QProcess::waitForReadyRead(msecs);
+}

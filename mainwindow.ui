@@ -401,7 +401,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="MF_RW_blockBox"/>
+              <widget class="QSpinBox" name="MF_RW_blockBox">
+               <property name="maximum">
+                <number>63</number>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="label_5">
@@ -603,7 +607,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="MF_UID_blockBox"/>
+              <widget class="QSpinBox" name="MF_UID_blockBox">
+               <property name="maximum">
+                <number>63</number>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QPushButton" name="MF_UID_readBlockButton">
