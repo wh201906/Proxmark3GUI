@@ -22,6 +22,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    bool MF_isKeyValid(const QString key);
+    QString execCMDWithOutput(QString cmd, int msec=2000);
 public slots:
     void refresh();
     void setStatusBar(QLabel* target,const QString & text);
@@ -54,6 +56,8 @@ private slots:
     void on_MF_Attack_sniffButton_clicked();
 
     void on_MF_Attack_listButton_clicked();
+
+    void on_MF_RW_readAllButton_clicked();
 
 private:
     Ui::MainWindow *ui;
