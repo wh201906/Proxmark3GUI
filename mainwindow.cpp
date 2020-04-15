@@ -205,6 +205,36 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
 
 }
 
+void MainWindow::on_MF_RW_readBlockButton_clicked()
+{
+    QString result = execCMDWithOutput("hf mf rdbl "
+                           + ui->MF_RW_blockBox->text()
+                           + " "
+                           + ui->MF_RW_keyTypeBox->currentText()
+                           + " "
+                           + ui->MF_RW_keyEdit->text());
+    if(result.indexOf("isOk:01") != -1)
+    {
+        ui->MF_RW_dataEdit->setText(result.mid(result.indexOf("isOk:01")+13, 47).toUpper());
+    }
+}
+
+void MainWindow::on_MF_RW_writeBlockButton_clicked()
+{
+    QString result = execCMDWithOutput("hf mf wrbl "
+                      + ui->MF_RW_blockBox->text()
+                      + " "
+                      + ui->MF_RW_keyTypeBox->currentText()
+                      + " "
+                      + ui->MF_RW_keyEdit->text()
+                      + " "
+                      + ui->MF_RW_dataEdit->text().replace(" ",""));
+    if(result.indexOf("isOk:01") != -1)
+    {
+
+    }
+}
+
 // ************************************************
 
 

@@ -415,12 +415,16 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="MF_RW_keyEdit"/>
+              <widget class="QLineEdit" name="MF_RW_keyEdit">
+               <property name="text">
+                <string>FFFFFFFFFFFF</string>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>Type:</string>
+                <string>Key Type:</string>
                </property>
               </widget>
              </item>
@@ -428,12 +432,12 @@
               <widget class="QComboBox" name="MF_RW_keyTypeBox">
                <item>
                 <property name="text">
-                 <string>KeyA</string>
+                 <string>A</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>KeyB</string>
+                 <string>B</string>
                 </property>
                </item>
               </widget>
