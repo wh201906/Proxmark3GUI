@@ -156,49 +156,105 @@ void MainWindow::on_MF_Attack_listButton_clicked()
 void MainWindow::on_MF_RW_readAllButton_clicked()
 {
     QString result;
-    int validkey;
-    const int waitTime=500;
+    bool isKeyAValid;
+    bool isKeyBValid;
+    const int waitTime = 500;
     for(int i = 0; i < 16; i++)
     {
         QApplication::processEvents();
         result = "";
-        validkey = -1;
-        if(ui->MF_keyWidget->item(i,1)!=nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
+        isKeyAValid=false;
+        isKeyBValid=false;
+
+        // check keys and read the first block of each sector
+        if(ui->MF_keyWidget->item(i, 1) != nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
         {
             result = execCMDWithOutput("hf mf rdbl "
-                                   + QString::number(4 * i)
-                                   + " A "
-                                   + ui->MF_keyWidget->item(i, 1)->text(),waitTime);
+                                       + QString::number(4 * i)
+                                       + " A "
+                                       + ui->MF_keyWidget->item(i, 1)->text(), waitTime);
             if(result.indexOf("isOk:01") != -1)
             {
-                validkey = 1;
-                ui->MF_dataWidget->setItem(4 * i, 2,new QTableWidgetItem(result.mid(result.indexOf("isOk:01")+13, 47).toUpper()));
+                isKeyAValid=true;
+                ui->MF_dataWidget->setItem(4 * i, 2, new QTableWidgetItem(result.mid(result.indexOf("isOk:01") + 13, 47).toUpper()));
             }
         }
-        if(validkey == -1 && ui->MF_keyWidget->item(i,2)!=nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 2)->text()))
+        QApplication::processEvents();
+        if(ui->MF_keyWidget->item(i, 2) != nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 2)->text()))
         {
             result = execCMDWithOutput("hf mf rdbl "
-                                   + QString::number(4 * i)
-                                   + " B "
-                                   + ui->MF_keyWidget->item(i, 2)->text(),waitTime);
+                                       + QString::number(4 * i)
+                                       + " B "
+                                       + ui->MF_keyWidget->item(i, 2)->text(), waitTime);
             if(result.indexOf("isOk:01") != -1)
             {
-                validkey = 2;
-                ui->MF_dataWidget->setItem(4 * i, 2,new QTableWidgetItem(result.mid(result.indexOf("isOk:01")+13, 47).toUpper()));
+                isKeyBValid=true;
+                ui->MF_dataWidget->setItem(4 * i, 2, new QTableWidgetItem(result.mid(result.indexOf("isOk:01") + 13, 47).toUpper()));
             }
         }
-        if(validkey!=-1)
+
+        // read the rest blocks of a sector
+        if(isKeyAValid || isKeyBValid)
         {
             for(int j = 1; j < 4; j++)
             {
                 QApplication::processEvents();
                 result = execCMDWithOutput("hf mf rdbl "
-                                       + QString::number(4 * i + j)
-                                       + " "
-                                       + (validkey==1?"A":"B")
-                                       + " "
-                                       + ui->MF_keyWidget->item(i, validkey)->text(),waitTime);
-                ui->MF_dataWidget->setItem(4 * i + j, 2,new QTableWidgetItem(result.mid(result.indexOf("isOk:01")+13, 47).toUpper()));
+                                           + QString::number(4 * i + j)
+                                           + " "
+                                           + (isKeyAValid ? "A" : "B")
+                                           + " "
+                                           + ui->MF_keyWidget->item(i, (isKeyAValid ? 1 : 2))->text(), waitTime);
+                result=result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
+                ui->MF_dataWidget->setItem(4 * i + j, 2, new QTableWidgetItem(result));
+            }
+
+            QApplication::processEvents();
+            // fill the MF_dataWidget with the known valid key
+            //
+            // check whether the MF_dataWidget contains the valid key,
+            // and fill MF_keyWidget(when you only have KeyA but the ReadBlock output contains the KeyB)
+            //
+            // the structure is not symmetric, since you cannot get KeyA from output
+            // this program will only process the provided KeyA(in MF_keyWidget)
+            result=ui->MF_dataWidget->item(4 * i + 3, 2)->text();
+            if(isKeyAValid)
+            {
+                for(int j = 0; j < 6; j++)
+                {
+                    result = result.replace(j * 3, 2, ui->MF_keyWidget->item(i,1)->text().mid(j * 2, 2));
+                }
+            }
+            else
+            {
+                result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
+            }
+            ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
+
+            if(isKeyBValid)
+            {
+                for(int j = 0; j < 6; j++)
+                {
+                    result = result.replace(30 + j * 3, 2, ui->MF_keyWidget->item(i,2)->text().mid(j * 2, 2));
+                    ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
+                }
+            }
+            else
+            {
+                QString tmpKey=result.right(18).replace(" ","");
+                result = execCMDWithOutput("hf mf rdbl "
+                                                  + QString::number(4 * i + 3)
+                                                  + " B "
+                                                  + tmpKey, waitTime);
+                if(result.indexOf("isOk:01") != -1)
+                {
+                    ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(tmpKey));
+                }
+                else
+                {
+                    result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
+                    ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
+                }
             }
         }
     }
@@ -208,27 +264,42 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
 void MainWindow::on_MF_RW_readBlockButton_clicked()
 {
     QString result = execCMDWithOutput("hf mf rdbl "
-                           + ui->MF_RW_blockBox->text()
-                           + " "
-                           + ui->MF_RW_keyTypeBox->currentText()
-                           + " "
-                           + ui->MF_RW_keyEdit->text());
+                                       + ui->MF_RW_blockBox->text()
+                                       + " "
+                                       + ui->MF_RW_keyTypeBox->currentText()
+                                       + " "
+                                       + ui->MF_RW_keyEdit->text());
     if(result.indexOf("isOk:01") != -1)
     {
-        ui->MF_RW_dataEdit->setText(result.mid(result.indexOf("isOk:01")+13, 47).toUpper());
+        result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
+        if((ui->MF_RW_blockBox->text().toInt() + 1) % 4 == 0)
+        {
+            if(ui->MF_RW_keyTypeBox->currentText() == "A")
+            {
+                for(int i = 0; i < 6; i++)
+                {
+                    result = result.replace(i * 3, 2, ui->MF_RW_keyEdit->text().mid(i * 2, 2));
+                }
+            }
+            else
+            {
+                result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
+            }
+        }
+        ui->MF_RW_dataEdit->setText(result);
     }
 }
 
 void MainWindow::on_MF_RW_writeBlockButton_clicked()
 {
     QString result = execCMDWithOutput("hf mf wrbl "
-                      + ui->MF_RW_blockBox->text()
-                      + " "
-                      + ui->MF_RW_keyTypeBox->currentText()
-                      + " "
-                      + ui->MF_RW_keyEdit->text()
-                      + " "
-                      + ui->MF_RW_dataEdit->text().replace(" ",""));
+                                       + ui->MF_RW_blockBox->text()
+                                       + " "
+                                       + ui->MF_RW_keyTypeBox->currentText()
+                                       + " "
+                                       + ui->MF_RW_keyEdit->text()
+                                       + " "
+                                       + ui->MF_RW_dataEdit->text().replace(" ", ""));
     if(result.indexOf("isOk:01") != -1)
     {
 
