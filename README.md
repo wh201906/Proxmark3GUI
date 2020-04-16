@@ -1,5 +1,5 @@
 # Proxmark3GUI
-A GUI for Proxmark3 client
+A GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 
 ***
 

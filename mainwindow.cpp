@@ -163,7 +163,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
         QApplication::processEvents();
         result = "";
         validkey = -1;
-        if(MF_isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
+        if(ui->MF_keyWidget->item(i,1)!=nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
         {
             result = execCMDWithOutput("hf mf rdbl "
                                    + QString::number(4 * i)
@@ -175,7 +175,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
                 ui->MF_dataWidget->setItem(4 * i, 2,new QTableWidgetItem(result.mid(result.indexOf("isOk:01")+13, 47).toUpper()));
             }
         }
-        if(validkey == -1 && MF_isKeyValid(ui->MF_keyWidget->item(i, 2)->text()))
+        if(validkey == -1 && ui->MF_keyWidget->item(i,2)!=nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 2)->text()))
         {
             result = execCMDWithOutput("hf mf rdbl "
                                    + QString::number(4 * i)
