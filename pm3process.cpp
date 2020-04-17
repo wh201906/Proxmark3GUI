@@ -5,6 +5,10 @@ PM3Process::PM3Process(QObject* parent): QProcess(parent)
     setProcessChannelMode(PM3Process::MergedChannels);
     isRequiringOutput=false;
     requiredOutput=new QString();
+    serialListener=new QTimer(this);
+    serialListener->setInterval(1000);
+    serialListener->setTimerType(Qt::VeryCoarseTimer);
+    connect(serialListener,&QTimer::timeout,this,&PM3Process::onTimeout);
 }
 
 QStringList PM3Process::findPort()
@@ -13,7 +17,9 @@ QStringList PM3Process::findPort()
     QStringList retList;
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
+        qDebug()<<info.isBusy()<<info.isNull()<<info.portName();
         serial.setPort(info);
+
         if(serial.open(QIODevice::ReadWrite))
         {
             retList<<info.portName();
@@ -27,7 +33,15 @@ bool PM3Process::start(const QString path, const QString port)
 {
     // using "-f" option to make the client output flushed after every print.
     QProcess::start(path, QStringList()<<port<<"-f",QProcess::Unbuffered|QProcess::ReadWrite);
-    return waitForStarted();
+    if(waitForStarted())
+    {
+        setSerialListener(port,true);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void PM3Process::setRequiringOutput(bool st)
@@ -54,3 +68,26 @@ bool PM3Process::waitForReadyRead(int msecs)
     return QProcess::waitForReadyRead(msecs);
 }
 
+void PM3Process::setSerialListener(const QString& name,bool state)
+{
+    if(state)
+    {
+        portInfo=new QSerialPortInfo(name);
+        serialListener->start();
+    }
+    else
+    {
+        serialListener->stop();
+        delete portInfo;
+    }
+}
+
+void PM3Process::onTimeout()
+{
+    qDebug()<<portInfo->isBusy();
+    if(!portInfo->isBusy())
+    {
+        emit PM3disconnected();
+        setSerialListener("",false);
+    }
+}

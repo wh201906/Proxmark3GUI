@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     pm3 = new PM3Process;
     mifare = new Mifare;
     connect(pm3, &PM3Process::readyRead, this, &MainWindow::refresh);
+    connect(pm3, &PM3Process::PM3disconnected, this, &MainWindow::onPM3disconnected);
     connect(ui->Raw_CMDEdit, &QLineEdit::editingFinished, this, &MainWindow::sendMSG);
     uiInit();
 }
@@ -38,21 +39,31 @@ void MainWindow::on_PM3_connectButton_clicked()
     else
     {
         pm3->setRequiringOutput(true);
-        qDebug() << pm3->start(ui->PM3_pathEdit->text(), port);
-        while(pm3->waitForReadyRead())
-            ;
-        QString result = pm3->getRequiredOutput();
-        pm3->setRequiringOutput(false);
-        result = result.mid(result.indexOf("os: "));
-        result = result.left(result.indexOf("\r\n"));
-        result = result.mid(3, result.lastIndexOf(" ") - 3);
-        setStatusBar(PM3VersionBar, result);
+        if(pm3->start(ui->PM3_pathEdit->text(), port))
+        {
+            while(pm3->waitForReadyRead())
+                ;
+            QString result = pm3->getRequiredOutput();
+            pm3->setRequiringOutput(false);
+            result = result.mid(result.indexOf("os: "));
+            result = result.left(result.indexOf("\r\n"));
+            result = result.mid(3, result.lastIndexOf(" ") - 3);
+            setStatusBar(PM3VersionBar, result);
+            setStatusBar(connectStatusBar,"Connected");
+        }
     }
 }
 
 void MainWindow::on_PM3_disconnectButton_clicked()
 {
     pm3->kill();
+    pm3->setSerialListener("",false);
+    onPM3disconnected();
+}
+
+void MainWindow::onPM3disconnected()
+{
+    setStatusBar(connectStatusBar,"Not Connected");
 }
 
 // *********************************************************
@@ -107,6 +118,11 @@ void MainWindow::on_Raw_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item
 // *****************************************************
 
 // ******************** mifare ********************
+
+void MainWindow::on_MF_Attack_infoButton_clicked()
+{
+    execCMD("hf 14a info", true);
+}
 
 void MainWindow::on_MF_Attack_chkButton_clicked()
 {
@@ -252,6 +268,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
                 }
                 else
                 {
+                    result=ui->MF_dataWidget->item(4 * i + 3, 2)->text();
                     result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
                     ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
                 }
@@ -264,7 +281,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
 void MainWindow::on_MF_RW_readBlockButton_clicked()
 {
     QString result = execCMDWithOutput("hf mf rdbl "
-                                       + ui->MF_RW_blockBox->text()
+                                       + ui->MF_RW_blockBox->currentText()
                                        + " "
                                        + ui->MF_RW_keyTypeBox->currentText()
                                        + " "
@@ -272,7 +289,7 @@ void MainWindow::on_MF_RW_readBlockButton_clicked()
     if(result.indexOf("isOk:01") != -1)
     {
         result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
-        if((ui->MF_RW_blockBox->text().toInt() + 1) % 4 == 0)
+        if((ui->MF_RW_blockBox->currentText().toInt() + 1) % 4 == 0)
         {
             if(ui->MF_RW_keyTypeBox->currentText() == "A")
             {
@@ -280,20 +297,37 @@ void MainWindow::on_MF_RW_readBlockButton_clicked()
                 {
                     result = result.replace(i * 3, 2, ui->MF_RW_keyEdit->text().mid(i * 2, 2));
                 }
+                ui->MF_RW_dataEdit->setText(result);
+                QString tmpKey=result.right(18).replace(" ","");
+                result = execCMDWithOutput("hf mf rdbl "
+                                                  + ui->MF_RW_keyTypeBox->currentText()
+                                                  + " B "
+                                                  + tmpKey);
+                if(result.indexOf("isOk:01") == -1)
+                {
+                    result= ui->MF_RW_dataEdit->text();
+                    result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
+                    ui->MF_RW_dataEdit->setText(result);
+                }
             }
             else
             {
+                for(int i = 0; i < 6; i++)
+                {
+                    result = result.replace(30 + i * 3, 2, ui->MF_RW_keyEdit->text().mid(i * 2, 2));
+                }
                 result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
+                ui->MF_RW_dataEdit->setText(result);
             }
         }
-        ui->MF_RW_dataEdit->setText(result);
+
     }
 }
 
 void MainWindow::on_MF_RW_writeBlockButton_clicked()
 {
     QString result = execCMDWithOutput("hf mf wrbl "
-                                       + ui->MF_RW_blockBox->text()
+                                       + ui->MF_RW_blockBox->currentText()
                                        + " "
                                        + ui->MF_RW_keyTypeBox->currentText()
                                        + " "
@@ -367,6 +401,12 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->setColumnWidth(1, 200);
     ui->MF_keyWidget->setColumnWidth(2, 200);
 
+    for(int i=0;i<64;i++)
+    {
+        ui->MF_RW_blockBox->addItem(QString::number(i));
+        ui->MF_UID_blockBox->addItem(QString::number(i));
+    }
+
     on_Raw_moreFuncCheckBox_stateChanged(0);
     on_PM3_refreshPortButton_clicked();
 }
@@ -374,7 +414,7 @@ void MainWindow::uiInit()
 void MainWindow::setStatusBar(QLabel* target, const QString & text)
 {
     if(target == PM3VersionBar)
-        target->setText("Version:" + text);
+        target->setText("HW Version:" + text);
     else if(target == connectStatusBar)
         target->setText("Connecton State:" + text);
     else if(target == programStatusBar)
@@ -411,3 +451,4 @@ bool MainWindow::MF_isKeyValid(const QString key)
     return true;
 }
 // ***********************************************
+

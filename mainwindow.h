@@ -28,6 +28,7 @@ public slots:
     void refresh();
     void setStatusBar(QLabel* target,const QString & text);
     void execCMD(QString cmd, bool gotoRawTab);
+    void onPM3disconnected();
 private slots:
 
     void on_PM3_connectButton_clicked();
@@ -62,6 +63,8 @@ private slots:
     void on_MF_RW_readBlockButton_clicked();
 
     void on_MF_RW_writeBlockButton_clicked();
+
+    void on_MF_Attack_infoButton_clicked();
 
 private:
     Ui::MainWindow *ui;

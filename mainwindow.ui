@@ -151,6 +151,19 @@
             </spacer>
            </item>
            <item>
+            <widget class="QPushButton" name="MF_Attack_infoButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Card Info</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="MF_Attack_chkButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -401,9 +414,21 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="MF_RW_blockBox">
-               <property name="maximum">
-                <number>63</number>
+              <widget class="QComboBox" name="MF_RW_blockBox">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>40</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -430,6 +455,18 @@
              </item>
              <item>
               <widget class="QComboBox" name="MF_RW_keyTypeBox">
+               <property name="minimumSize">
+                <size>
+                 <width>35</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>35</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <item>
                 <property name="text">
                  <string>A</string>
@@ -611,9 +648,21 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="MF_UID_blockBox">
-               <property name="maximum">
-                <number>63</number>
+              <widget class="QComboBox" name="MF_UID_blockBox">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>40</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="editable">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
