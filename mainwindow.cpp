@@ -107,23 +107,19 @@ void MainWindow::on_Raw_clearOutputButton_clicked()
     ui->Raw_outputEdit->clear();
 }
 
-void MainWindow::on_Raw_moreFuncCheckBox_stateChanged(int arg1)
+void MainWindow::on_Raw_CMDHistoryBox_stateChanged(int arg1)
 {
-    if(ui->Raw_moreFuncCheckBox->isChecked())
+    if(arg1==Qt::Checked)
     {
-        ui->Raw_CMDTreeWidget->setVisible(true);
-        ui->Raw_CMDTreeLabel->setVisible(true);
         ui->Raw_CMDHistoryWidget->setVisible(true);
-        ui->Raw_CMDHistoryLabel->setVisible(true);
         ui->Raw_clearHistoryButton->setVisible(true);
+        ui->Raw_CMDHistoryBox->setText("History:");
     }
     else
     {
-        ui->Raw_CMDTreeWidget->setVisible(false);
-        ui->Raw_CMDTreeLabel->setVisible(false);
         ui->Raw_CMDHistoryWidget->setVisible(false);
-        ui->Raw_CMDHistoryLabel->setVisible(false);
         ui->Raw_clearHistoryButton->setVisible(false);
+        ui->Raw_CMDHistoryBox->setText("");
     }
 }
 
@@ -458,7 +454,7 @@ void MainWindow::uiInit()
         ui->MF_UID_blockBox->addItem(QString::number(i));
     }
 
-    on_Raw_moreFuncCheckBox_stateChanged(0);
+    on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
     on_PM3_refreshPortButton_clicked();
 }
 

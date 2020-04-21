@@ -46,7 +46,7 @@ private slots:
     void sendMSG();
     void on_PM3_refreshPortButton_clicked();
 
-    void on_Raw_moreFuncCheckBox_stateChanged(int arg1);
+    void on_Raw_CMDHistoryBox_stateChanged(int arg1);
 
     void on_Raw_clearHistoryButton_clicked();
 
@@ -71,6 +71,7 @@ private slots:
     void on_MF_Attack_infoButton_clicked();
 
     void on_MF_RW_writeAllButton_clicked();
+
 
 private:
     Ui::MainWindow *ui;

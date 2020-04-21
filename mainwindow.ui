@@ -88,7 +88,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -849,38 +849,6 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <widget class="QLabel" name="Raw_CMDTreeLabel">
-              <property name="text">
-               <string>Command List:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QTreeWidget" name="Raw_CMDTreeWidget">
-              <property name="minimumSize">
-               <size>
-                <width>1</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="columnCount">
-               <number>1</number>
-              </property>
-              <column>
-               <property name="text">
-                <string>1</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="Raw_CMDHistoryLabel">
-              <property name="text">
-               <string>History:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QListWidget" name="Raw_CMDHistoryWidget">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -907,12 +875,15 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="Raw_moreFuncCheckBox">
+             <widget class="QCheckBox" name="Raw_CMDHistoryBox">
               <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
+               <enum>Qt::LeftToRight</enum>
               </property>
               <property name="text">
-               <string/>
+               <string>History:</string>
+              </property>
+              <property name="tristate">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
