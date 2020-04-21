@@ -6,17 +6,27 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    pm3 = new PM3Process;
+
+    pm3Thread=new QThread(this);
+    pm3 = new PM3Process(pm3Thread);
+//    pm3->moveToThread(pm3Thread);
+//    pm3->init();
+    pm3Thread->start();
+    pm3state=false;
+
     mifare = new Mifare;
-    connect(pm3, &PM3Process::readyRead, this, &MainWindow::refresh);
-    connect(pm3, &PM3Process::PM3disconnected, this, &MainWindow::onPM3disconnected);
-    connect(ui->Raw_CMDEdit, &QLineEdit::editingFinished, this, &MainWindow::sendMSG);
+
     uiInit();
+    signalInit();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    pm3Thread->exit(0);
+    pm3Thread->wait(5000);
+    delete pm3;
+    delete pm3Thread;
 }
 
 // ******************** basic functions ********************
@@ -25,7 +35,20 @@ void MainWindow::on_PM3_refreshPortButton_clicked()
 {
     ui->PM3_portBox->clear();
     ui->PM3_portBox->addItem("");
-    foreach(QString port, pm3->findPort())
+    QSerialPort serial;
+    QStringList serialList;
+    foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        qDebug()<<info.isBusy()<<info.isNull()<<info.portName();
+        serial.setPort(info);
+
+        if(serial.open(QIODevice::ReadWrite))
+        {
+            serialList<<info.portName();
+            serial.close();
+        }
+    }
+    foreach(QString port, serialList)
     {
         ui->PM3_portBox->addItem(port);
     }
@@ -33,36 +56,36 @@ void MainWindow::on_PM3_refreshPortButton_clicked()
 
 void MainWindow::on_PM3_connectButton_clicked()
 {
+    qDebug()<<"Main:"<<QThread::currentThread();
     QString port = ui->PM3_portBox->currentText();
     if(port == "")
         QMessageBox::information(NULL, "Info", "Plz choose a port first", QMessageBox::Ok);
     else
     {
-        pm3->setRequiringOutput(true);
-        if(pm3->start(ui->PM3_pathEdit->text(), port))
-        {
-            while(pm3->waitForReadyRead())
-                ;
-            QString result = pm3->getRequiredOutput();
-            pm3->setRequiringOutput(false);
-            result = result.mid(result.indexOf("os: "));
-            result = result.left(result.indexOf("\r\n"));
-            result = result.mid(3, result.lastIndexOf(" ") - 3);
-            setStatusBar(PM3VersionBar, result);
-            setStatusBar(connectStatusBar,"Connected");
-        }
+        emit requiringOutput(true);
+        emit connectPM3(ui->PM3_pathEdit->text(), port);
+    }
+}
+
+void MainWindow::onPM3StateChanged(bool st, QString info)
+{
+    pm3state=st;
+    if(st==true)
+    {
+        setStatusBar(PM3VersionBar,info);
+        setStatusBar(connectStatusBar,"Connected");
+    }
+    else
+    {
+        setStatusBar(connectStatusBar,"Not Connected");
     }
 }
 
 void MainWindow::on_PM3_disconnectButton_clicked()
 {
-    pm3->kill();
-    pm3->setSerialListener("",false);
-    onPM3disconnected();
-}
-
-void MainWindow::onPM3disconnected()
-{
+    pm3state=false;
+    emit killPM3();
+    emit setSerialListener("", false);
     setStatusBar(connectStatusBar,"Not Connected");
 }
 
@@ -179,8 +202,8 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
     {
         QApplication::processEvents();
         result = "";
-        isKeyAValid=false;
-        isKeyBValid=false;
+        isKeyAValid = false;
+        isKeyBValid = false;
 
         // check keys and read the first block of each sector
         if(ui->MF_keyWidget->item(i, 1) != nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
@@ -191,7 +214,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
                                        + ui->MF_keyWidget->item(i, 1)->text(), waitTime);
             if(result.indexOf("isOk:01") != -1)
             {
-                isKeyAValid=true;
+                isKeyAValid = true;
                 ui->MF_dataWidget->setItem(4 * i, 2, new QTableWidgetItem(result.mid(result.indexOf("isOk:01") + 13, 47).toUpper()));
             }
         }
@@ -204,7 +227,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
                                        + ui->MF_keyWidget->item(i, 2)->text(), waitTime);
             if(result.indexOf("isOk:01") != -1)
             {
-                isKeyBValid=true;
+                isKeyBValid = true;
                 ui->MF_dataWidget->setItem(4 * i, 2, new QTableWidgetItem(result.mid(result.indexOf("isOk:01") + 13, 47).toUpper()));
             }
         }
@@ -221,7 +244,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
                                            + (isKeyAValid ? "A" : "B")
                                            + " "
                                            + ui->MF_keyWidget->item(i, (isKeyAValid ? 1 : 2))->text(), waitTime);
-                result=result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
+                result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
                 ui->MF_dataWidget->setItem(4 * i + j, 2, new QTableWidgetItem(result));
             }
 
@@ -233,12 +256,12 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
             //
             // the structure is not symmetric, since you cannot get KeyA from output
             // this program will only process the provided KeyA(in MF_keyWidget)
-            result=ui->MF_dataWidget->item(4 * i + 3, 2)->text();
+            result = ui->MF_dataWidget->item(4 * i + 3, 2)->text();
             if(isKeyAValid)
             {
                 for(int j = 0; j < 6; j++)
                 {
-                    result = result.replace(j * 3, 2, ui->MF_keyWidget->item(i,1)->text().mid(j * 2, 2));
+                    result = result.replace(j * 3, 2, ui->MF_keyWidget->item(i, 1)->text().mid(j * 2, 2));
                 }
             }
             else
@@ -251,24 +274,24 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
             {
                 for(int j = 0; j < 6; j++)
                 {
-                    result = result.replace(30 + j * 3, 2, ui->MF_keyWidget->item(i,2)->text().mid(j * 2, 2));
+                    result = result.replace(30 + j * 3, 2, ui->MF_keyWidget->item(i, 2)->text().mid(j * 2, 2));
                     ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
                 }
             }
             else
             {
-                QString tmpKey=result.right(18).replace(" ","");
+                QString tmpKey = result.right(18).replace(" ", "");
                 result = execCMDWithOutput("hf mf rdbl "
-                                                  + QString::number(4 * i + 3)
-                                                  + " B "
-                                                  + tmpKey, waitTime);
+                                           + QString::number(4 * i + 3)
+                                           + " B "
+                                           + tmpKey, waitTime);
                 if(result.indexOf("isOk:01") != -1)
                 {
                     ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(tmpKey));
                 }
                 else
                 {
-                    result=ui->MF_dataWidget->item(4 * i + 3, 2)->text();
+                    result = ui->MF_dataWidget->item(4 * i + 3, 2)->text();
                     result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
                     ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
                 }
@@ -298,14 +321,14 @@ void MainWindow::on_MF_RW_readBlockButton_clicked()
                     result = result.replace(i * 3, 2, ui->MF_RW_keyEdit->text().mid(i * 2, 2));
                 }
                 ui->MF_RW_dataEdit->setText(result);
-                QString tmpKey=result.right(18).replace(" ","");
+                QString tmpKey = result.right(18).replace(" ", "");
                 result = execCMDWithOutput("hf mf rdbl "
-                                                  + ui->MF_RW_keyTypeBox->currentText()
-                                                  + " B "
-                                                  + tmpKey);
+                                           + ui->MF_RW_keyTypeBox->currentText()
+                                           + " B "
+                                           + tmpKey);
                 if(result.indexOf("isOk:01") == -1)
                 {
-                    result= ui->MF_RW_dataEdit->text();
+                    result = ui->MF_RW_dataEdit->text();
                     result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
                     ui->MF_RW_dataEdit->setText(result);
                 }
@@ -340,6 +363,32 @@ void MainWindow::on_MF_RW_writeBlockButton_clicked()
     }
 }
 
+void MainWindow::on_MF_RW_writeAllButton_clicked()
+{
+    QString result;
+    for(int i = 0; i < 16; i++)
+    {
+        for(int j = 0; j < 4; j++)
+        {
+            result = execCMDWithOutput("hf mf wrbl "
+                                       + QString::number(i * 4 + j)
+                                       + " A "
+                                       + ui->MF_keyWidget->item(i, 1)->text()
+                                       + " "
+                                       + ui->MF_dataWidget->item(2, i * 4 + j)->text().replace(" ", ""));
+            if(result.indexOf("isOk:01") == -1)
+            {
+                result = execCMDWithOutput("hf mf wrbl "
+                                           + QString::number(i * 4 + j)
+                                           + " B "
+                                           + ui->MF_keyWidget->item(i, 2)->text()
+                                           + " "
+                                           + ui->MF_dataWidget->item(2, i * 4 + j)->text().replace(" ", ""));
+            }
+        }
+    }
+}
+
 // ************************************************
 
 
@@ -365,6 +414,8 @@ void MainWindow::sendMSG()
 
 void MainWindow::uiInit()
 {
+    connect(ui->Raw_CMDEdit, &QLineEdit::editingFinished, this, &MainWindow::sendMSG);
+
     connectStatusBar = new QLabel(this);
     programStatusBar = new QLabel(this);
     PM3VersionBar = new QLabel(this);
@@ -401,7 +452,7 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->setColumnWidth(1, 200);
     ui->MF_keyWidget->setColumnWidth(2, 200);
 
-    for(int i=0;i<64;i++)
+    for(int i = 0; i < 64; i++)
     {
         ui->MF_RW_blockBox->addItem(QString::number(i));
         ui->MF_UID_blockBox->addItem(QString::number(i));
@@ -409,6 +460,16 @@ void MainWindow::uiInit()
 
     on_Raw_moreFuncCheckBox_stateChanged(0);
     on_PM3_refreshPortButton_clicked();
+}
+
+void MainWindow::signalInit()
+{
+    connect(pm3, &PM3Process::readyRead, this, &MainWindow::refresh);
+
+    connect(this,&MainWindow::requiringOutput,pm3,&PM3Process::setRequiringOutput);
+    connect(this,&MainWindow::connectPM3,pm3,&PM3Process::connectPM3);
+    connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
+    connect(this,&MainWindow::killPM3,pm3,&PM3Process::kill);
 }
 
 void MainWindow::setStatusBar(QLabel* target, const QString & text)
@@ -451,4 +512,6 @@ bool MainWindow::MF_isKeyValid(const QString key)
     return true;
 }
 // ***********************************************
+
+
 

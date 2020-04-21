@@ -2,10 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
 #include <QProcess>
 #include <QDebug>
 #include <QMessageBox>
 #include <QListWidgetItem>
+#include <QtSerialPort/QSerialPortInfo>
+#include <QtSerialPort/QSerialPort>
+
 #include "pm3process.h"
 #include "mifare.h"
 #include "mf_attack_hardnesteddialog.h"
@@ -28,7 +32,7 @@ public slots:
     void refresh();
     void setStatusBar(QLabel* target,const QString & text);
     void execCMD(QString cmd, bool gotoRawTab);
-    void onPM3disconnected();
+    void onPM3StateChanged(bool st, QString info);
 private slots:
 
     void on_PM3_connectButton_clicked();
@@ -66,13 +70,23 @@ private slots:
 
     void on_MF_Attack_infoButton_clicked();
 
+    void on_MF_RW_writeAllButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     PM3Process* pm3;
+    bool pm3state;
+    QThread* pm3Thread;
     Mifare* mifare;
     void uiInit();
     QLabel* connectStatusBar;
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
+    void signalInit();
+signals:
+    void requiringOutput(bool st);
+    void connectPM3(const QString path, const QString port);
+    void killPM3();
+    void setSerialListener(const QString &name, bool state);
 };
 #endif // MAINWINDOW_H

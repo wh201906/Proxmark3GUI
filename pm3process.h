@@ -2,6 +2,7 @@
 #define PM3PROCESS_H
 
 #include <QProcess>
+#include <QThread>
 #include <QString>
 #include <QDebug>
 #include <QTimer>
@@ -12,13 +13,16 @@ class PM3Process : public QProcess
 {
     Q_OBJECT
 public:
-    explicit PM3Process(QObject* parent=nullptr);
-    bool start(const QString path, const QString port);
-    QStringList findPort();
+    explicit PM3Process(QThread* thread, QObject* parent=nullptr);
     QByteArray readLine(qint64 maxlen = 0);
-    void setRequiringOutput(bool st);
     QString getRequiredOutput();
     bool waitForReadyRead(int msecs = 2000);
+
+    void testThread();
+
+public slots:
+    void setRequiringOutput(bool st);
+    void connectPM3(const QString path, const QString port);
     void setSerialListener(const QString &name, bool state);
 private slots:
     void onTimeout();
@@ -28,7 +32,7 @@ private:
     QTimer* serialListener;
     QSerialPortInfo* portInfo;
 signals:
-    void PM3disconnected();
+    void PM3StatedChanged(bool st, QString info="");
 };
 
 #endif // PM3PROCESS_H
