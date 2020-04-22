@@ -14,14 +14,11 @@ class PM3Process : public QProcess
     Q_OBJECT
 public:
     explicit PM3Process(QThread* thread, QObject* parent=nullptr);
-    QByteArray readLine(qint64 maxlen = 0);
-    QString getRequiredOutput();
     bool waitForReadyRead(int msecs = 2000);
 
     void testThread();
 
 public slots:
-    void setRequiringOutput(bool st);
     void connectPM3(const QString path, const QString port);
     void setSerialListener(const QString &name, bool state);
     qint64 write(QString data);
@@ -30,7 +27,8 @@ private slots:
     void onReadyRead();
 private:
     bool isRequiringOutput;
-    QString* requiredOutput;
+    QString* requiredOutput; // It only works in this class now
+    void setRequiringOutput(bool st);// It only works in this class now
     QTimer* serialListener;
     QSerialPortInfo* portInfo;
 signals:

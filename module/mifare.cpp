@@ -46,3 +46,15 @@ void Mifare::setInputType(InputType tp)
 {
     inputType=tp;
 }
+
+bool Mifare::isKeyValid(const QString key)
+{
+    if(key.length() != 12)
+        return false;
+    for(int i = 0; i < 12; i++)
+    {
+        if(!((key[i] >= '0' && key[i] <= '9') || (key[i] >= 'A' && key[i] <= 'F')))
+            return false;
+    }
+    return true;
+}

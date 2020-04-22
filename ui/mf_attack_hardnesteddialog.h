@@ -19,7 +19,7 @@ public:
 private:
     Ui::MF_Attack_hardnestedDialog *ui;
 signals:
-    void sendCMD(QString cmd, bool requireJump = true);
+    void sendCMD(QString cmd);
 private slots:
     void on_buttonBox_accepted();
 };

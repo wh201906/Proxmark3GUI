@@ -28,11 +28,10 @@ public:
     ~MainWindow();
 
     bool MF_isKeyValid(const QString key);
-    QString execCMDWithOutput(QString cmd, int msec=2000);
 public slots:
-    void refresh();
+    void refreshOutput(const QString &output);
+    void refreshCMD(const QString &cmd);
     void setStatusBar(QLabel* target,const QString & text);
-    void execCMD(QString cmd, bool gotoRawTab=false);
     void onPM3StateChanged(bool st, QString info);
 private slots:
 
@@ -87,10 +86,8 @@ private:
     QLabel* PM3VersionBar;
     void signalInit();
 signals:
-    void requiringOutput(bool st);
     void connectPM3(const QString path, const QString port);
     void killPM3();
     void setSerialListener(const QString &name, bool state);
-    void write(QString data);
 };
 #endif // MAINWINDOW_H

@@ -11,6 +11,7 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
     serialListener->setInterval(1000);
     serialListener->setTimerType(Qt::VeryCoarseTimer);
     connect(serialListener,&QTimer::timeout,this,&PM3Process::onTimeout);
+    connect(this,&PM3Process::readyRead,this,&PM3Process::onReadyRead);
 }
 
 void PM3Process::connectPM3(const QString path, const QString port)
@@ -44,18 +45,6 @@ void PM3Process::setRequiringOutput(bool st)
     if(isRequiringOutput)
         requiredOutput->clear();
 }
-QByteArray PM3Process::readLine(qint64 maxlen)
-{
-    QByteArray buff;
-    buff=QProcess::readLine(maxlen);
-    if(isRequiringOutput)
-        requiredOutput->append(buff);
-    return buff;
-}
-QString PM3Process::getRequiredOutput()
-{
-    return *requiredOutput;
-}
 
 bool PM3Process::waitForReadyRead(int msecs)
 {
@@ -77,7 +66,7 @@ void PM3Process::setSerialListener(const QString& name,bool state)
     }
 }
 
-void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly terminated or the PM3 hardware is removed, the isBusy() will return false(tested on Windows);
+void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly terminated or the PM3 hardware is removed, the isBusy() will return false(only tested on Windows);
 {
     qDebug()<<portInfo->isBusy();
     if(!portInfo->isBusy())
@@ -101,12 +90,13 @@ qint64 PM3Process::write(QString data)
 
 void PM3Process::onReadyRead()
 {
-    QString btay = readLine();
-//    while(btay != "")
-//    {
-//        qDebug() << btay;
-//        ui->Raw_outputEdit->insertPlainText(btay);
-//        btay = pm3->readLine();
-//    }
-//    ui->Raw_outputEdit->moveCursor(QTextCursor::End);
+    QString out = readAll();
+    if(isRequiringOutput)
+        requiredOutput->append(out);
+    if(out != "")
+    {
+        qDebug()<<"PM3Process::onReadyRead:" << out;
+        emit newOutput(out);
+
+    }
 }

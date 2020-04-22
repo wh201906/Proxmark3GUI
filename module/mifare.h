@@ -3,6 +3,7 @@
 
 #include "common/util.h"
 #include <QObject>
+#include <QString>
 
 class Mifare : public QObject
 {
@@ -25,6 +26,7 @@ public:
 
     void setProcessingState(ProcessingState st);
     void setInputType(InputType tp);
+    bool isKeyValid(const QString key);
 public slots:
     void processData(const QString str);
     void processKey(const QString str);

@@ -97,7 +97,7 @@ void MainWindow::on_PM3_disconnectButton_clicked()
 
 void MainWindow::on_Raw_sendCMDButton_clicked()
 {
-    execCMD(ui->Raw_CMDEdit->text());
+    util->execCMD(ui->Raw_CMDEdit->text());
 }
 
 void MainWindow::on_Raw_clearOutputButton_clicked()
@@ -138,12 +138,13 @@ void MainWindow::on_Raw_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item
 
 void MainWindow::on_MF_Attack_infoButton_clicked()
 {
-    execCMD("hf 14a info", true);
+    util->execCMD("hf 14a info");
+    ui->funcTab->setCurrentIndex(1);
 }
 
 void MainWindow::on_MF_Attack_chkButton_clicked()
 {
-    QString result = execCMDWithOutput("hf mf chk *1 ?");
+    QString result = util->execCMDWithOutput("hf mf chk *1 ?");
     result = result.mid(result.indexOf("|---|----------------|----------------|"));
     QStringList keys = result.split("\r\n");
     for(int i = 0; i < 16; i++)
@@ -156,7 +157,7 @@ void MainWindow::on_MF_Attack_chkButton_clicked()
 
 void MainWindow::on_MF_Attack_nestedButton_clicked()
 {
-    QString result = execCMDWithOutput("hf mf nested 1 *");
+    QString result = util->execCMDWithOutput("hf mf nested 1 *");
     result = result.mid(result.indexOf("|---|----------------|---|----------------|---|"));
     QStringList keys = result.split("\r\n");
     for(int i = 0; i < 16; i++)
@@ -172,18 +173,21 @@ void MainWindow::on_MF_Attack_nestedButton_clicked()
 void MainWindow::on_MF_Attack_hardnestedButton_clicked()
 {
     MF_Attack_hardnestedDialog dialog;
-    connect(&dialog, &MF_Attack_hardnestedDialog::sendCMD, this, &MainWindow::execCMD);
-    dialog.exec();
+    connect(&dialog, &MF_Attack_hardnestedDialog::sendCMD, util, &Util::execCMD);
+    if(dialog.exec()==QDialog::Accepted)
+        ui->funcTab->setCurrentIndex(1);
 }
 
 void MainWindow::on_MF_Attack_sniffButton_clicked()
 {
-    execCMD("hf mf sniff", true);
+    util->execCMD("hf mf sniff");
+    ui->funcTab->setCurrentIndex(1);
 }
 
 void MainWindow::on_MF_Attack_listButton_clicked()
 {
-    execCMD("hf list mf", true);
+    util->execCMD("hf list mf");
+    ui->funcTab->setCurrentIndex(1);
 }
 
 void MainWindow::on_MF_RW_readAllButton_clicked()
@@ -200,9 +204,9 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
         isKeyBValid = false;
 
         // check keys and read the first block of each sector
-        if(ui->MF_keyWidget->item(i, 1) != nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
+        if(ui->MF_keyWidget->item(i, 1) != nullptr && mifare->isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
         {
-            result = execCMDWithOutput("hf mf rdbl "
+            result = util->execCMDWithOutput("hf mf rdbl "
                                        + QString::number(4 * i)
                                        + " A "
                                        + ui->MF_keyWidget->item(i, 1)->text(), waitTime);
@@ -213,9 +217,9 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
             }
         }
         QApplication::processEvents();
-        if(ui->MF_keyWidget->item(i, 2) != nullptr && MF_isKeyValid(ui->MF_keyWidget->item(i, 2)->text()))
+        if(ui->MF_keyWidget->item(i, 2) != nullptr && mifare->isKeyValid(ui->MF_keyWidget->item(i, 2)->text()))
         {
-            result = execCMDWithOutput("hf mf rdbl "
+            result = util->execCMDWithOutput("hf mf rdbl "
                                        + QString::number(4 * i)
                                        + " B "
                                        + ui->MF_keyWidget->item(i, 2)->text(), waitTime);
@@ -232,7 +236,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
             for(int j = 1; j < 4; j++)
             {
                 QApplication::processEvents();
-                result = execCMDWithOutput("hf mf rdbl "
+                result = util->execCMDWithOutput("hf mf rdbl "
                                            + QString::number(4 * i + j)
                                            + " "
                                            + (isKeyAValid ? "A" : "B")
@@ -275,7 +279,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
             else
             {
                 QString tmpKey = result.right(18).replace(" ", "");
-                result = execCMDWithOutput("hf mf rdbl "
+                result = util->execCMDWithOutput("hf mf rdbl "
                                            + QString::number(4 * i + 3)
                                            + " B "
                                            + tmpKey, waitTime);
@@ -297,7 +301,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
 
 void MainWindow::on_MF_RW_readBlockButton_clicked()
 {
-    QString result = execCMDWithOutput("hf mf rdbl "
+    QString result = util->execCMDWithOutput("hf mf rdbl "
                                        + ui->MF_RW_blockBox->currentText()
                                        + " "
                                        + ui->MF_RW_keyTypeBox->currentText()
@@ -316,7 +320,7 @@ void MainWindow::on_MF_RW_readBlockButton_clicked()
                 }
                 ui->MF_RW_dataEdit->setText(result);
                 QString tmpKey = result.right(18).replace(" ", "");
-                result = execCMDWithOutput("hf mf rdbl "
+                result = util->execCMDWithOutput("hf mf rdbl "
                                            + ui->MF_RW_keyTypeBox->currentText()
                                            + " B "
                                            + tmpKey);
@@ -343,7 +347,7 @@ void MainWindow::on_MF_RW_readBlockButton_clicked()
 
 void MainWindow::on_MF_RW_writeBlockButton_clicked()
 {
-    QString result = execCMDWithOutput("hf mf wrbl "
+    QString result = util->execCMDWithOutput("hf mf wrbl "
                                        + ui->MF_RW_blockBox->currentText()
                                        + " "
                                        + ui->MF_RW_keyTypeBox->currentText()
@@ -364,7 +368,7 @@ void MainWindow::on_MF_RW_writeAllButton_clicked()
     {
         for(int j = 0; j < 4; j++)
         {
-            result = execCMDWithOutput("hf mf wrbl "
+            result = util->execCMDWithOutput("hf mf wrbl "
                                        + QString::number(i * 4 + j)
                                        + " A "
                                        + ui->MF_keyWidget->item(i, 1)->text()
@@ -372,7 +376,7 @@ void MainWindow::on_MF_RW_writeAllButton_clicked()
                                        + ui->MF_dataWidget->item(2, i * 4 + j)->text().replace(" ", ""));
             if(result.indexOf("isOk:01") == -1)
             {
-                result = execCMDWithOutput("hf mf wrbl "
+                result = util->execCMDWithOutput("hf mf wrbl "
                                            + QString::number(i * 4 + j)
                                            + " B "
                                            + ui->MF_keyWidget->item(i, 2)->text()
@@ -388,16 +392,18 @@ void MainWindow::on_MF_RW_writeAllButton_clicked()
 
 // ******************** other ********************
 
-void MainWindow::refresh()
+void MainWindow::refreshOutput(const QString& output)
 {
-    QString btay = pm3->readLine();
-    while(btay != "")
-    {
-        qDebug() << btay;
-        ui->Raw_outputEdit->insertPlainText(btay);
-        btay = pm3->readLine();
-    }
+    qDebug()<<"MainWindow::refresh:" << output;
+    ui->Raw_outputEdit->insertPlainText(output);
     ui->Raw_outputEdit->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::refreshCMD(const QString& cmd)
+{
+    ui->Raw_CMDEdit->setText(cmd);
+    if(cmd!=""&&(ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd))
+        ui->Raw_CMDHistoryWidget->addItem(cmd);
 }
 
 void MainWindow::sendMSG()
@@ -458,14 +464,14 @@ void MainWindow::uiInit()
 
 void MainWindow::signalInit()
 {
-//    connect(pm3, &PM3Process::readyRead, util, &MainWindow::refresh);
+    connect(pm3, &PM3Process::newOutput, util, &Util::processOutput);
+    connect(util,&Util::refreshOutput,this,&MainWindow::refreshOutput);
 
-    connect(this,&MainWindow::requiringOutput,pm3,&PM3Process::setRequiringOutput);
     connect(this,&MainWindow::connectPM3,pm3,&PM3Process::connectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
     connect(this,&MainWindow::killPM3,pm3,&PM3Process::kill);
 
-    connect(this,&MainWindow::write,pm3,&PM3Process::write);
+    connect(util,&Util::write,pm3,&PM3Process::write);
 }
 
 void MainWindow::setStatusBar(QLabel* target, const QString & text)
@@ -476,39 +482,6 @@ void MainWindow::setStatusBar(QLabel* target, const QString & text)
         target->setText("Connecton State:" + text);
     else if(target == programStatusBar)
         target->setText("Program State:" + text);
-}
-
-void MainWindow::execCMD(QString cmd, bool gotoRawTab)
-{
-    ui->Raw_CMDEdit->setText(cmd);
-    if(ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd)
-        ui->Raw_CMDHistoryWidget->addItem(cmd);
-    qDebug() << cmd;
-    emit write(cmd + "\r\n");
-    if(gotoRawTab)
-        ui->funcTab->setCurrentIndex(1);
-}
-
-QString MainWindow::execCMDWithOutput(QString cmd, int msec)
-{
-    emit requiringOutput(true);
-    execCMD(cmd);
-    while(pm3->waitForReadyRead(msec))
-        ;
-    pm3->setRequiringOutput(false);
-    return pm3->getRequiredOutput();
-}
-
-bool MainWindow::MF_isKeyValid(const QString key)
-{
-    if(key.length() != 12)
-        return false;
-    for(int i = 0; i < 12; i++)
-    {
-        if(!((key[i] >= '0' && key[i] <= '9') || (key[i] >= 'A' && key[i] <= 'F')))
-            return false;
-    }
-    return true;
 }
 // ***********************************************
 
