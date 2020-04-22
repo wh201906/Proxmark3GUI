@@ -1,13 +1,14 @@
 ﻿#ifndef MIFARE_H
 #define MIFARE_H
 
+#include "common/util.h"
 #include <QObject>
 
 class Mifare : public QObject
 {
     Q_OBJECT
 public:
-    explicit Mifare(QObject *parent = nullptr);
+    explicit Mifare(Util *addr,QObject *parent = nullptr);
     enum ProcessingState
     {
         NONE,
@@ -30,6 +31,7 @@ public slots:
 signals:
 
 private:
+    Util* util;
     bool isProcessingData=false;
     bool isProcessingKey=false;
     InputType inputType;

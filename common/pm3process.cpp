@@ -98,3 +98,15 @@ qint64 PM3Process::write(QString data)
 {
     return QProcess::write(data.toLatin1());
 }
+
+void PM3Process::onReadyRead()
+{
+    QString btay = readLine();
+//    while(btay != "")
+//    {
+//        qDebug() << btay;
+//        ui->Raw_outputEdit->insertPlainText(btay);
+//        btay = pm3->readLine();
+//    }
+//    ui->Raw_outputEdit->moveCursor(QTextCursor::End);
+}

@@ -27,6 +27,7 @@ public slots:
     qint64 write(QString data);
 private slots:
     void onTimeout();
+    void onReadyRead();
 private:
     bool isRequiringOutput;
     QString* requiredOutput;
@@ -34,6 +35,7 @@ private:
     QSerialPortInfo* portInfo;
 signals:
     void PM3StatedChanged(bool st, QString info="");
+    void newOutput(QString output);
 };
 
 #endif // PM3PROCESS_H

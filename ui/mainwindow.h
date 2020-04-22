@@ -10,9 +10,10 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
 
-#include "pm3process.h"
-#include "mifare.h"
-#include "mf_attack_hardnesteddialog.h"
+#include "common/pm3process.h"
+#include "module/mifare.h"
+#include "common/util.h"
+#include "ui/mf_attack_hardnesteddialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -79,6 +80,7 @@ private:
     bool pm3state;
     QThread* pm3Thread;
     Mifare* mifare;
+    Util* util;
     void uiInit();
     QLabel* connectStatusBar;
     QLabel* programStatusBar;

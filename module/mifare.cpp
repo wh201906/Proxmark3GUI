@@ -1,7 +1,8 @@
 ﻿#include "mifare.h"
 
-Mifare::Mifare(QObject *parent) : QObject(parent)
+Mifare::Mifare(Util *addr,QObject *parent) : QObject(parent)
 {
+    util=addr;
     isProcessingData=false;
     isProcessingKey=false;
 }

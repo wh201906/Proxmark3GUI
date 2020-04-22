@@ -1,4 +1,4 @@
-#ifndef UTIL_H
+﻿#ifndef UTIL_H
 #define UTIL_H
 
 #include <QObject>
@@ -11,6 +11,8 @@ public:
 
 signals:
 
+private slots:
+    void processOutput();
 };
 
 #endif // UTIL_H
