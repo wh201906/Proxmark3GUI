@@ -105,6 +105,11 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="font">
+             <font>
+              <family>Courier</family>
+             </font>
+            </property>
             <attribute name="verticalHeaderMinimumSectionSize">
              <number>20</number>
             </attribute>
@@ -120,6 +125,11 @@
               <horstretch>1</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <family>Courier</family>
+             </font>
             </property>
             <attribute name="verticalHeaderMinimumSectionSize">
              <number>20</number>

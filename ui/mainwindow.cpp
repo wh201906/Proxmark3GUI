@@ -195,7 +195,7 @@ void MainWindow::on_MF_RW_readAllButton_clicked()
     QString result;
     bool isKeyAValid;
     bool isKeyBValid;
-    const int waitTime = 500;
+    const int waitTime = 300;
     for(int i = 0; i < 16; i++)
     {
         QApplication::processEvents();
@@ -428,29 +428,29 @@ void MainWindow::uiInit()
 
     ui->MF_dataWidget->setColumnCount(3);
     ui->MF_dataWidget->setRowCount(64);
-    ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("Sector"));
-    ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("Block"));
+    ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("Sec"));
+    ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("Blk"));
     ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("Data"));
     for(int i = 0; i < 64; i++)
         ui->MF_dataWidget->setItem(i, 1, new QTableWidgetItem(QString::number(i)));
     for(int i = 0; i < 16; i++)
         ui->MF_dataWidget->setItem(i * 4, 0, new QTableWidgetItem(QString::number(i)));
     ui->MF_dataWidget->verticalHeader()->setVisible(false);
-    ui->MF_dataWidget->setColumnWidth(0, 50);
-    ui->MF_dataWidget->setColumnWidth(1, 40);
+    ui->MF_dataWidget->setColumnWidth(0, 35);
+    ui->MF_dataWidget->setColumnWidth(1, 35);
     ui->MF_dataWidget->setColumnWidth(2, 400);
 
     ui->MF_keyWidget->setColumnCount(3);
     ui->MF_keyWidget->setRowCount(16);
-    ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("Sector"));
+    ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("Sec"));
     ui->MF_keyWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("KeyA"));
     ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("KeyB"));
     for(int i = 0; i < 16; i++)
         ui->MF_keyWidget->setItem(i, 0, new QTableWidgetItem(QString::number(i)));
     ui->MF_keyWidget->verticalHeader()->setVisible(false);
-    ui->MF_keyWidget->setColumnWidth(0, 50);
-    ui->MF_keyWidget->setColumnWidth(1, 200);
-    ui->MF_keyWidget->setColumnWidth(2, 200);
+    ui->MF_keyWidget->setColumnWidth(0, 35);
+    ui->MF_keyWidget->setColumnWidth(1, 110);
+    ui->MF_keyWidget->setColumnWidth(2, 110);
 
     for(int i = 0; i < 64; i++)
     {
