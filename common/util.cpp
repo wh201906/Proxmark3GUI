@@ -2,18 +2,18 @@
 
 Util::Util(QObject *parent) : QObject(parent)
 {
-    isRequiringOutput=false;
-    requiredOutput=new QString();
-    timeStamp=QTime::currentTime();
+    isRequiringOutput = false;
+    requiredOutput = new QString();
+    timeStamp = QTime::currentTime();
 }
 
 void Util::processOutput(QString output)
 {
-    qDebug()<<"Util::processOutput:" << output;
+    qDebug() << "Util::processOutput:" << output;
     if(isRequiringOutput)
     {
         requiredOutput->append(output);
-        timeStamp=QTime::currentTime();
+        timeStamp = QTime::currentTime();
     }
     emit refreshOutput(output);
 }
@@ -26,21 +26,21 @@ void Util::execCMD(QString cmd)
 
 QString Util::execCMDWithOutput(QString cmd, unsigned long timeout)
 {
-    QTime currTime=QTime::currentTime();
+    QTime currTime = QTime::currentTime();
     QTime targetTime = QTime::currentTime().addMSecs(timeout);
-    isRequiringOutput=true;
+    isRequiringOutput = true;
     requiredOutput->clear();
     execCMD(cmd);
     while( QTime::currentTime() < targetTime)
     {
         QApplication::processEvents();
-        if(timeStamp>currTime)
+        if(timeStamp > currTime)
         {
-            currTime=timeStamp;
-            targetTime=timeStamp.addMSecs(timeout);
+            currTime = timeStamp;
+            targetTime = timeStamp.addMSecs(timeout);
         }
     }
-    isRequiringOutput=false;
+    isRequiringOutput = false;
     return *requiredOutput;
 }
 

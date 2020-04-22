@@ -7,15 +7,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    pm3Thread=new QThread(this);
+    pm3Thread = new QThread(this);
     pm3 = new PM3Process(pm3Thread);
 //    pm3->moveToThread(pm3Thread);
 //    pm3->init();
     pm3Thread->start();
-    pm3state=false;
+    pm3state = false;
 
     util = new Util(this);
-    mifare = new Mifare(util,this);
+    mifare = new Mifare(ui, util, this);
 
 
     uiInit();
@@ -42,12 +42,12 @@ void MainWindow::on_PM3_refreshPortButton_clicked()
     QStringList serialList;
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
-        qDebug()<<info.isBusy()<<info.isNull()<<info.portName();
+        qDebug() << info.isBusy() << info.isNull() << info.portName();
         serial.setPort(info);
 
         if(serial.open(QIODevice::ReadWrite))
         {
-            serialList<<info.portName();
+            serialList << info.portName();
             serial.close();
         }
     }
@@ -59,7 +59,7 @@ void MainWindow::on_PM3_refreshPortButton_clicked()
 
 void MainWindow::on_PM3_connectButton_clicked()
 {
-    qDebug()<<"Main:"<<QThread::currentThread();
+    qDebug() << "Main:" << QThread::currentThread();
     QString port = ui->PM3_portBox->currentText();
     if(port == "")
         QMessageBox::information(NULL, "Info", "Plz choose a port first", QMessageBox::Ok);
@@ -71,24 +71,38 @@ void MainWindow::on_PM3_connectButton_clicked()
 
 void MainWindow::onPM3StateChanged(bool st, QString info)
 {
-    pm3state=st;
-    if(st==true)
+    pm3state = st;
+    if(st == true)
     {
-        setStatusBar(PM3VersionBar,info);
-        setStatusBar(connectStatusBar,"Connected");
+        setStatusBar(PM3VersionBar, info);
+        setStatusBar(connectStatusBar, "Connected");
     }
     else
     {
-        setStatusBar(connectStatusBar,"Not Connected");
+        setStatusBar(connectStatusBar, "Not Connected");
     }
 }
 
 void MainWindow::on_PM3_disconnectButton_clicked()
 {
-    pm3state=false;
+    pm3state = false;
     emit killPM3();
     emit setSerialListener("", false);
-    setStatusBar(connectStatusBar,"Not Connected");
+    setStatusBar(connectStatusBar, "Not Connected");
+}
+
+void MainWindow::refreshOutput(const QString& output)
+{
+    qDebug() << "MainWindow::refresh:" << output;
+    ui->Raw_outputEdit->insertPlainText(output);
+    ui->Raw_outputEdit->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::refreshCMD(const QString& cmd)
+{
+    ui->Raw_CMDEdit->setText(cmd);
+    if(cmd != "" && (ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd))
+        ui->Raw_CMDHistoryWidget->addItem(cmd);
 }
 
 // *********************************************************
@@ -107,7 +121,7 @@ void MainWindow::on_Raw_clearOutputButton_clicked()
 
 void MainWindow::on_Raw_CMDHistoryBox_stateChanged(int arg1)
 {
-    if(arg1==Qt::Checked)
+    if(arg1 == Qt::Checked)
     {
         ui->Raw_CMDHistoryWidget->setVisible(true);
         ui->Raw_clearHistoryButton->setVisible(true);
@@ -138,253 +152,52 @@ void MainWindow::on_Raw_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item
 
 void MainWindow::on_MF_Attack_infoButton_clicked()
 {
-    util->execCMD("hf 14a info");
-    ui->funcTab->setCurrentIndex(1);
+    mifare->info();
 }
 
 void MainWindow::on_MF_Attack_chkButton_clicked()
 {
-    QString result = util->execCMDWithOutput("hf mf chk *1 ?");
-    result = result.mid(result.indexOf("|---|----------------|----------------|"));
-    QStringList keys = result.split("\r\n");
-    for(int i = 0; i < 16; i++)
-    {
-        ui->MF_keyWidget->setItem(i, 1, new QTableWidgetItem(keys[i + 3].mid(7, 12).trimmed().toUpper()));
-        ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(keys[i + 3].mid(24, 12).trimmed().toUpper()));
-    }
-    qDebug() << "***********\n" << keys << "***********\n";
+    mifare->chk();
 }
 
 void MainWindow::on_MF_Attack_nestedButton_clicked()
 {
-    QString result = util->execCMDWithOutput("hf mf nested 1 *");
-    result = result.mid(result.indexOf("|---|----------------|---|----------------|---|"));
-    QStringList keys = result.split("\r\n");
-    for(int i = 0; i < 16; i++)
-    {
-        if(keys[i + 3].at(23) == '1')
-            ui->MF_keyWidget->setItem(i, 1, new QTableWidgetItem(keys[i + 3].mid(7, 12).trimmed().toUpper()));
-        if(keys[i + 3].at(44) == '1')
-            ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(keys[i + 3].mid(28, 12).trimmed().toUpper()));
-    }
-    qDebug() << "***********\n" << keys << "***********\n";
+    mifare->nested();
 }
 
 void MainWindow::on_MF_Attack_hardnestedButton_clicked()
 {
-    MF_Attack_hardnestedDialog dialog;
-    connect(&dialog, &MF_Attack_hardnestedDialog::sendCMD, util, &Util::execCMD);
-    if(dialog.exec()==QDialog::Accepted)
-        ui->funcTab->setCurrentIndex(1);
+    mifare->hardnested();
 }
 
 void MainWindow::on_MF_Attack_sniffButton_clicked()
 {
-    util->execCMD("hf mf sniff");
-    ui->funcTab->setCurrentIndex(1);
+    mifare->sniff();
 }
 
 void MainWindow::on_MF_Attack_listButton_clicked()
 {
-    util->execCMD("hf list mf");
-    ui->funcTab->setCurrentIndex(1);
+    mifare->list();
 }
 
 void MainWindow::on_MF_RW_readAllButton_clicked()
 {
-    QString result;
-    bool isKeyAValid;
-    bool isKeyBValid;
-    const int waitTime = 300;
-    for(int i = 0; i < 16; i++)
-    {
-        QApplication::processEvents();
-        result = "";
-        isKeyAValid = false;
-        isKeyBValid = false;
-
-        // check keys and read the first block of each sector
-        if(ui->MF_keyWidget->item(i, 1) != nullptr && mifare->isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
-        {
-            result = util->execCMDWithOutput("hf mf rdbl "
-                                       + QString::number(4 * i)
-                                       + " A "
-                                       + ui->MF_keyWidget->item(i, 1)->text(), waitTime);
-            if(result.indexOf("isOk:01") != -1)
-            {
-                isKeyAValid = true;
-                ui->MF_dataWidget->setItem(4 * i, 2, new QTableWidgetItem(result.mid(result.indexOf("isOk:01") + 13, 47).toUpper()));
-            }
-        }
-        QApplication::processEvents();
-        if(ui->MF_keyWidget->item(i, 2) != nullptr && mifare->isKeyValid(ui->MF_keyWidget->item(i, 2)->text()))
-        {
-            result = util->execCMDWithOutput("hf mf rdbl "
-                                       + QString::number(4 * i)
-                                       + " B "
-                                       + ui->MF_keyWidget->item(i, 2)->text(), waitTime);
-            if(result.indexOf("isOk:01") != -1)
-            {
-                isKeyBValid = true;
-                ui->MF_dataWidget->setItem(4 * i, 2, new QTableWidgetItem(result.mid(result.indexOf("isOk:01") + 13, 47).toUpper()));
-            }
-        }
-
-        // read the rest blocks of a sector
-        if(isKeyAValid || isKeyBValid)
-        {
-            for(int j = 1; j < 4; j++)
-            {
-                QApplication::processEvents();
-                result = util->execCMDWithOutput("hf mf rdbl "
-                                           + QString::number(4 * i + j)
-                                           + " "
-                                           + (isKeyAValid ? "A" : "B")
-                                           + " "
-                                           + ui->MF_keyWidget->item(i, (isKeyAValid ? 1 : 2))->text(), waitTime);
-                result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
-                ui->MF_dataWidget->setItem(4 * i + j, 2, new QTableWidgetItem(result));
-            }
-
-            QApplication::processEvents();
-            // fill the MF_dataWidget with the known valid key
-            //
-            // check whether the MF_dataWidget contains the valid key,
-            // and fill MF_keyWidget(when you only have KeyA but the ReadBlock output contains the KeyB)
-            //
-            // the structure is not symmetric, since you cannot get KeyA from output
-            // this program will only process the provided KeyA(in MF_keyWidget)
-            result = ui->MF_dataWidget->item(4 * i + 3, 2)->text();
-            if(isKeyAValid)
-            {
-                for(int j = 0; j < 6; j++)
-                {
-                    result = result.replace(j * 3, 2, ui->MF_keyWidget->item(i, 1)->text().mid(j * 2, 2));
-                }
-            }
-            else
-            {
-                result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
-            }
-            ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
-
-            if(isKeyBValid)
-            {
-                for(int j = 0; j < 6; j++)
-                {
-                    result = result.replace(30 + j * 3, 2, ui->MF_keyWidget->item(i, 2)->text().mid(j * 2, 2));
-                    ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
-                }
-            }
-            else
-            {
-                QString tmpKey = result.right(18).replace(" ", "");
-                result = util->execCMDWithOutput("hf mf rdbl "
-                                           + QString::number(4 * i + 3)
-                                           + " B "
-                                           + tmpKey, waitTime);
-                if(result.indexOf("isOk:01") != -1)
-                {
-                    ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(tmpKey));
-                }
-                else
-                {
-                    result = ui->MF_dataWidget->item(4 * i + 3, 2)->text();
-                    result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
-                    ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
-                }
-            }
-        }
-    }
-
+    mifare->readAll();
 }
 
 void MainWindow::on_MF_RW_readBlockButton_clicked()
 {
-    QString result = util->execCMDWithOutput("hf mf rdbl "
-                                       + ui->MF_RW_blockBox->currentText()
-                                       + " "
-                                       + ui->MF_RW_keyTypeBox->currentText()
-                                       + " "
-                                       + ui->MF_RW_keyEdit->text());
-    if(result.indexOf("isOk:01") != -1)
-    {
-        result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
-        if((ui->MF_RW_blockBox->currentText().toInt() + 1) % 4 == 0)
-        {
-            if(ui->MF_RW_keyTypeBox->currentText() == "A")
-            {
-                for(int i = 0; i < 6; i++)
-                {
-                    result = result.replace(i * 3, 2, ui->MF_RW_keyEdit->text().mid(i * 2, 2));
-                }
-                ui->MF_RW_dataEdit->setText(result);
-                QString tmpKey = result.right(18).replace(" ", "");
-                result = util->execCMDWithOutput("hf mf rdbl "
-                                           + ui->MF_RW_keyTypeBox->currentText()
-                                           + " B "
-                                           + tmpKey);
-                if(result.indexOf("isOk:01") == -1)
-                {
-                    result = ui->MF_RW_dataEdit->text();
-                    result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
-                    ui->MF_RW_dataEdit->setText(result);
-                }
-            }
-            else
-            {
-                for(int i = 0; i < 6; i++)
-                {
-                    result = result.replace(30 + i * 3, 2, ui->MF_RW_keyEdit->text().mid(i * 2, 2));
-                }
-                result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
-                ui->MF_RW_dataEdit->setText(result);
-            }
-        }
-
-    }
+    mifare->read();
 }
 
 void MainWindow::on_MF_RW_writeBlockButton_clicked()
 {
-    QString result = util->execCMDWithOutput("hf mf wrbl "
-                                       + ui->MF_RW_blockBox->currentText()
-                                       + " "
-                                       + ui->MF_RW_keyTypeBox->currentText()
-                                       + " "
-                                       + ui->MF_RW_keyEdit->text()
-                                       + " "
-                                       + ui->MF_RW_dataEdit->text().replace(" ", ""));
-    if(result.indexOf("isOk:01") != -1)
-    {
-
-    }
+    mifare->write();
 }
 
 void MainWindow::on_MF_RW_writeAllButton_clicked()
 {
-    QString result;
-    for(int i = 0; i < 16; i++)
-    {
-        for(int j = 0; j < 4; j++)
-        {
-            result = util->execCMDWithOutput("hf mf wrbl "
-                                       + QString::number(i * 4 + j)
-                                       + " A "
-                                       + ui->MF_keyWidget->item(i, 1)->text()
-                                       + " "
-                                       + ui->MF_dataWidget->item(2, i * 4 + j)->text().replace(" ", ""));
-            if(result.indexOf("isOk:01") == -1)
-            {
-                result = util->execCMDWithOutput("hf mf wrbl "
-                                           + QString::number(i * 4 + j)
-                                           + " B "
-                                           + ui->MF_keyWidget->item(i, 2)->text()
-                                           + " "
-                                           + ui->MF_dataWidget->item(2, i * 4 + j)->text().replace(" ", ""));
-            }
-        }
-    }
+    mifare->writeAll();
 }
 
 // ************************************************
@@ -392,21 +205,7 @@ void MainWindow::on_MF_RW_writeAllButton_clicked()
 
 // ******************** other ********************
 
-void MainWindow::refreshOutput(const QString& output)
-{
-    qDebug()<<"MainWindow::refresh:" << output;
-    ui->Raw_outputEdit->insertPlainText(output);
-    ui->Raw_outputEdit->moveCursor(QTextCursor::End);
-}
-
-void MainWindow::refreshCMD(const QString& cmd)
-{
-    ui->Raw_CMDEdit->setText(cmd);
-    if(cmd!=""&&(ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd))
-        ui->Raw_CMDHistoryWidget->addItem(cmd);
-}
-
-void MainWindow::sendMSG()
+void MainWindow::sendMSG() // send command when pressing Enter
 {
     if(ui->Raw_CMDEdit->hasFocus())
         on_Raw_sendCMDButton_clicked();
@@ -465,13 +264,13 @@ void MainWindow::uiInit()
 void MainWindow::signalInit()
 {
     connect(pm3, &PM3Process::newOutput, util, &Util::processOutput);
-    connect(util,&Util::refreshOutput,this,&MainWindow::refreshOutput);
+    connect(util, &Util::refreshOutput, this, &MainWindow::refreshOutput);
 
-    connect(this,&MainWindow::connectPM3,pm3,&PM3Process::connectPM3);
+    connect(this, &MainWindow::connectPM3, pm3, &PM3Process::connectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
-    connect(this,&MainWindow::killPM3,pm3,&PM3Process::kill);
+    connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
 
-    connect(util,&Util::write,pm3,&PM3Process::write);
+    connect(util, &Util::write, pm3, &PM3Process::write);
 }
 
 void MainWindow::setStatusBar(QLabel* target, const QString & text)

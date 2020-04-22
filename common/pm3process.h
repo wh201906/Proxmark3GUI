@@ -13,7 +13,7 @@ class PM3Process : public QProcess
 {
     Q_OBJECT
 public:
-    explicit PM3Process(QThread* thread, QObject* parent=nullptr);
+    explicit PM3Process(QThread* thread, QObject* parent = nullptr);
     bool waitForReadyRead(int msecs = 2000);
 
     void testThread();
@@ -32,7 +32,7 @@ private:
     QTimer* serialListener;
     QSerialPortInfo* portInfo;
 signals:
-    void PM3StatedChanged(bool st, QString info="");
+    void PM3StatedChanged(bool st, QString info = "");
     void newOutput(QString output);
 };
 

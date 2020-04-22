@@ -16,7 +16,7 @@ public:
     explicit Util(QObject *parent = nullptr);
 
     void execCMD(QString cmd);
-    QString execCMDWithOutput(QString cmd, unsigned long timeout=2000);
+    QString execCMDWithOutput(QString cmd, unsigned long timeout = 2000);
     void delay(unsigned int msec);
 public slots:
     void processOutput(QString output);

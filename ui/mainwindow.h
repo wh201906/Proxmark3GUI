@@ -13,10 +13,11 @@
 #include "common/pm3process.h"
 #include "module/mifare.h"
 #include "common/util.h"
-#include "ui/mf_attack_hardnesteddialog.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -31,7 +32,7 @@ public:
 public slots:
     void refreshOutput(const QString &output);
     void refreshCMD(const QString &cmd);
-    void setStatusBar(QLabel* target,const QString & text);
+    void setStatusBar(QLabel* target, const QString & text);
     void onPM3StateChanged(bool st, QString info);
 private slots:
 
