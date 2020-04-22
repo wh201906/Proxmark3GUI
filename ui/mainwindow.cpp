@@ -112,6 +112,7 @@ void MainWindow::refreshCMD(const QString& cmd)
 void MainWindow::on_Raw_sendCMDButton_clicked()
 {
     util->execCMD(ui->Raw_CMDEdit->text());
+    refreshCMD(ui->Raw_CMDEdit->text());
 }
 
 void MainWindow::on_Raw_clearOutputButton_clicked()
@@ -144,6 +145,12 @@ void MainWindow::on_Raw_CMDHistoryWidget_itemDoubleClicked(QListWidgetItem *item
 {
     ui->Raw_CMDEdit->setText(item->text());
     ui->Raw_CMDEdit->setFocus();
+}
+
+void MainWindow::sendMSG() // send command when pressing Enter
+{
+    if(ui->Raw_CMDEdit->hasFocus())
+        on_Raw_sendCMDButton_clicked();
 }
 
 // *****************************************************
@@ -200,16 +207,20 @@ void MainWindow::on_MF_RW_writeAllButton_clicked()
     mifare->writeAll();
 }
 
+void MainWindow::on_MF_RW_dumpButton_clicked()
+{
+    mifare->dump();
+}
+
+void MainWindow::on_MF_RW_restoreButton_clicked()
+{
+    mifare->restore();
+}
+
 // ************************************************
 
 
 // ******************** other ********************
-
-void MainWindow::sendMSG() // send command when pressing Enter
-{
-    if(ui->Raw_CMDEdit->hasFocus())
-        on_Raw_sendCMDButton_clicked();
-}
 
 void MainWindow::uiInit()
 {
@@ -283,6 +294,4 @@ void MainWindow::setStatusBar(QLabel* target, const QString & text)
         target->setText("Program State:" + text);
 }
 // ***********************************************
-
-
 

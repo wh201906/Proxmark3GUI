@@ -24,6 +24,8 @@ public:
     void readAll();
     void write();
     void writeAll();
+    void dump();
+    void restore();
 public slots:
 signals:
 

@@ -74,6 +74,10 @@ private slots:
     void on_MF_RW_writeAllButton_clicked();
 
 
+    void on_MF_RW_dumpButton_clicked();
+
+    void on_MF_RW_restoreButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     PM3Process* pm3;

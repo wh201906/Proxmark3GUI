@@ -271,3 +271,15 @@ void Mifare::writeAll()
         }
     }
 }
+
+void Mifare::dump()
+{
+    util->execCMD("hf mf dump");
+    ui->funcTab->setCurrentIndex(1);
+}
+
+void Mifare::restore()
+{
+    util->execCMD("hf mf restore");
+    ui->funcTab->setCurrentIndex(1);
+}
