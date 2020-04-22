@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+    emit killPM3();
     pm3Thread->exit(0);
     pm3Thread->wait(5000);
     delete pm3;
@@ -62,7 +63,6 @@ void MainWindow::on_PM3_connectButton_clicked()
         QMessageBox::information(NULL, "Info", "Plz choose a port first", QMessageBox::Ok);
     else
     {
-        emit requiringOutput(true);
         emit connectPM3(ui->PM3_pathEdit->text(), port);
     }
 }
@@ -95,11 +95,7 @@ void MainWindow::on_PM3_disconnectButton_clicked()
 
 void MainWindow::on_Raw_sendCMDButton_clicked()
 {
-    if(ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != ui->Raw_CMDEdit->text())
-        ui->Raw_CMDHistoryWidget->addItem(ui->Raw_CMDEdit->text());
-    qDebug() << (ui->Raw_CMDEdit->text().toLocal8Bit());
-    pm3->write((ui->Raw_CMDEdit->text() + "\r\n").toLocal8Bit());
-    pm3->waitForBytesWritten(3000);
+    execCMD(ui->Raw_CMDEdit->text());
 }
 
 void MainWindow::on_Raw_clearOutputButton_clicked()
@@ -466,6 +462,8 @@ void MainWindow::signalInit()
     connect(this,&MainWindow::connectPM3,pm3,&PM3Process::connectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
     connect(this,&MainWindow::killPM3,pm3,&PM3Process::kill);
+
+    connect(this,&MainWindow::write,pm3,&PM3Process::write);
 }
 
 void MainWindow::setStatusBar(QLabel* target, const QString & text)
@@ -481,15 +479,18 @@ void MainWindow::setStatusBar(QLabel* target, const QString & text)
 void MainWindow::execCMD(QString cmd, bool gotoRawTab)
 {
     ui->Raw_CMDEdit->setText(cmd);
-    on_Raw_sendCMDButton_clicked();
+    if(ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd)
+        ui->Raw_CMDHistoryWidget->addItem(cmd);
+    qDebug() << cmd;
+    emit write(cmd + "\r\n");
     if(gotoRawTab)
         ui->funcTab->setCurrentIndex(1);
 }
 
 QString MainWindow::execCMDWithOutput(QString cmd, int msec)
 {
-    pm3->setRequiringOutput(true);
-    execCMD(cmd, false);
+    emit requiringOutput(true);
+    execCMD(cmd);
     while(pm3->waitForReadyRead(msec))
         ;
     pm3->setRequiringOutput(false);

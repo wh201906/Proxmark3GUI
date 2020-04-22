@@ -20,13 +20,15 @@ SOURCES += \
     mainwindow.cpp \
     mf_attack_hardnesteddialog.cpp \
     mifare.cpp \
-    pm3process.cpp
+    pm3process.cpp \
+    util.cpp
 
 HEADERS += \
     mainwindow.h \
     mf_attack_hardnesteddialog.h \
     mifare.h \
-    pm3process.h
+    pm3process.h \
+    util.h
 
 FORMS += \
     mainwindow.ui \

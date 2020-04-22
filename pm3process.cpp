@@ -77,7 +77,7 @@ void PM3Process::setSerialListener(const QString& name,bool state)
     }
 }
 
-void PM3Process::onTimeout()
+void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly terminated or the PM3 hardware is removed, the isBusy() will return false(tested on Windows);
 {
     qDebug()<<portInfo->isBusy();
     if(!portInfo->isBusy())
@@ -91,4 +91,10 @@ void PM3Process::onTimeout()
 void PM3Process::testThread()
 {
     qDebug()<<"PM3:"<<QThread::currentThread();
+}
+
+
+qint64 PM3Process::write(QString data)
+{
+    return QProcess::write(data.toLatin1());
 }

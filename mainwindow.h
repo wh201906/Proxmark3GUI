@@ -31,7 +31,7 @@ public:
 public slots:
     void refresh();
     void setStatusBar(QLabel* target,const QString & text);
-    void execCMD(QString cmd, bool gotoRawTab);
+    void execCMD(QString cmd, bool gotoRawTab=false);
     void onPM3StateChanged(bool st, QString info);
 private slots:
 
@@ -89,5 +89,6 @@ signals:
     void connectPM3(const QString path, const QString port);
     void killPM3();
     void setSerialListener(const QString &name, bool state);
+    void write(QString data);
 };
 #endif // MAINWINDOW_H

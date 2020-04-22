@@ -24,6 +24,7 @@ public slots:
     void setRequiringOutput(bool st);
     void connectPM3(const QString path, const QString port);
     void setSerialListener(const QString &name, bool state);
+    qint64 write(QString data);
 private slots:
     void onTimeout();
 private:
