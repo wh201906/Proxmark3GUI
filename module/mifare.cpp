@@ -9,6 +9,7 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QObject *parent) : QObject(parent
     dataList = new QStringList();
     data_clearKey(); // fill with blank Qstring
     data_clearData(); // fill with blank Qstring
+    dataPattern = new QRegExp("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
 }
 
 
@@ -83,8 +84,8 @@ void Mifare::read()
                      + ui->MF_RW_keyEdit->text());
     if(result.indexOf("isOk:01") != -1)
     {
-        result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
-        if((ui->MF_RW_blockBox->currentText().toInt() + 1) % 4 == 0)
+        result = result.mid(result.indexOf(*dataPattern, 0), 47).toUpper();
+        if((ui->MF_RW_blockBox->currentText().toInt() + 1) % 4 == 0) // process key block
         {
             if(ui->MF_RW_keyTypeBox->currentText() == "A")
             {
@@ -125,9 +126,11 @@ void Mifare::read()
 void Mifare::readAll()
 {
     QString result;
+    QString tmp;
+    int offset = 0;
     bool isKeyAValid;
     bool isKeyBValid;
-    const int waitTime = 300;
+    const int waitTime = 150;
     for(int i = 0; i < sectors; i++)
     {
         result = "";
@@ -137,50 +140,51 @@ void Mifare::readAll()
         // check keys and read the first block of each sector
         if(data_isKeyValid(keyAList->at(i)))
         {
-            result = util->execCMDWithOutput("hf mf rdbl "
-                                             + QString::number(4 * i)
+            result = util->execCMDWithOutput("hf mf rdsc "
+                                             + QString::number(i)
                                              + " A "
                                              + keyAList->at(i), waitTime);
-            if(result.indexOf("isOk:01") != -1)
+            qDebug() << result;
+            offset = result.indexOf("isOk:01");
+            if(offset != -1)
             {
                 isKeyAValid = true;
-                result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
-                result.replace(" ", "");
-                dataList->replace(4 * i, result);
+                for(int j = 0; j < 4; j++)
+                {
+                    tmp = result.mid(result.indexOf(*dataPattern, offset), 47).toUpper();
+                    offset += 47;
+                    qDebug() << tmp;
+                    tmp.replace(" ", "");
+                    dataList->replace(i * 4 + j, tmp);
+                    data_syncWithDataWidget(false, i * 4 + j);
+                }
             }
         }
         if(data_isKeyValid(keyBList->at(i)))
         {
-            result = util->execCMDWithOutput("hf mf rdbl "
-                                             + QString::number(4 * i)
+            result = util->execCMDWithOutput("hf mf rdsc "
+                                             + QString::number(i)
                                              + " B "
                                              + keyBList->at(i), waitTime);
-            if(result.indexOf("isOk:01") != -1)
+            qDebug() << result;
+            offset = result.indexOf("isOk:01");
+            if(offset != -1)
             {
                 isKeyBValid = true;
-                result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
-                result.replace(" ", "");
-                dataList->replace(4 * i, result);
+                for(int j = 0; j < 4; j++)
+                {
+                    tmp = result.mid(result.indexOf(*dataPattern, offset), 47).toUpper();
+                    offset += 47;
+                    qDebug() << tmp;
+                    tmp.replace(" ", "");
+                    dataList->replace(i * 4 + j, tmp);
+                    data_syncWithDataWidget(false, i * 4 + j);
+                }
             }
         }
-        data_syncWithDataWidget(false, 4 * i);
-        // read the rest blocks of a sector
+
         if(isKeyAValid || isKeyBValid)
         {
-            for(int j = 1; j < 4; j++)
-            {
-                result = util->execCMDWithOutput("hf mf rdbl "
-                                                 + QString::number(4 * i + j)
-                                                 + " "
-                                                 + (isKeyAValid ? "A" : "B")
-                                                 + " "
-                                                 + (isKeyAValid ? keyAList : keyBList)->at(i), waitTime);
-                result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
-                result.replace(" ", "");
-                dataList->replace(4 * i + j, result);
-                data_syncWithDataWidget(false, 4 * i + j);
-            }
-
             // fill the MF_dataWidget with the known valid key
             //
             // check whether the MF_dataWidget contains the valid key,

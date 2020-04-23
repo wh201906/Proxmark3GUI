@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QRegExp>
 class Mifare : public QObject
 {
     Q_OBJECT
@@ -49,6 +50,7 @@ private:
     QStringList* keyAList;
     QStringList* keyBList;
     QStringList*  dataList;
+    QRegExp* dataPattern;
 
     int sectors = 16;
     int blocks = 64;
