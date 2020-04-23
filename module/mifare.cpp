@@ -4,20 +4,14 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QObject *parent) : QObject(parent
 {
     util = addr;
     this->ui = ui;
+    keyAList = new QStringList();
+    keyBList = new QStringList();
+    dataList = new QStringList();
+    data_clearKey(); // fill with blank Qstring
+    data_clearData(); // fill with blank Qstring
 }
 
 
-bool Mifare::isKeyValid(const QString key)
-{
-    if(key.length() != 12)
-        return false;
-    for(int i = 0; i < 12; i++)
-    {
-        if(!((key[i] >= '0' && key[i] <= '9') || (key[i] >= 'A' && key[i] <= 'F')))
-            return false;
-    }
-    return true;
-}
 
 void Mifare::info()
 {
@@ -32,9 +26,14 @@ void Mifare::chk()
     QStringList keys = result.split("\r\n");
     for(int i = 0; i < 16; i++)
     {
-        ui->MF_keyWidget->setItem(i, 1, new QTableWidgetItem(keys[i + 3].mid(7, 12).trimmed().toUpper()));
-        ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(keys[i + 3].mid(24, 12).trimmed().toUpper()));
+        keyAList->replace(i, keys[i + 3].mid(7, 12).trimmed().toUpper());
+        if(keyAList->at(i) == "?")
+            keyAList->replace(i, "");
+        keyBList->replace(i, keys[i + 3].mid(24, 12).trimmed().toUpper());
+        if(keyBList->at(i) == "?")
+            keyBList->replace(i, "");
     }
+    data_syncWithKeyWidget();
     qDebug() << "***********\n" << keys << "***********\n";
 }
 
@@ -46,10 +45,11 @@ void Mifare::nested()
     for(int i = 0; i < 16; i++)
     {
         if(keys[i + 3].at(23) == '1')
-            ui->MF_keyWidget->setItem(i, 1, new QTableWidgetItem(keys[i + 3].mid(7, 12).trimmed().toUpper()));
+            keyAList->replace(i, keys[i + 3].mid(7, 12).trimmed().toUpper());
         if(keys[i + 3].at(44) == '1')
-            ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(keys[i + 3].mid(28, 12).trimmed().toUpper()));
+            keyBList->replace(i, keys[i + 3].mid(28, 12).trimmed().toUpper());
     }
+    data_syncWithKeyWidget();
     qDebug() << "***********\n" << keys << "***********\n";
 }
 
@@ -128,57 +128,59 @@ void Mifare::readAll()
     bool isKeyAValid;
     bool isKeyBValid;
     const int waitTime = 300;
-    for(int i = 0; i < 16; i++)
+    for(int i = 0; i < sectors; i++)
     {
-        QApplication::processEvents();
         result = "";
         isKeyAValid = false;
         isKeyBValid = false;
 
         // check keys and read the first block of each sector
-        if(ui->MF_keyWidget->item(i, 1) != nullptr && isKeyValid(ui->MF_keyWidget->item(i, 1)->text()))
+        if(data_isKeyValid(keyAList->at(i)))
         {
             result = util->execCMDWithOutput("hf mf rdbl "
                                              + QString::number(4 * i)
                                              + " A "
-                                             + ui->MF_keyWidget->item(i, 1)->text(), waitTime);
+                                             + keyAList->at(i), waitTime);
             if(result.indexOf("isOk:01") != -1)
             {
                 isKeyAValid = true;
-                ui->MF_dataWidget->setItem(4 * i, 2, new QTableWidgetItem(result.mid(result.indexOf("isOk:01") + 13, 47).toUpper()));
+                result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
+                result.replace(" ", "");
+                dataList->replace(4 * i, result);
             }
         }
-        QApplication::processEvents();
-        if(ui->MF_keyWidget->item(i, 2) != nullptr && isKeyValid(ui->MF_keyWidget->item(i, 2)->text()))
+        if(data_isKeyValid(keyBList->at(i)))
         {
             result = util->execCMDWithOutput("hf mf rdbl "
                                              + QString::number(4 * i)
                                              + " B "
-                                             + ui->MF_keyWidget->item(i, 2)->text(), waitTime);
+                                             + keyBList->at(i), waitTime);
             if(result.indexOf("isOk:01") != -1)
             {
                 isKeyBValid = true;
-                ui->MF_dataWidget->setItem(4 * i, 2, new QTableWidgetItem(result.mid(result.indexOf("isOk:01") + 13, 47).toUpper()));
+                result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
+                result.replace(" ", "");
+                dataList->replace(4 * i, result);
             }
         }
-
+        data_syncWithDataWidget(false, 4 * i);
         // read the rest blocks of a sector
         if(isKeyAValid || isKeyBValid)
         {
             for(int j = 1; j < 4; j++)
             {
-                QApplication::processEvents();
                 result = util->execCMDWithOutput("hf mf rdbl "
                                                  + QString::number(4 * i + j)
                                                  + " "
                                                  + (isKeyAValid ? "A" : "B")
                                                  + " "
-                                                 + ui->MF_keyWidget->item(i, (isKeyAValid ? 1 : 2))->text(), waitTime);
+                                                 + (isKeyAValid ? keyAList : keyBList)->at(i), waitTime);
                 result = result.mid(result.indexOf("isOk:01") + 13, 47).toUpper();
-                ui->MF_dataWidget->setItem(4 * i + j, 2, new QTableWidgetItem(result));
+                result.replace(" ", "");
+                dataList->replace(4 * i + j, result);
+                data_syncWithDataWidget(false, 4 * i + j);
             }
 
-            QApplication::processEvents();
             // fill the MF_dataWidget with the known valid key
             //
             // check whether the MF_dataWidget contains the valid key,
@@ -186,46 +188,44 @@ void Mifare::readAll()
             //
             // the structure is not symmetric, since you cannot get KeyA from output
             // this program will only process the provided KeyA(in MF_keyWidget)
-            result = ui->MF_dataWidget->item(4 * i + 3, 2)->text();
+            result = dataList->at(4 * i + 3);
             if(isKeyAValid)
             {
-                for(int j = 0; j < 6; j++)
-                {
-                    result = result.replace(j * 3, 2, ui->MF_keyWidget->item(i, 1)->text().mid(j * 2, 2));
-                }
+                result.replace(0, 12, keyAList->at(i));
             }
             else
             {
-                result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
+                result = result.replace(0, 12, "????????????");
             }
-            ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
+            dataList->replace(4 * i + 3, result);
 
             if(isKeyBValid)
             {
-                for(int j = 0; j < 6; j++)
-                {
-                    result = result.replace(30 + j * 3, 2, ui->MF_keyWidget->item(i, 2)->text().mid(j * 2, 2));
-                    ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
-                }
+                result.replace(20, 12, keyBList->at(i));
+                dataList->replace(4 * i + 3, result);
+                data_syncWithDataWidget(false, 4 * i + 3);
             }
-            else
+            else // now isKeyAValid == true, the output might contains the KeyB
             {
-                QString tmpKey = result.right(18).replace(" ", "");
+                QString tmpKey = dataList->at(4 * i + 3).right(12);
                 result = util->execCMDWithOutput("hf mf rdbl "
                                                  + QString::number(4 * i + 3)
                                                  + " B "
                                                  + tmpKey, waitTime);
                 if(result.indexOf("isOk:01") != -1)
                 {
-                    ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(tmpKey));
+                    keyBList->replace(i, tmpKey);
+                    data_syncWithKeyWidget(false, i, false);
                 }
                 else
                 {
-                    result = ui->MF_dataWidget->item(4 * i + 3, 2)->text();
-                    result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
-                    ui->MF_dataWidget->setItem(4 * i + 3, 2, new QTableWidgetItem(result));
+                    result = dataList->at(4 * i + 3);
+                    result = result.replace(20, 12, "????????????");
+                    dataList->replace(4 * i + 3, result);
+
                 }
             }
+            data_syncWithDataWidget(false, 4 * i + 3);
         }
     }
 }
@@ -248,25 +248,33 @@ void Mifare::write()
 
 void Mifare::writeAll()
 {
+    const int waitTime = 300;
     QString result;
     for(int i = 0; i < 16; i++)
     {
         for(int j = 0; j < 4; j++)
         {
-            result = util->execCMDWithOutput("hf mf wrbl "
-                                             + QString::number(i * 4 + j)
-                                             + " A "
-                                             + ui->MF_keyWidget->item(i, 1)->text()
-                                             + " "
-                                             + ui->MF_dataWidget->item(2, i * 4 + j)->text().replace(" ", ""));
-            if(result.indexOf("isOk:01") == -1)
+            result = ""; // if the KeyA is invalid and the result is not empty, the KeyB will not be tested.
+            if(data_isDataValid(dataList->at(i * 4 + j)) != DATA_NOSPACE || dataList->at(i * 4 + j).contains('?'))
+                continue;
+            if(data_isKeyValid(keyAList->at(i)))
+            {
+                result = util->execCMDWithOutput("hf mf wrbl "
+                                                 + QString::number(i * 4 + j)
+                                                 + " A "
+                                                 + keyAList->at(i)
+                                                 + " "
+                                                 + dataList->at(i * 4 + j), waitTime);
+            }
+            qDebug() << i << j << result.indexOf("isOk:01") << data_isKeyValid(keyBList->at(i));
+            if(result.indexOf("isOk:01") == -1 && data_isKeyValid(keyBList->at(i)))
             {
                 result = util->execCMDWithOutput("hf mf wrbl "
                                                  + QString::number(i * 4 + j)
                                                  + " B "
-                                                 + ui->MF_keyWidget->item(i, 2)->text()
+                                                 + keyBList->at(i)
                                                  + " "
-                                                 + ui->MF_dataWidget->item(2, i * 4 + j)->text().replace(" ", ""));
+                                                 + dataList->at(i * 4 + j), waitTime);
             }
         }
     }
@@ -282,4 +290,113 @@ void Mifare::restore()
 {
     util->execCMD("hf mf restore");
     ui->funcTab->setCurrentIndex(1);
+}
+
+void Mifare::data_syncWithDataWidget(bool syncAll, int block)
+{
+    QString tmp = "";
+    if(syncAll)
+    {
+        for(int i = 0; i < blocks; i++)
+        {
+            tmp += dataList->at(i).mid(0, 2);
+            for(int j = 1; j < 16; j++)
+            {
+                tmp += " ";
+                tmp += dataList->at(i).mid(j * 2, 2);
+            }
+            ui->MF_dataWidget->item(i, 2)->setText(tmp);
+        }
+    }
+    else
+    {
+        tmp += dataList->at(block).mid(0, 2);
+        for(int j = 1; j < 16; j++)
+        {
+            tmp += " ";
+            tmp += dataList->at(block).mid(j * 2, 2);
+        }
+        ui->MF_dataWidget->item(block, 2)->setText(tmp);
+    }
+}
+
+void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, bool isKeyA)
+{
+    if(syncAll)
+    {
+        for(int i = 0; i < sectors; i++)
+        {
+            ui->MF_keyWidget->item(i, 1)->setText(keyAList->at(i));
+            ui->MF_keyWidget->item(i, 2)->setText(keyBList->at(i));
+        }
+    }
+    else
+    {
+        if(isKeyA)
+            ui->MF_keyWidget->item(sector, 1)->setText(keyAList->at(sector));
+        else
+            ui->MF_keyWidget->item(sector, 2)->setText(keyBList->at(sector));
+    }
+}
+
+void Mifare::data_clearData()
+{
+    dataList->clear();
+    for(int i = 0; i < blocks; i++)
+        dataList->append("");
+}
+
+void Mifare::data_clearKey()
+{
+    keyAList->clear();
+    keyBList->clear();
+    for(int i = 0; i < sectors; i++)
+    {
+        keyAList->append("");
+        keyBList->append("");
+    }
+}
+
+bool Mifare::data_isKeyValid(const QString& key)
+{
+    if(key.length() != 12)
+        return false;
+    for(int i = 0; i < 12; i++)
+    {
+        if(!((key[i] >= '0' && key[i] <= '9') || (key[i] >= 'A' && key[i] <= 'F')))
+            return false;
+    }
+    return true;
+}
+
+Mifare::DataType Mifare::data_isDataValid(QString data) // "?" will not been processd there
+{
+    if(data.length() == 47)
+    {
+        for(int i = 0; i < 47; i++)
+        {
+            if(i % 3 != 0)
+            {
+                if(!((data[i] >= '0' && data[i] <= '9') || (data[i] >= 'A' && data[i] <= 'F') || data[i] == '?'))
+                    return DATA_INVALID;
+            }
+            else
+            {
+                if(data[i] != ' ')
+                    return DATA_INVALID;
+            }
+            return DATA_WITHSPACE;
+        }
+    }
+    else if(data.length() == 32)
+    {
+        for(int i = 0; i < 32; i++)
+        {
+            if(!((data[i] >= '0' && data[i] <= '9') || (data[i] >= 'A' && data[i] <= 'F') || data[i] == '?'))
+                return DATA_INVALID;
+        }
+        return DATA_NOSPACE;
+    }
+    else
+        return DATA_INVALID;
 }

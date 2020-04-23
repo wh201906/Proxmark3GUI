@@ -9,7 +9,7 @@ Util::Util(QObject *parent) : QObject(parent)
 
 void Util::processOutput(QString output)
 {
-    qDebug() << "Util::processOutput:" << output;
+//    qDebug() << "Util::processOutput:" << output;
     if(isRequiringOutput)
     {
         requiredOutput->append(output);

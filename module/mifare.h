@@ -6,14 +6,13 @@
 #include "ui/mf_attack_hardnesteddialog.h"
 #include <QObject>
 #include <QString>
-
+#include <QStringList>
 class Mifare : public QObject
 {
     Q_OBJECT
 public:
     explicit Mifare(Ui::MainWindow *ui, Util *addr, QObject *parent = nullptr);
 
-    bool isKeyValid(const QString key);
     void info();
     void chk();
     void nested();
@@ -26,12 +25,33 @@ public:
     void writeAll();
     void dump();
     void restore();
+
+    enum DataType
+    {
+        DATA_INVALID,
+        DATA_WITHSPACE,
+        DATA_NOSPACE,
+    };
+
+    void data_clearData();
+    void data_clearKey();
+    bool data_isKeyValid(const QString &key);
+    Mifare::DataType data_isDataValid(QString data);
+    void data_syncWithDataWidget(bool syncAll = true, int block = 0);
+    void data_syncWithKeyWidget(bool syncAll = true, int sector = 0, bool isKeyA = true);
 public slots:
 signals:
 
 private:
     Ui::MainWindow *ui;
     Util* util;
+
+    QStringList* keyAList;
+    QStringList* keyBList;
+    QStringList*  dataList;
+
+    int sectors = 16;
+    int blocks = 64;
 };
 
 #endif // MIFARE_H

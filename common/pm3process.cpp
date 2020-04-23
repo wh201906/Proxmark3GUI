@@ -95,7 +95,7 @@ void PM3Process::onReadyRead()
         requiredOutput->append(out);
     if(out != "")
     {
-        qDebug() << "PM3Process::onReadyRead:" << out;
+//        qDebug() << "PM3Process::onReadyRead:" << out;
         emit newOutput(out);
 
     }
