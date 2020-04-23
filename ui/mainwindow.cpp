@@ -272,7 +272,6 @@ void MainWindow::uiInit()
     for(int i = 0; i < 64; i++)
     {
         ui->MF_RW_blockBox->addItem(QString::number(i));
-        ui->MF_UID_blockBox->addItem(QString::number(i));
     }
 
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
@@ -296,9 +295,9 @@ void MainWindow::setStatusBar(QLabel* target, const QString & text)
     if(target == PM3VersionBar)
         target->setText("HW Version:" + text);
     else if(target == connectStatusBar)
-        target->setText("Connecton State:" + text);
+        target->setText("PM3:" + text);
     else if(target == programStatusBar)
-        target->setText("Program State:" + text);
+        target->setText("State:" + text);
 }
 // ***********************************************
 
