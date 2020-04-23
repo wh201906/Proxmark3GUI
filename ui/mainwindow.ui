@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>787</width>
+    <width>800</width>
     <height>770</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>450</width>
-    <height>300</height>
+    <width>800</width>
+    <height>550</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -94,9 +94,12 @@
        <attribute name="title">
         <string>Mifare</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QTableWidget" name="MF_dataWidget">
             <property name="sizePolicy">
@@ -119,6 +122,89 @@
            </widget>
           </item>
           <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="MF_data2KeyBotton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>25</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>25</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>&gt;&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="MF_key2DataBotton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>25</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>25</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>&lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QTableWidget" name="MF_keyWidget">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -131,6 +217,9 @@
               <family>Courier</family>
              </font>
             </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
             <attribute name="verticalHeaderMinimumSectionSize">
              <number>20</number>
             </attribute>
@@ -142,93 +231,189 @@
          </layout>
         </item>
         <item>
-         <widget class="QGroupBox" name="MF_attackGroupBox">
-          <property name="title">
-           <string>Attack</string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <property name="topMargin">
-            <number>5</number>
-           </property>
-           <property name="bottomMargin">
-            <number>5</number>
-           </property>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="title">
+             <string>Card Type</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <property name="topMargin">
+              <number>5</number>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
+             <property name="bottomMargin">
+              <number>5</number>
              </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Attack_infoButton">
-             <property name="text">
-              <string>Card Info</string>
+             <item>
+              <widget class="QRadioButton" name="radioButton">
+               <property name="text">
+                <string>1K</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_2">
+               <property name="text">
+                <string>2K</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_3">
+               <property name="text">
+                <string>4K</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="title">
+             <string>File</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <property name="topMargin">
+              <number>5</number>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Attack_chkButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="bottomMargin">
+              <number>5</number>
              </property>
-             <property name="text">
-              <string>Check Default</string>
+             <item>
+              <widget class="QPushButton" name="pushButton_3">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Load</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_4">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Save</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox">
+               <property name="text">
+                <string>Data</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="checkBox_2">
+               <property name="text">
+                <string>Key</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="MF_attackGroupBox">
+            <property name="title">
+             <string>Attack</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="topMargin">
+              <number>5</number>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Attack_nestedButton">
-             <property name="text">
-              <string>Nested</string>
+             <property name="bottomMargin">
+              <number>5</number>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Attack_hardnestedButton">
-             <property name="text">
-              <string>Hardnested</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Attack_sniffButton">
-             <property name="text">
-              <string>Sniff</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Attack_listButton">
-             <property name="text">
-              <string>List Sniff Data</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Attack_infoButton">
+               <property name="text">
+                <string>Card Info</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Attack_chkButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Check Default</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Attack_nestedButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Nested</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Attack_hardnestedButton">
+               <property name="text">
+                <string>Hardnested</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QGroupBox" name="MF_RWGroupBox">
@@ -275,6 +460,11 @@
                </item>
                <item>
                 <widget class="QLineEdit" name="MF_RW_keyEdit">
+                 <property name="font">
+                  <font>
+                   <family>Courier</family>
+                  </font>
+                 </property>
                  <property name="text">
                   <string>FFFFFFFFFFFF</string>
                  </property>
@@ -379,6 +569,12 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Dump</string>
                   </property>
@@ -413,14 +609,14 @@
                  <number>5</number>
                 </property>
                 <item row="0" column="2">
-                 <widget class="QPushButton" name="pushButton">
+                 <widget class="QPushButton" name="MF_lockUIDButton">
                   <property name="text">
                    <string>Lock UFUID Card</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="2">
-                 <widget class="QPushButton" name="pushButton_2">
+                 <widget class="QPushButton" name="MF_UID_aboutUIDButton">
                   <property name="text">
                    <string>About UID Card</string>
                   </property>
@@ -475,6 +671,12 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Wipe</string>
                   </property>
@@ -486,88 +688,185 @@
             </layout>
            </item>
            <item>
-            <widget class="QLineEdit" name="MF_RW_dataEdit"/>
+            <widget class="QLineEdit" name="MF_RW_dataEdit">
+             <property name="font">
+              <font>
+               <family>Courier</family>
+              </font>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="MF_simGroupBox">
-          <property name="title">
-           <string>Simulate</string>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_11">
-           <property name="topMargin">
-            <number>5</number>
-           </property>
-           <property name="rightMargin">
-            <number>9</number>
-           </property>
-           <property name="bottomMargin">
-            <number>5</number>
-           </property>
-           <item>
-            <spacer name="horizontalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QGroupBox" name="MF_simGroupBox">
+            <property name="title">
+             <string>Simulate</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_11">
+             <property name="topMargin">
+              <number>5</number>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
+             <property name="rightMargin">
+              <number>9</number>
              </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Sim_loadFileButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+             <property name="bottomMargin">
+              <number>5</number>
              </property>
-             <property name="text">
-              <string>Load from .eml</string>
+             <item>
+              <spacer name="horizontalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Sim_loadDataButton">
+               <property name="text">
+                <string>Load from data above</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Sim_writeAllButton">
+               <property name="text">
+                <string>Read All</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Sim_clearButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Clear</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Sim_simButton">
+               <property name="text">
+                <string>Simulate</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="MF_sniffGroupBox">
+            <property name="title">
+             <string>Sniff</string>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <property name="topMargin">
+              <number>5</number>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Sim_loadDataButton">
-             <property name="text">
-              <string>Load from data above</string>
+             <property name="bottomMargin">
+              <number>5</number>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Sim_clearButton">
-             <property name="text">
-              <string>Clear</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="MF_Sim_simButton">
-             <property name="text">
-              <string>Simulate</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
+             <item>
+              <spacer name="horizontalSpacer_7">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Attack_sniffButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Sniff</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Attack_listButton">
+               <property name="text">
+                <string>List Sniff Data</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Load</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_2">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Save</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>

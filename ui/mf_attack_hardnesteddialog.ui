@@ -77,6 +77,11 @@
      </item>
      <item>
       <widget class="QLineEdit" name="knownKeyBox">
+       <property name="font">
+        <font>
+         <family>Courier</family>
+        </font>
+       </property>
        <property name="text">
         <string>FFFFFFFFFFFF</string>
        </property>
