@@ -8,11 +8,12 @@
 #include <QString>
 #include <QStringList>
 #include <QRegExp>
+#include <QMessageBox>
 class Mifare : public QObject
 {
     Q_OBJECT
 public:
-    explicit Mifare(Ui::MainWindow *ui, Util *addr, QObject *parent = nullptr);
+    explicit Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent = nullptr);
 
     void info();
     void chk();
@@ -77,10 +78,15 @@ public:
     Mifare::DataType data_isDataValid(QString data);
     void data_syncWithDataWidget(bool syncAll = true, int block = 0);
     void data_syncWithKeyWidget(bool syncAll = true, int sector = 0, bool isKeyA = true);
+
+    CardType cardType;
+    Mifare::CardType getCardType();
+    void setCardType(int type);
 public slots:
 signals:
 
 private:
+    QWidget* parent;
     Ui::MainWindow *ui;
     Util* util;
 
@@ -90,8 +96,6 @@ private:
     QRegExp* dataPattern;
     QRegExp* chkKeyPattern;
     QRegExp* nestedKeyPattern;
-
-    CardType cardType;
 };
 
 #endif // MIFARE_H

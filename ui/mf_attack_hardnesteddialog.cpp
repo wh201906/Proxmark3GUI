@@ -1,12 +1,12 @@
 ﻿#include "mf_attack_hardnesteddialog.h"
 #include "ui_mf_attack_hardnesteddialog.h"
 
-MF_Attack_hardnestedDialog::MF_Attack_hardnestedDialog(QWidget *parent) :
+MF_Attack_hardnestedDialog::MF_Attack_hardnestedDialog(int blocks, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MF_Attack_hardnestedDialog)
 {
     ui->setupUi(this);
-    for(int i = 0; i < 64; i++)
+    for(int i = 0; i < blocks; i++)
     {
         ui->knownKeySectorBox->addItem(QString::number(i));
         ui->targetKeySectorBox->addItem(QString::number(i));

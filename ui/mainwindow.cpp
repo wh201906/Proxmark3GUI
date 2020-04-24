@@ -156,6 +156,27 @@ void MainWindow::sendMSG() // send command when pressing Enter
 // *****************************************************
 
 // ******************** mifare ********************
+void MainWindow::MF_onTypeChanged(int id, bool st)
+{
+    typeBtnGroup->blockSignals(true);
+    qDebug() << id << typeBtnGroup->checkedId();
+    if(!st)
+    {
+        int result = QMessageBox::question(this, tr("info"), tr("When Changeing card type, the data and keys in this app will be cleard.\nContinue?"), QMessageBox::Yes | QMessageBox::No);
+        if(result == QMessageBox::Yes)
+        {
+            qDebug() << "Yes";
+            mifare->setCardType(typeBtnGroup->checkedId());
+            MF_widgetReset();
+        }
+        else
+        {
+            qDebug() << "No";
+            typeBtnGroup->button(id)->setChecked(true);
+        }
+    }
+    typeBtnGroup->blockSignals(false);
+}
 
 void MainWindow::on_MF_Attack_infoButton_clicked()
 {
@@ -217,6 +238,30 @@ void MainWindow::on_MF_RW_restoreButton_clicked()
     mifare->restore();
 }
 
+void MainWindow::MF_widgetReset()
+{
+    int secs = mifare->cardType.sectors;
+    int blks = mifare->cardType.blks[secs - 1] + mifare->cardType.blk[secs - 1];
+    ui->MF_RW_blockBox->clear();
+    ui->MF_keyWidget->setRowCount(secs);
+    ui->MF_dataWidget->setRowCount(blks);
+
+    for(int i = 0; i < blks; i++)
+    {
+        setTableItem(ui->MF_dataWidget, i, 0, "");
+        setTableItem(ui->MF_dataWidget, i, 1, QString::number(i));
+        setTableItem(ui->MF_dataWidget, i, 2, "");
+        ui->MF_RW_blockBox->addItem(QString::number(i));
+    }
+
+    for(int i = 0; i < secs; i++)
+    {
+        setTableItem(ui->MF_keyWidget, i, 0, QString::number(i));
+        setTableItem(ui->MF_keyWidget, i, 1, "");
+        setTableItem(ui->MF_keyWidget, i, 2, "");
+        setTableItem(ui->MF_dataWidget, mifare->cardType.blks[i], 0, QString::number(i));
+    }
+}
 // ************************************************
 
 
@@ -237,42 +282,42 @@ void MainWindow::uiInit()
     ui->statusbar->addPermanentWidget(programStatusBar, 1);
 
     ui->MF_dataWidget->setColumnCount(3);
-    ui->MF_dataWidget->setRowCount(64);
     ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
     ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Blk")));
     ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Data")));
-    for(int i = 0; i < 64; i++)
-    {
-        ui->MF_dataWidget->setItem(i, 1, new QTableWidgetItem(QString::number(i)));
-        ui->MF_dataWidget->setItem(i, 2, new QTableWidgetItem(""));
-    }
-    for(int i = 0; i < 16; i++)
-        ui->MF_dataWidget->setItem(i * 4, 0, new QTableWidgetItem(QString::number(i)));
     ui->MF_dataWidget->verticalHeader()->setVisible(false);
     ui->MF_dataWidget->setColumnWidth(0, 35);
     ui->MF_dataWidget->setColumnWidth(1, 35);
     ui->MF_dataWidget->setColumnWidth(2, 400);
+//    for(int i = 0; i < 256; i++)
+//    {
+//        ui->MF_dataWidget->setItem(i, 0, new QTableWidgetItem());
+//        ui->MF_dataWidget->setItem(i, 1, new QTableWidgetItem());
+//        ui->MF_dataWidget->setItem(i, 2, new QTableWidgetItem());
+//    }
 
     ui->MF_keyWidget->setColumnCount(3);
-    ui->MF_keyWidget->setRowCount(16);
     ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
     ui->MF_keyWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("KeyA")));
     ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("KeyB")));
-    for(int i = 0; i < 16; i++)
-    {
-        ui->MF_keyWidget->setItem(i, 0, new QTableWidgetItem(QString::number(i)));
-        ui->MF_keyWidget->setItem(i, 1, new QTableWidgetItem(""));
-        ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem(""));
-    }
     ui->MF_keyWidget->verticalHeader()->setVisible(false);
     ui->MF_keyWidget->setColumnWidth(0, 35);
     ui->MF_keyWidget->setColumnWidth(1, 110);
     ui->MF_keyWidget->setColumnWidth(2, 110);
+//    for(int i = 0; i < 40; i++)
+//    {
+//        ui->MF_keyWidget->setItem(i, 0, new QTableWidgetItem());
+//        ui->MF_keyWidget->setItem(i, 1, new QTableWidgetItem());
+//        ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem());
+//    }
 
-    for(int i = 0; i < 64; i++)
-    {
-        ui->MF_RW_blockBox->addItem(QString::number(i));
-    }
+    MF_widgetReset();
+    typeBtnGroup = new QButtonGroup(this);
+    typeBtnGroup->addButton(ui->MF_Type_miniButton, 0);
+    typeBtnGroup->addButton(ui->MF_Type_1kButton, 1);
+    typeBtnGroup->addButton(ui->MF_Type_2kButton, 2);
+    typeBtnGroup->addButton(ui->MF_Type_4kButton, 4);
+    connect(typeBtnGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), this, &MainWindow::MF_onTypeChanged);
 
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
     on_PM3_refreshPortButton_clicked();
@@ -298,6 +343,13 @@ void MainWindow::setStatusBar(QLabel* target, const QString & text)
         target->setText(tr("PM3:") + text);
     else if(target == programStatusBar)
         target->setText(tr("State:") + text);
+}
+
+void MainWindow::setTableItem(QTableWidget* widget, int row, int column, const QString& text)
+{
+    if(widget->item(row, column) == nullptr)
+        widget->setItem(row, column, new QTableWidgetItem());
+    widget->item(row, column)->setText(text);
 }
 // ***********************************************
 

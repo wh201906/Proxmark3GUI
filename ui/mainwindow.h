@@ -7,6 +7,8 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QListWidgetItem>
+#include <QButtonGroup>
+#include <QRadioButton>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
 
@@ -28,12 +30,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    bool MF_isKeyValid(const QString key);
 public slots:
     void refreshOutput(const QString &output);
     void refreshCMD(const QString &cmd);
     void setStatusBar(QLabel* target, const QString & text);
     void onPM3StateChanged(bool st, QString info);
+    void MF_onTypeChanged(int id, bool st);
 private slots:
 
     void on_PM3_connectButton_clicked();
@@ -80,16 +82,23 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    PM3Process* pm3;
-    bool pm3state;
-    QThread* pm3Thread;
-    Mifare* mifare;
-    Util* util;
-    void uiInit();
+    QButtonGroup* typeBtnGroup;
     QLabel* connectStatusBar;
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
+    void uiInit();
+
+    PM3Process* pm3;
+    bool pm3state;
+    QThread* pm3Thread;
+
+    Mifare* mifare;
+    Util* util;
+
+
     void signalInit();
+    void MF_widgetReset();
+    void setTableItem(QTableWidget *widget, int row, int column, const QString &text);
 signals:
     void connectPM3(const QString path, const QString port);
     void killPM3();

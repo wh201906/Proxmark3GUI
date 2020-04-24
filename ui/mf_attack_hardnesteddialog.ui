@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Hardnested Attack</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -34,13 +34,13 @@
       <widget class="QComboBox" name="knownKeySectorBox">
        <property name="minimumSize">
         <size>
-         <width>40</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>
@@ -109,13 +109,13 @@
       <widget class="QComboBox" name="targetKeySectorBox">
        <property name="minimumSize">
         <size>
-         <width>40</width>
+         <width>60</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>40</width>
+         <width>60</width>
          <height>16777215</height>
         </size>
        </property>

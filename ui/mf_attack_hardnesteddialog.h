@@ -12,7 +12,7 @@ class MF_Attack_hardnestedDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MF_Attack_hardnestedDialog(QWidget *parent = nullptr);
+    explicit MF_Attack_hardnestedDialog(int blocks, QWidget *parent = nullptr);
     ~MF_Attack_hardnestedDialog();
 
 
