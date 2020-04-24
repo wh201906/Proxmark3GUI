@@ -670,7 +670,7 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QPushButton" name="MF_UID_writeUIDButton">
+                 <widget class="QPushButton" name="MF_UID_setParaButton">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -678,7 +678,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Write UID</string>
+                   <string>Set Parameter</string>
                   </property>
                  </widget>
                 </item>
@@ -824,7 +824,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="MF_Attack_sniffButton">
+              <widget class="QPushButton" name="MF_Sniff_sniffButton">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -837,14 +837,14 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="MF_Attack_listButton">
+              <widget class="QPushButton" name="MF_Sniff_listButton">
                <property name="text">
                 <string>List Sniff Data</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="MF_Sniff_loadButton">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -857,7 +857,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="MF_Sniff_saveButton">
                <property name="minimumSize">
                 <size>
                  <width>40</width>

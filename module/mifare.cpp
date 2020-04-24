@@ -308,6 +308,102 @@ void Mifare::writeAll()
     }
 }
 
+void Mifare::readC()
+{
+    int waitTime = 300;
+    int currblk = ui->MF_RW_blockBox->currentText().toInt();
+    QString result = util->execCMDWithOutput("hf mf cgetblk "
+                     + QString::number(currblk), waitTime);
+    if(result.indexOf("No chinese") == -1)
+    {
+        result = result.mid(result.indexOf(*dataPattern, 0), 47).toUpper();
+        ui->MF_RW_dataEdit->setText(result);
+    }
+}
+
+void Mifare::readAllC()
+{
+    QString result;
+    const int waitTime = 150;
+
+    QString tmp;
+    int offset = 0;
+    for(int i = 0; i < cardType.sectors; i++)
+    {
+        result = util->execCMDWithOutput("hf mf cgetsc "
+                                         + QString::number(i), waitTime);
+        qDebug() << result;
+        if(result.indexOf("No chinese") == -1)
+        {
+            offset = 0;
+            for(int j = 0; j < cardType.blk[i]; j++)
+            {
+                offset = result.indexOf(*dataPattern, offset);
+                tmp = result.mid(offset, 47).toUpper();
+                offset += 47;
+                qDebug() << tmp;
+                tmp.replace(" ", "");
+                dataList->replace(cardType.blks[i] + j, tmp);
+                data_syncWithDataWidget(false, cardType.blks[i] + j);
+            }
+            keyAList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).left(12));
+            keyBList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12));
+            data_syncWithKeyWidget(false, i, true);
+            data_syncWithKeyWidget(false, i, false);
+        }
+    }
+}
+
+void Mifare::writeC()
+{
+    int waitTime = 150;
+    QString result = util->execCMDWithOutput("hf mf csetblk "
+                     + ui->MF_RW_blockBox->currentText()
+                     + " "
+                     + ui->MF_RW_dataEdit->text().replace(" ", ""), waitTime);
+    if(result.indexOf("No chinese") == -1)
+    {
+        QMessageBox::information(parent, tr("info"), tr("Success!"));
+    }
+    else
+    {
+        QMessageBox::information(parent, tr("info"), tr("Failed!"));
+    }
+}
+
+void Mifare::writeAllC()
+{
+    const int waitTime = 150;
+    QString result;
+    for(int i = 0; i < cardType.sectors; i++)
+    {
+        for(int j = 0; j < cardType.blk[i]; j++)
+        {
+            result = ""; // if the KeyA is invalid and the result is not empty, the KeyB will not be tested.
+            if(data_isDataValid(dataList->at(cardType.blks[i] + j)) != DATA_NOSPACE || dataList->at(cardType.blks[i] + j).contains('?'))
+                continue;
+            result = util->execCMDWithOutput("hf mf csetblk "
+                                             + QString::number(cardType.blks[i] + j)
+                                             + " "
+                                             + dataList->at(cardType.blks[i] + j), waitTime);
+        }
+    }
+}
+
+void Mifare::wipeC()
+{
+    util->execCMD("hf mf cwipe "
+                  + QString::number(cardType.type)
+                  + " f");
+    ui->funcTab->setCurrentIndex(1);
+}
+
+void Mifare::setParameterC()
+{
+
+}
+
+
 void Mifare::dump()
 {
     util->execCMD("hf mf dump");

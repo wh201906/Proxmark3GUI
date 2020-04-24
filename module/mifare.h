@@ -82,6 +82,12 @@ public:
     CardType cardType;
     Mifare::CardType getCardType();
     void setCardType(int type);
+    void writeAllC();
+    void writeC();
+    void readAllC();
+    void readC();
+    void wipeC();
+    void setParameterC();
 public slots:
 signals:
 

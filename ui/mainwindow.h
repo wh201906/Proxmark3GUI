@@ -61,9 +61,9 @@ private slots:
 
     void on_MF_Attack_hardnestedButton_clicked();
 
-    void on_MF_Attack_sniffButton_clicked();
+    void on_MF_Sniff_sniffButton_clicked();
 
-    void on_MF_Attack_listButton_clicked();
+    void on_MF_Sniff_listButton_clicked();
 
     void on_MF_RW_readAllButton_clicked();
 
@@ -79,6 +79,14 @@ private slots:
     void on_MF_RW_dumpButton_clicked();
 
     void on_MF_RW_restoreButton_clicked();
+
+    void on_MF_UID_readAllButton_clicked();
+
+    void on_MF_UID_readBlockButton_clicked();
+
+    void on_MF_UID_writeAllButton_clicked();
+
+    void on_MF_UID_writeBlockButton_clicked();
 
 private:
     Ui::MainWindow *ui;

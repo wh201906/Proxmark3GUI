@@ -20,6 +20,7 @@ SOURCES += \
     common/pm3process.cpp \
     common/util.cpp \
     module/mifare.cpp \
+    ui/mf_uid_parameterdialog.cpp \
     ui/mainwindow.cpp \
     ui/mf_attack_hardnesteddialog.cpp \
 
@@ -27,10 +28,12 @@ HEADERS += \
     common/pm3process.h \
     common/util.h \
     module/mifare.h \
+    ui/mf_uid_parameterdialog.h \
     ui/mainwindow.h \
     ui/mf_attack_hardnesteddialog.h \
 
 FORMS += \
+    ui/mf_uid_parameterdialog.ui \
     ui/mainwindow.ui \
     ui/mf_attack_hardnesteddialog.ui
 

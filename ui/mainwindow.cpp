@@ -198,16 +198,6 @@ void MainWindow::on_MF_Attack_hardnestedButton_clicked()
     mifare->hardnested();
 }
 
-void MainWindow::on_MF_Attack_sniffButton_clicked()
-{
-    mifare->sniff();
-}
-
-void MainWindow::on_MF_Attack_listButton_clicked()
-{
-    mifare->list();
-}
-
 void MainWindow::on_MF_RW_readAllButton_clicked()
 {
     mifare->readAll();
@@ -236,6 +226,36 @@ void MainWindow::on_MF_RW_dumpButton_clicked()
 void MainWindow::on_MF_RW_restoreButton_clicked()
 {
     mifare->restore();
+}
+
+void MainWindow::on_MF_UID_readAllButton_clicked()
+{
+    mifare->readAllC();
+}
+
+void MainWindow::on_MF_UID_readBlockButton_clicked()
+{
+    mifare->readC();
+}
+
+void MainWindow::on_MF_UID_writeAllButton_clicked()
+{
+    mifare->writeAllC();
+}
+
+void MainWindow::on_MF_UID_writeBlockButton_clicked()
+{
+    mifare->writeC();
+}
+
+void MainWindow::on_MF_Sniff_sniffButton_clicked()
+{
+    mifare->sniff();
+}
+
+void MainWindow::on_MF_Sniff_listButton_clicked()
+{
+    mifare->list();
 }
 
 void MainWindow::MF_widgetReset()
@@ -352,4 +372,3 @@ void MainWindow::setTableItem(QTableWidget* widget, int row, int column, const Q
     widget->item(row, column)->setText(text);
 }
 // ***********************************************
-
