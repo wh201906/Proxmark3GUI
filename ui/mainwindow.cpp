@@ -62,7 +62,7 @@ void MainWindow::on_PM3_connectButton_clicked()
     qDebug() << "Main:" << QThread::currentThread();
     QString port = ui->PM3_portBox->currentText();
     if(port == "")
-        QMessageBox::information(NULL, "Info", "Plz choose a port first", QMessageBox::Ok);
+        QMessageBox::information(NULL, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
     else
     {
         emit connectPM3(ui->PM3_pathEdit->text(), port);
@@ -75,11 +75,11 @@ void MainWindow::onPM3StateChanged(bool st, QString info)
     if(st == true)
     {
         setStatusBar(PM3VersionBar, info);
-        setStatusBar(connectStatusBar, "Connected");
+        setStatusBar(connectStatusBar, tr("Connected"));
     }
     else
     {
-        setStatusBar(connectStatusBar, "Not Connected");
+        setStatusBar(connectStatusBar, tr("Not Connected"));
     }
 }
 
@@ -88,7 +88,7 @@ void MainWindow::on_PM3_disconnectButton_clicked()
     pm3state = false;
     emit killPM3();
     emit setSerialListener("", false);
-    setStatusBar(connectStatusBar, "Not Connected");
+    setStatusBar(connectStatusBar, tr("Not Connected"));
 }
 
 void MainWindow::refreshOutput(const QString& output)
@@ -126,7 +126,7 @@ void MainWindow::on_Raw_CMDHistoryBox_stateChanged(int arg1)
     {
         ui->Raw_CMDHistoryWidget->setVisible(true);
         ui->Raw_clearHistoryButton->setVisible(true);
-        ui->Raw_CMDHistoryBox->setText("History:");
+        ui->Raw_CMDHistoryBox->setText(tr("History:"));
     }
     else
     {
@@ -229,8 +229,8 @@ void MainWindow::uiInit()
     connectStatusBar = new QLabel(this);
     programStatusBar = new QLabel(this);
     PM3VersionBar = new QLabel(this);
-    setStatusBar(connectStatusBar, "Not Connected");
-    setStatusBar(programStatusBar, "Idle");
+    setStatusBar(connectStatusBar, tr("Not Connected"));
+    setStatusBar(programStatusBar, tr("Idle"));
     setStatusBar(PM3VersionBar, "");
     ui->statusbar->addPermanentWidget(PM3VersionBar, 1);
     ui->statusbar->addPermanentWidget(connectStatusBar, 1);
@@ -238,9 +238,9 @@ void MainWindow::uiInit()
 
     ui->MF_dataWidget->setColumnCount(3);
     ui->MF_dataWidget->setRowCount(64);
-    ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("Sec"));
-    ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("Blk"));
-    ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("Data"));
+    ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
+    ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Blk")));
+    ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Data")));
     for(int i = 0; i < 64; i++)
     {
         ui->MF_dataWidget->setItem(i, 1, new QTableWidgetItem(QString::number(i)));
@@ -255,9 +255,9 @@ void MainWindow::uiInit()
 
     ui->MF_keyWidget->setColumnCount(3);
     ui->MF_keyWidget->setRowCount(16);
-    ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("Sec"));
-    ui->MF_keyWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("KeyA"));
-    ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem("KeyB"));
+    ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
+    ui->MF_keyWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("KeyA")));
+    ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("KeyB")));
     for(int i = 0; i < 16; i++)
     {
         ui->MF_keyWidget->setItem(i, 0, new QTableWidgetItem(QString::number(i)));
@@ -293,11 +293,11 @@ void MainWindow::signalInit()
 void MainWindow::setStatusBar(QLabel* target, const QString & text)
 {
     if(target == PM3VersionBar)
-        target->setText("HW Version:" + text);
+        target->setText(tr("HW Version:") + text);
     else if(target == connectStatusBar)
-        target->setText("PM3:" + text);
+        target->setText(tr("PM3:") + text);
     else if(target == programStatusBar)
-        target->setText("State:" + text);
+        target->setText(tr("State:") + text);
 }
 // ***********************************************
 

@@ -113,6 +113,9 @@
               <family>Courier</family>
              </font>
             </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
             <attribute name="verticalHeaderMinimumSectionSize">
              <number>20</number>
             </attribute>
@@ -448,6 +451,12 @@
                  </property>
                  <property name="editable">
                   <bool>true</bool>
+                 </property>
+                 <property name="currentText">
+                  <string>0</string>
+                 </property>
+                 <property name="currentIndex">
+                  <number>-1</number>
                  </property>
                 </widget>
                </item>

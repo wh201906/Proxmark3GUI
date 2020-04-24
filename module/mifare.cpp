@@ -4,12 +4,15 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QObject *parent) : QObject(parent
 {
     util = addr;
     this->ui = ui;
+    cardType = card_1k;
     keyAList = new QStringList();
     keyBList = new QStringList();
     dataList = new QStringList();
     data_clearKey(); // fill with blank Qstring
     data_clearData(); // fill with blank Qstring
     dataPattern = new QRegExp("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
+    chkKeyPattern = new QRegExp("\\|\\d{3}\\|.+\\|.+\\|");
+    nestedKeyPattern = new QRegExp("\\|\\d{3}\\|.+\\|.+\\|.+\\|.+\\|");
 }
 
 
@@ -22,36 +25,43 @@ void Mifare::info()
 
 void Mifare::chk()
 {
-    QString result = util->execCMDWithOutput("hf mf chk *1 ?");
-    result = result.mid(result.indexOf("|---|----------------|----------------|"));
-    QStringList keys = result.split("\r\n");
-    for(int i = 0; i < 16; i++)
+    QString result = util->execCMDWithOutput("hf mf chk *" + QString::number(cardType.type) + " ?");
+
+    int offset = 0;
+    QString tmp, tmp2;
+    for(int i = 0; i < cardType.sectors; i++)
     {
-        keyAList->replace(i, keys[i + 3].mid(7, 12).trimmed().toUpper());
-        if(keyAList->at(i) == "?")
-            keyAList->replace(i, "");
-        keyBList->replace(i, keys[i + 3].mid(24, 12).trimmed().toUpper());
-        if(keyBList->at(i) == "?")
-            keyBList->replace(i, "");
+        offset = result.indexOf(*chkKeyPattern, offset);
+        tmp = result.mid(offset, 39).toUpper();
+        offset += 39;
+        qDebug() << tmp << offset;
+        tmp2 = tmp.mid(7, 12).trimmed();
+        if(tmp2 != "?")
+            keyAList->replace(i, tmp2);
+        tmp2 = tmp.mid(24, 12).trimmed();
+        if(tmp2 != "?")
+            keyBList->replace(i, tmp2);
     }
     data_syncWithKeyWidget();
-    qDebug() << "***********\n" << keys << "***********\n";
 }
 
 void Mifare::nested()
 {
-    QString result = util->execCMDWithOutput("hf mf nested 1 *");
-    result = result.mid(result.indexOf("|---|----------------|---|----------------|---|"));
-    QStringList keys = result.split("\r\n");
-    for(int i = 0; i < 16; i++)
+    QString result = util->execCMDWithOutput("hf mf nested " + QString::number(cardType.type) + " *");
+
+    int offset = 0;
+    QString tmp;
+    for(int i = 0; i < cardType.sectors; i++)
     {
-        if(keys[i + 3].at(23) == '1')
-            keyAList->replace(i, keys[i + 3].mid(7, 12).trimmed().toUpper());
-        if(keys[i + 3].at(44) == '1')
-            keyBList->replace(i, keys[i + 3].mid(28, 12).trimmed().toUpper());
+        offset = result.indexOf(*nestedKeyPattern, offset);
+        tmp = result.mid(offset, 47).toUpper();
+        offset += 47;
+        if(tmp.at(23) == '1')
+            keyAList->replace(i, tmp.mid(7, 12).trimmed());
+        if(tmp.at(44) == '1')
+            keyBList->replace(i, tmp.mid(28, 12).trimmed());
     }
     data_syncWithKeyWidget();
-    qDebug() << "***********\n" << keys << "***********\n";
 }
 
 void Mifare::hardnested()
@@ -126,12 +136,13 @@ void Mifare::read()
 void Mifare::readAll()
 {
     QString result;
-    QString tmp;
-    int offset = 0;
     bool isKeyAValid;
     bool isKeyBValid;
     const int waitTime = 150;
-    for(int i = 0; i < sectors; i++)
+
+    QString tmp;
+    int offset = 0;
+    for(int i = 0; i < cardType.sectors; i++)
     {
         result = "";
         isKeyAValid = false;
@@ -149,9 +160,10 @@ void Mifare::readAll()
             if(offset != -1)
             {
                 isKeyAValid = true;
-                for(int j = 0; j < 4; j++)
+                for(int j = 0; j < cardType.blk[i]; j++)
                 {
-                    tmp = result.mid(result.indexOf(*dataPattern, offset), 47).toUpper();
+                    offset = result.indexOf(*dataPattern, offset);
+                    tmp = result.mid(offset, 47).toUpper();
                     offset += 47;
                     qDebug() << tmp;
                     tmp.replace(" ", "");
@@ -173,7 +185,8 @@ void Mifare::readAll()
                 isKeyBValid = true;
                 for(int j = 0; j < 4; j++)
                 {
-                    tmp = result.mid(result.indexOf(*dataPattern, offset), 47).toUpper();
+                    offset = result.indexOf(*dataPattern, offset);
+                    tmp = result.mid(offset, 47).toUpper();
                     offset += 47;
                     qDebug() << tmp;
                     tmp.replace(" ", "");
@@ -301,7 +314,7 @@ void Mifare::data_syncWithDataWidget(bool syncAll, int block)
     QString tmp = "";
     if(syncAll)
     {
-        for(int i = 0; i < blocks; i++)
+        for(int i = 0; i < cardType.blk[block]; i++)
         {
             tmp += dataList->at(i).mid(0, 2);
             for(int j = 1; j < 16; j++)
@@ -328,7 +341,7 @@ void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, bool isKeyA)
 {
     if(syncAll)
     {
-        for(int i = 0; i < sectors; i++)
+        for(int i = 0; i < cardType.sectors; i++)
         {
             ui->MF_keyWidget->item(i, 1)->setText(keyAList->at(i));
             ui->MF_keyWidget->item(i, 2)->setText(keyBList->at(i));
@@ -346,7 +359,7 @@ void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, bool isKeyA)
 void Mifare::data_clearData()
 {
     dataList->clear();
-    for(int i = 0; i < blocks; i++)
+    for(int i = 0; i < 40; i++)
         dataList->append("");
 }
 
@@ -354,7 +367,7 @@ void Mifare::data_clearKey()
 {
     keyAList->clear();
     keyBList->clear();
-    for(int i = 0; i < sectors; i++)
+    for(int i = 0; i < cardType.sectors; i++)
     {
         keyAList->append("");
         keyBList->append("");

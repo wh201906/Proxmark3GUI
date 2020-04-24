@@ -34,6 +34,43 @@ public:
         DATA_NOSPACE,
     };
 
+    struct CardType
+    {
+        int type;
+        int sectors;
+        int blk[40];
+        int blks[40];
+    };
+
+    const CardType card_mini =
+    {
+        0,
+        5,
+        {4, 4, 4, 4, 4},
+        {0, 4, 8, 12, 16}
+    };
+    const CardType card_1k =
+    {
+        1,
+        16,
+        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+        {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60}
+    };
+    const CardType card_2k =
+    {
+        2,
+        32,
+        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+        {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124}
+    };
+    const CardType card_4k =
+    {
+        4,
+        40,
+        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 16, 16, 16, 16, 16, 16, 16, 16},
+        {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 144, 160, 176, 192, 208, 224, 240}
+    };
+
     void data_clearData();
     void data_clearKey();
     bool data_isKeyValid(const QString &key);
@@ -51,9 +88,10 @@ private:
     QStringList* keyBList;
     QStringList*  dataList;
     QRegExp* dataPattern;
+    QRegExp* chkKeyPattern;
+    QRegExp* nestedKeyPattern;
 
-    int sectors = 16;
-    int blocks = 64;
+    CardType cardType;
 };
 
 #endif // MIFARE_H
