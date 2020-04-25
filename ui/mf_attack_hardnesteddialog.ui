@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Known Key:</string>
+      <string>Known Block:</string>
      </property>
     </widget>
    </item>
@@ -83,7 +83,7 @@
         </font>
        </property>
        <property name="text">
-        <string>FFFFFFFFFFFF</string>
+        <string notr="true">FFFFFFFFFFFF</string>
        </property>
       </widget>
      </item>
@@ -92,7 +92,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Target Key: </string>
+      <string>Target Block: </string>
      </property>
     </widget>
    </item>

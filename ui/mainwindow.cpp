@@ -18,8 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
     mifare = new Mifare(ui, util, this);
 
 
-    uiInit();
-    signalInit();
 }
 
 MainWindow::~MainWindow()
@@ -30,6 +28,13 @@ MainWindow::~MainWindow()
     pm3Thread->wait(5000);
     delete pm3;
     delete pm3Thread;
+}
+
+void MainWindow::initUI()
+{
+    ui->retranslateUi(this);
+    uiInit();
+    signalInit();
 }
 
 // ******************** basic functions ********************
@@ -162,7 +167,7 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
     qDebug() << id << typeBtnGroup->checkedId();
     if(!st)
     {
-        int result = QMessageBox::question(this, tr("info"), tr("When Changeing card type, the data and keys in this app will be cleard.\nContinue?"), QMessageBox::Yes | QMessageBox::No);
+        int result = QMessageBox::question(this, tr("Info"), tr("When Changeing card type, the data and keys in this app will be cleard.\nContinue?"), QMessageBox::Yes | QMessageBox::No);
         if(result == QMessageBox::Yes)
         {
             qDebug() << "Yes";

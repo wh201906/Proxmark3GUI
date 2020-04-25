@@ -42,7 +42,7 @@
       <item>
        <widget class="QLineEdit" name="PM3_pathEdit">
         <property name="text">
-         <string>E:\Documents\source\qt\pm3\win64\proxmark3</string>
+         <string notr="true">E:\Documents\source\qt\pm3\win64\proxmark3</string>
         </property>
        </widget>
       </item>
@@ -394,7 +394,7 @@
               <widget class="QPushButton" name="MF_Attack_nestedButton">
                <property name="minimumSize">
                 <size>
-                 <width>40</width>
+                 <width>0</width>
                  <height>0</height>
                 </size>
                </property>
@@ -485,7 +485,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>FFFFFFFFFFFF</string>
+                  <string notr="true">FFFFFFFFFFFF</string>
                  </property>
                 </widget>
                </item>

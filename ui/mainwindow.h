@@ -30,6 +30,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void initUI();
 public slots:
     void refreshOutput(const QString &output);
     void refreshCMD(const QString &cmd);

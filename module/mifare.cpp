@@ -266,11 +266,11 @@ void Mifare::write()
                      + ui->MF_RW_dataEdit->text().replace(" ", ""), waitTime);
     if(result.indexOf("isOk:01") != -1)
     {
-        QMessageBox::information(parent, tr("info"), tr("Success!"));
+        QMessageBox::information(parent, tr("Info"), tr("Success!"));
     }
     else
     {
-        QMessageBox::information(parent, tr("info"), tr("Failed!"));
+        QMessageBox::information(parent, tr("Info"), tr("Failed!"));
     }
 }
 
@@ -363,11 +363,11 @@ void Mifare::writeC()
                      + ui->MF_RW_dataEdit->text().replace(" ", ""), waitTime);
     if(result.indexOf("No chinese") == -1)
     {
-        QMessageBox::information(parent, tr("info"), tr("Success!"));
+        QMessageBox::information(parent, tr("Info"), tr("Success!"));
     }
     else
     {
-        QMessageBox::information(parent, tr("info"), tr("Failed!"));
+        QMessageBox::information(parent, tr("Info"), tr("Failed!"));
     }
 }
 
