@@ -68,8 +68,7 @@ void Mifare::nested()
 
 void Mifare::hardnested()
 {
-    int secs = cardType.sectors;
-    MF_Attack_hardnestedDialog dialog(cardType.blks[secs - 1] + cardType.blk[secs - 1]);
+    MF_Attack_hardnestedDialog dialog(cardType.blocks);
     connect(&dialog, &MF_Attack_hardnestedDialog::sendCMD, util, &Util::execCMD);
     if(dialog.exec() == QDialog::Accepted)
         ui->funcTab->setCurrentIndex(1);
@@ -421,8 +420,7 @@ void Mifare::data_syncWithDataWidget(bool syncAll, int block)
     QString tmp = "";
     if(syncAll)
     {
-        int secs = cardType.sectors;
-        for(int i = 0; i < cardType.blks[secs - 1] + cardType.blk[secs - 1]; i++)
+        for(int i = 0; i < cardType.blocks; i++)
         {
             tmp += dataList->at(i).mid(0, 2);
             for(int j = 1; j < 16; j++)
@@ -466,9 +464,8 @@ void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, bool isKeyA)
 
 void Mifare::data_clearData()
 {
-    int secs = cardType.sectors;
     dataList->clear();
-    for(int i = 0; i < cardType.blks[secs - 1] + cardType.blk[secs - 1]; i++)
+    for(int i = 0; i < cardType.blocks; i++)
         dataList->append("");
 }
 

@@ -266,7 +266,7 @@ void MainWindow::on_MF_Sniff_listButton_clicked()
 void MainWindow::MF_widgetReset()
 {
     int secs = mifare->cardType.sectors;
-    int blks = mifare->cardType.blks[secs - 1] + mifare->cardType.blk[secs - 1];
+    int blks = mifare->cardType.blocks;
     ui->MF_RW_blockBox->clear();
     ui->MF_keyWidget->setRowCount(secs);
     ui->MF_dataWidget->setRowCount(blks);
