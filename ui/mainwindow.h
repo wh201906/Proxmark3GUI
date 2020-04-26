@@ -94,6 +94,10 @@ private slots:
 
     void on_MF_File_saveButton_clicked();
 
+    void on_MF_data2KeyBotton_clicked();
+
+    void on_MF_key2DataBotton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;

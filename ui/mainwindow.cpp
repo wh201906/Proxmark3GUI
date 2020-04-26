@@ -182,6 +182,16 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
     typeBtnGroup->blockSignals(false);
 }
 
+void MainWindow::on_MF_data2KeyBotton_clicked()
+{
+    mifare->data_data2Key();
+}
+
+void MainWindow::on_MF_key2DataBotton_clicked()
+{
+    mifare->data_key2Data();
+}
+
 void MainWindow::on_MF_File_loadButton_clicked()
 {
     QString title = "";

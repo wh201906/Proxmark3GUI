@@ -94,11 +94,10 @@ public:
     void wipeC();
     void setParameterC();
 
-    QStringList* keyAList;
-    QStringList* keyBList;
-    QStringList* dataList;
     bool data_loadDataFile(const QString &filename);
     bool data_loadKeyFile(const QString &filename);
+    void data_key2Data();
+    void data_data2Key();
 public slots:
 signals:
 
@@ -107,7 +106,9 @@ private:
     Ui::MainWindow *ui;
     Util* util;
 
-
+    QStringList* keyAList;
+    QStringList* keyBList;
+    QStringList* dataList;
     QRegExp* dataPattern;
     QRegExp* chkKeyPattern;
     QRegExp* nestedKeyPattern;

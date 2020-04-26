@@ -642,3 +642,47 @@ bool Mifare::data_loadKeyFile(const QString& filename)
         return false;
     }
 }
+
+void Mifare::data_key2Data()
+{
+    for(int i = 0; i < cardType.sectors; i++)
+    {
+        QString tmp = "";
+        dataList->replace(cardType.blks[i] + cardType.blk[i] - 1, "????????????FF078069????????????");
+        if(data_isKeyValid(keyAList->at(i)))
+            tmp += keyAList->at(i);
+        else
+            tmp += "????????????";
+
+        if(dataList->at(cardType.blks[i] + cardType.blk[i] - 1) == "")
+            tmp += "FF078069"; // default control bytes
+        else
+            tmp += dataList->at(cardType.blks[i] + cardType.blk[i] - 1).mid(12, 8);
+
+        if(data_isKeyValid(keyBList->at(i)))
+            tmp += keyBList->at(i);
+        else
+            tmp += "????????????";
+
+        dataList->replace(cardType.blks[i] + cardType.blk[i] - 1, tmp);
+        data_syncWithDataWidget();
+    }
+}
+
+void Mifare::data_data2Key()
+{
+    for(int i = 0; i < cardType.sectors; i++)
+    {
+        if(dataList->at(cardType.blks[i] + cardType.blk[i] - 1) == "")
+        {
+            keyAList->replace(i, "????????????");
+            keyBList->replace(i, "????????????");
+        }
+        else
+        {
+            keyAList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).left(12));
+            keyBList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12));
+        }
+        data_syncWithKeyWidget();
+    }
+}
