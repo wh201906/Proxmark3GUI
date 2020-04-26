@@ -422,6 +422,7 @@ void Mifare::data_syncWithDataWidget(bool syncAll, int block)
     {
         for(int i = 0; i < cardType.blocks; i++)
         {
+            tmp = "";
             tmp += dataList->at(i).mid(0, 2);
             for(int j = 1; j < 16; j++)
             {
@@ -543,5 +544,101 @@ void Mifare::setCardType(int type)
             cardType = card_4k;
         data_clearKey();
         data_clearData();
+    }
+}
+
+bool Mifare::data_loadDataFile(const QString& filename)
+{
+    QFile file(filename, this);
+    if(file.open(QIODevice::ReadOnly))
+    {
+        QByteArray buff;
+        buff = file.read(8192);
+        bool isBin = false;
+        for(int i = 0; i < cardType.blocks * 16; i++) // Detect the file type
+        {
+//                qDebug() << (unsigned char)buff[i];
+            if(!((buff[i] >= 'A' && buff[i] <= 'F') ||
+                    (buff[i] >= 'a' && buff[i] <= 'f') ||
+                    (buff[i] >= '0' && buff[i] <= '9') ||
+                    buff[i] == '\n' ||
+                    buff[i] == '\r'))
+            {
+                isBin = true;
+                break;
+            }
+        }
+        if(isBin)
+        {
+            char LByte, RByte;
+            char map[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+            for(int i = 0; i < cardType.blocks; i++)
+            {
+                QString tmp = "";
+                for(int j = 0; j < 16; j++)
+                {
+                    LByte = map[(unsigned char)buff[i * 16 + j] >> 4];
+                    RByte = map[(unsigned char)buff[i * 16 + j] & 0xF];
+                    tmp += LByte;
+                    tmp += RByte;
+                }
+                qDebug() << tmp;
+                dataList->replace(i, tmp.toUpper());
+            }
+        }
+        else
+        {
+            QString tmp = buff.left(cardType.blocks * 34);
+            QStringList tmpList = tmp.split("\r\n");
+            for(int i = 0; i < cardType.blocks; i++)
+            {
+                dataList->replace(i, tmpList[i].toUpper());
+                qDebug() << tmpList[i];
+            }
+        }
+        file.close();
+        data_syncWithDataWidget();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Mifare::data_loadKeyFile(const QString& filename)
+{
+    QFile file(filename, this);
+    if(file.open(QIODevice::ReadOnly))
+    {
+        QByteArray buff;
+        buff = file.read(960);
+        bool isBin = true;
+        if(isBin)
+        {
+            char LByte, RByte;
+            char map[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+            for(int i = 0; i < cardType.sectors; i++)
+            {
+                QString tmp = "";
+                for(int j = 0; j < 12; j++)
+                {
+                    LByte = map[(unsigned char)buff[i * 12 + j] >> 4];
+                    RByte = map[(unsigned char)buff[i * 12 + j] & 0xF];
+                    tmp += LByte;
+                    tmp += RByte;
+                }
+                qDebug() << tmp;
+                keyAList->replace(i, tmp.left(12).toUpper());
+                keyBList->replace(i, tmp.right(12).toUpper());
+            }
+        }
+        file.close();
+        data_syncWithKeyWidget();
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }

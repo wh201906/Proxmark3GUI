@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>820</width>
     <height>770</height>
    </rect>
   </property>
@@ -323,7 +323,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="MF_File_dataBox">
+              <widget class="QRadioButton" name="MF_File_dataBox">
                <property name="text">
                 <string>Data</string>
                </property>
@@ -333,12 +333,9 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="MF_File_keyBox">
+              <widget class="QRadioButton" name="MF_File_keyBox">
                <property name="text">
                 <string>Key</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
                </property>
               </widget>
              </item>

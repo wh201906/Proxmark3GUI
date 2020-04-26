@@ -32,11 +32,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mf_attack_hardnesteddialog.ui" line="86"/>
-        <source>FFFFFFFFFFFF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ui/mf_attack_hardnesteddialog.ui" line="95"/>
         <source>Target Block: </source>
         <translation type="unfinished"></translation>
@@ -80,11 +75,6 @@
     <message>
         <location filename="../ui/mainwindow.ui" line="38"/>
         <source>Path:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/mainwindow.ui" line="45"/>
-        <source>E:\Documents\source\qt\pm3\win64\proxmark3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -149,19 +139,19 @@
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="308"/>
-        <location filename="../ui/mainwindow.ui" line="855"/>
+        <location filename="../ui/mainwindow.ui" line="852"/>
         <source>Load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="321"/>
-        <location filename="../ui/mainwindow.ui" line="868"/>
+        <location filename="../ui/mainwindow.ui" line="865"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="328"/>
-        <location filename="../ui/mainwindow.cpp" line="312"/>
+        <location filename="../ui/mainwindow.cpp" line="352"/>
         <source>Data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -171,250 +161,283 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="351"/>
+        <location filename="../ui/mainwindow.ui" line="348"/>
         <source>Attack</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="376"/>
+        <location filename="../ui/mainwindow.ui" line="373"/>
         <source>Card Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="389"/>
+        <location filename="../ui/mainwindow.ui" line="386"/>
         <source>Check Default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="402"/>
+        <location filename="../ui/mainwindow.ui" line="399"/>
         <source>Nested</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="409"/>
+        <location filename="../ui/mainwindow.ui" line="406"/>
         <source>Hardnested</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="434"/>
+        <location filename="../ui/mainwindow.ui" line="431"/>
         <source>Read/Write</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="444"/>
+        <location filename="../ui/mainwindow.ui" line="441"/>
         <source>Block:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="476"/>
+        <location filename="../ui/mainwindow.ui" line="473"/>
         <source>Key:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="488"/>
-        <source>FFFFFFFFFFFF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/mainwindow.ui" line="495"/>
+        <location filename="../ui/mainwindow.ui" line="492"/>
         <source>Key Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="515"/>
+        <location filename="../ui/mainwindow.ui" line="512"/>
         <source>A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="520"/>
+        <location filename="../ui/mainwindow.ui" line="517"/>
         <source>B</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="543"/>
+        <location filename="../ui/mainwindow.ui" line="540"/>
         <source>Normal(Require Password)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="558"/>
-        <location filename="../ui/mainwindow.ui" line="647"/>
+        <location filename="../ui/mainwindow.ui" line="555"/>
+        <location filename="../ui/mainwindow.ui" line="644"/>
         <source>Read Block</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="565"/>
-        <location filename="../ui/mainwindow.ui" line="654"/>
+        <location filename="../ui/mainwindow.ui" line="562"/>
+        <location filename="../ui/mainwindow.ui" line="651"/>
         <source>Write Block</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="572"/>
-        <location filename="../ui/mainwindow.ui" line="661"/>
-        <location filename="../ui/mainwindow.ui" line="761"/>
+        <location filename="../ui/mainwindow.ui" line="569"/>
+        <location filename="../ui/mainwindow.ui" line="658"/>
+        <location filename="../ui/mainwindow.ui" line="758"/>
         <source>Read All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="579"/>
-        <location filename="../ui/mainwindow.ui" line="668"/>
+        <location filename="../ui/mainwindow.ui" line="576"/>
+        <location filename="../ui/mainwindow.ui" line="665"/>
         <source>Write All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="598"/>
+        <location filename="../ui/mainwindow.ui" line="595"/>
         <source>Dump</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="611"/>
+        <location filename="../ui/mainwindow.ui" line="608"/>
         <source>Restore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="621"/>
+        <location filename="../ui/mainwindow.ui" line="618"/>
         <source>Chinese Magic Card(Without Password)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="633"/>
+        <location filename="../ui/mainwindow.ui" line="630"/>
         <source>Lock UFUID Card</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="640"/>
+        <location filename="../ui/mainwindow.ui" line="637"/>
         <source>About UID Card</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="681"/>
+        <location filename="../ui/mainwindow.ui" line="678"/>
         <source>Set Parameter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="700"/>
+        <location filename="../ui/mainwindow.ui" line="697"/>
         <source>Wipe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="726"/>
-        <location filename="../ui/mainwindow.ui" line="781"/>
+        <location filename="../ui/mainwindow.ui" line="723"/>
+        <location filename="../ui/mainwindow.ui" line="778"/>
         <source>Simulate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="754"/>
+        <location filename="../ui/mainwindow.ui" line="751"/>
         <source>Load from data above</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="774"/>
+        <location filename="../ui/mainwindow.ui" line="771"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="804"/>
-        <location filename="../ui/mainwindow.ui" line="835"/>
+        <location filename="../ui/mainwindow.ui" line="801"/>
+        <location filename="../ui/mainwindow.ui" line="832"/>
         <source>Sniff</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="842"/>
+        <location filename="../ui/mainwindow.ui" line="839"/>
         <source>List Sniff Data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="894"/>
+        <location filename="../ui/mainwindow.ui" line="891"/>
         <source>RawCommand</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="926"/>
-        <location filename="../ui/mainwindow.cpp" line="134"/>
+        <location filename="../ui/mainwindow.ui" line="923"/>
+        <location filename="../ui/mainwindow.cpp" line="133"/>
         <source>History:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="955"/>
+        <location filename="../ui/mainwindow.ui" line="952"/>
         <source>ClearHistory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="974"/>
+        <location filename="../ui/mainwindow.ui" line="971"/>
         <source>Send</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="981"/>
+        <location filename="../ui/mainwindow.ui" line="978"/>
         <source>ClearOutput</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="70"/>
-        <location filename="../ui/mainwindow.cpp" line="170"/>
+        <location filename="../ui/mainwindow.cpp" line="69"/>
+        <location filename="../ui/mainwindow.cpp" line="169"/>
+        <location filename="../ui/mainwindow.cpp" line="198"/>
+        <location filename="../ui/mainwindow.cpp" line="211"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="70"/>
+        <location filename="../ui/mainwindow.cpp" line="69"/>
         <source>Plz choose a port first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="83"/>
+        <location filename="../ui/mainwindow.cpp" line="82"/>
         <source>Connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="87"/>
-        <location filename="../ui/mainwindow.cpp" line="96"/>
-        <location filename="../ui/mainwindow.cpp" line="302"/>
+        <location filename="../ui/mainwindow.cpp" line="86"/>
+        <location filename="../ui/mainwindow.cpp" line="95"/>
+        <location filename="../ui/mainwindow.cpp" line="342"/>
         <source>Not Connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="170"/>
+        <location filename="../ui/mainwindow.cpp" line="169"/>
         <source>When Changeing card type, the data and keys in this app will be cleard.
 Continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="303"/>
+        <location filename="../ui/mainwindow.cpp" line="191"/>
+        <source>Plz choose the data file:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="192"/>
+        <source>Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml);;All Files(*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="198"/>
+        <location filename="../ui/mainwindow.cpp" line="211"/>
+        <source>Failed to open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="204"/>
+        <source>Plz choose the key file:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="205"/>
+        <source>Binary Key Files(*.bin *.dump);;All Files(*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="220"/>
+        <source>Save data to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="222"/>
+        <source>Bin Files(*.bin *.dump);;Text Files(*.txt *.eml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.cpp" line="343"/>
         <source>Idle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="310"/>
-        <location filename="../ui/mainwindow.cpp" line="325"/>
+        <location filename="../ui/mainwindow.cpp" line="350"/>
+        <location filename="../ui/mainwindow.cpp" line="359"/>
         <source>Sec</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="311"/>
+        <location filename="../ui/mainwindow.cpp" line="351"/>
         <source>Blk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="326"/>
+        <location filename="../ui/mainwindow.cpp" line="360"/>
         <source>KeyA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="327"/>
+        <location filename="../ui/mainwindow.cpp" line="361"/>
         <source>KeyB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="366"/>
+        <location filename="../ui/mainwindow.cpp" line="394"/>
         <source>HW Version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="368"/>
+        <location filename="../ui/mainwindow.cpp" line="396"/>
         <source>PM3:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="370"/>
+        <location filename="../ui/mainwindow.cpp" line="398"/>
         <source>State:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -422,22 +445,22 @@ Continue?</source>
 <context>
     <name>Mifare</name>
     <message>
-        <location filename="../module/mifare.cpp" line="269"/>
-        <location filename="../module/mifare.cpp" line="366"/>
+        <location filename="../module/mifare.cpp" line="268"/>
+        <location filename="../module/mifare.cpp" line="365"/>
         <source>Success!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="269"/>
-        <location filename="../module/mifare.cpp" line="273"/>
-        <location filename="../module/mifare.cpp" line="366"/>
-        <location filename="../module/mifare.cpp" line="370"/>
+        <location filename="../module/mifare.cpp" line="268"/>
+        <location filename="../module/mifare.cpp" line="272"/>
+        <location filename="../module/mifare.cpp" line="365"/>
+        <location filename="../module/mifare.cpp" line="369"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="273"/>
-        <location filename="../module/mifare.cpp" line="370"/>
+        <location filename="../module/mifare.cpp" line="272"/>
+        <location filename="../module/mifare.cpp" line="369"/>
         <source>Failed!</source>
         <translation type="unfinished"></translation>
     </message>

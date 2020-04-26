@@ -9,6 +9,7 @@
 #include <QListWidgetItem>
 #include <QButtonGroup>
 #include <QRadioButton>
+#include <QFileDialog>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
 
@@ -89,12 +90,17 @@ private slots:
 
     void on_MF_UID_writeBlockButton_clicked();
 
+    void on_MF_File_loadButton_clicked();
+
+    void on_MF_File_saveButton_clicked();
+
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
     QLabel* connectStatusBar;
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
+
     void uiInit();
 
     PM3Process* pm3;

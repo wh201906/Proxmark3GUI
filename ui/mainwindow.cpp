@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     util = new Util(this);
     mifare = new Mifare(ui, util, this);
 
-
 }
 
 MainWindow::~MainWindow()
@@ -30,7 +29,7 @@ MainWindow::~MainWindow()
     delete pm3Thread;
 }
 
-void MainWindow::initUI()
+void MainWindow::initUI() // will be called by main.app
 {
     ui->retranslateUi(this);
     uiInit();
@@ -183,6 +182,47 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
     typeBtnGroup->blockSignals(false);
 }
 
+void MainWindow::on_MF_File_loadButton_clicked()
+{
+    QString title = "";
+    QString filename = "";
+    if(ui->MF_File_dataBox->isChecked())
+    {
+        title = tr("Plz choose the data file:");
+        filename = QFileDialog::getOpenFileName(this, title, "./", tr("Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml);;All Files(*.*)"));
+        qDebug() << filename;
+        if(filename != "")
+        {
+            if(!mifare->data_loadDataFile(filename))
+            {
+                QMessageBox::information(this, tr("Info"), tr("Failed to open") + "\n" + filename);
+            }
+        }
+    }
+    else if(ui->MF_File_keyBox->isChecked())
+    {
+        title = tr("Plz choose the key file:");
+        filename = QFileDialog::getOpenFileName(this, title, "./", tr("Binary Key Files(*.bin *.dump);;All Files(*.*)"));
+        qDebug() << filename;
+        if(filename != "")
+        {
+            if(!mifare->data_loadKeyFile(filename))
+            {
+                QMessageBox::information(this, tr("Info"), tr("Failed to open") + "\n" + filename);
+            }
+        }
+    }
+
+}
+
+void MainWindow::on_MF_File_saveButton_clicked()
+{
+    QString title = tr("Save data to");
+    QString selectedType = "";
+    QString filename = QFileDialog::getSaveFileName(this, title, "./", tr("Bin Files(*.bin *.dump);;Text Files(*.txt *.eml)"), &selectedType);
+    qDebug() << filename << selectedType;
+}
+
 void MainWindow::on_MF_Attack_infoButton_clicked()
 {
     mifare->info();
@@ -314,12 +354,6 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->setColumnWidth(0, 35);
     ui->MF_dataWidget->setColumnWidth(1, 35);
     ui->MF_dataWidget->setColumnWidth(2, 400);
-//    for(int i = 0; i < 256; i++)
-//    {
-//        ui->MF_dataWidget->setItem(i, 0, new QTableWidgetItem());
-//        ui->MF_dataWidget->setItem(i, 1, new QTableWidgetItem());
-//        ui->MF_dataWidget->setItem(i, 2, new QTableWidgetItem());
-//    }
 
     ui->MF_keyWidget->setColumnCount(3);
     ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
@@ -329,12 +363,6 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->setColumnWidth(0, 35);
     ui->MF_keyWidget->setColumnWidth(1, 110);
     ui->MF_keyWidget->setColumnWidth(2, 110);
-//    for(int i = 0; i < 40; i++)
-//    {
-//        ui->MF_keyWidget->setItem(i, 0, new QTableWidgetItem());
-//        ui->MF_keyWidget->setItem(i, 1, new QTableWidgetItem());
-//        ui->MF_keyWidget->setItem(i, 2, new QTableWidgetItem());
-//    }
 
     MF_widgetReset();
     typeBtnGroup = new QButtonGroup(this);
