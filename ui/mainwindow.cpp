@@ -198,7 +198,7 @@ void MainWindow::on_MF_File_loadButton_clicked()
     QString filename = "";
     if(ui->MF_File_dataBox->isChecked())
     {
-        title = tr("Plz choose the data file:");
+        title = tr("Plz select the data file:");
         filename = QFileDialog::getOpenFileName(this, title, "./", tr("Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml);;All Files(*.*)"));
         qDebug() << filename;
         if(filename != "")
@@ -211,7 +211,7 @@ void MainWindow::on_MF_File_loadButton_clicked()
     }
     else if(ui->MF_File_keyBox->isChecked())
     {
-        title = tr("Plz choose the key file:");
+        title = tr("Plz select the key file:");
         filename = QFileDialog::getOpenFileName(this, title, "./", tr("Binary Key Files(*.bin *.dump);;All Files(*.*)"));
         qDebug() << filename;
         if(filename != "")
@@ -227,9 +227,37 @@ void MainWindow::on_MF_File_loadButton_clicked()
 
 void MainWindow::on_MF_File_saveButton_clicked()
 {
-    QString title = tr("Save data to");
+
+    QString title = "";
+    QString filename = "";
     QString selectedType = "";
-    QString filename = QFileDialog::getSaveFileName(this, title, "./", tr("Bin Files(*.bin *.dump);;Text Files(*.txt *.eml)"), &selectedType);
+
+    if(ui->MF_File_dataBox->isChecked())
+    {
+        title = tr("Plz select the location to save data file:");
+        filename = QFileDialog::getSaveFileName(this, title, "./", tr("Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml)"), &selectedType);
+        qDebug() << filename;
+        if(filename != "")
+        {
+            if(!mifare->data_saveDataFile(filename, selectedType == "Binary Data Files(*.bin *.dump)"))
+            {
+                QMessageBox::information(this, tr("Info"), tr("Failed to save to") + "\n" + filename);
+            }
+        }
+    }
+    else if(ui->MF_File_keyBox->isChecked())
+    {
+        title = tr("Plz select the location to save key file:");
+        filename = QFileDialog::getSaveFileName(this, title, "./", tr("Binary Key Files(*.bin *.dump)"), &selectedType);
+        qDebug() << filename;
+        if(filename != "")
+        {
+            if(!mifare->data_saveKeyFile(filename, selectedType == "Binary Key Files(*.bin *.dump)"))
+            {
+                QMessageBox::information(this, tr("Info"), tr("Failed to save to") + "\n" + filename);
+            }
+        }
+    }
     qDebug() << filename << selectedType;
 }
 

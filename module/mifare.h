@@ -96,8 +96,11 @@ public:
 
     bool data_loadDataFile(const QString &filename);
     bool data_loadKeyFile(const QString &filename);
+    bool data_saveDataFile(const QString& filename, bool isBin);
+    bool data_saveKeyFile(const QString &filename, bool isBin);
     void data_key2Data();
     void data_data2Key();
+
 public slots:
 signals:
 

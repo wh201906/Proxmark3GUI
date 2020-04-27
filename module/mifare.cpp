@@ -509,8 +509,8 @@ Mifare::DataType Mifare::data_isDataValid(QString data) // "?" will not been pro
                 if(data[i] != ' ')
                     return DATA_INVALID;
             }
-            return DATA_WITHSPACE;
         }
+        return DATA_WITHSPACE;
     }
     else if(data.length() == 32)
     {
@@ -643,12 +643,108 @@ bool Mifare::data_loadKeyFile(const QString& filename)
     }
 }
 
+bool Mifare::data_saveDataFile(const QString& filename, bool isBin)
+{
+    QFile file(filename, this);
+    if(file.open(QIODevice::WriteOnly))
+    {
+        QByteArray buff;
+        QChar tmp;
+        if(isBin)
+        {
+            for(int i = 0; i < cardType.blocks; i++)
+            {
+                for(int j = 0; j < 16; j++)
+                {
+                    unsigned char Byt[2];
+                    for(int k = 0; k < 2; k++)
+                    {
+                        tmp = dataList->at(i).at(j*2+k).toUpper();
+                        if(tmp >= '0' && tmp <= '9')
+                            Byt[k] = tmp.toLatin1() - '0';
+                        else if(tmp >= 'A' && tmp <= 'F')
+                            Byt[k] = tmp.toLatin1() - 'A' + 10;
+                    }
+                    buff += (Byt[0] << 4)|Byt[1];
+                }
+            }
+        }
+        else
+        {
+            for(int i = 0; i < cardType.blocks; i++)
+            {
+                buff += dataList->at(i);
+                buff += "\r\n";
+            }
+        }
+        bool ret = file.write(buff) != -1;
+        file.close();
+        return ret;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Mifare::data_saveKeyFile(const QString& filename, bool isBin)
+{
+    QFile file(filename, this);
+    if(file.open(QIODevice::WriteOnly))
+    {
+        QByteArray buff;
+        QChar tmp;
+        if(isBin)
+        {
+            for(int i = 0; i < cardType.sectors; i++)
+            {
+                for(int j = 0; j < 6; j++)
+                {
+                    unsigned char Byt[2];
+                    for(int k = 0; k < 2; k++)
+                    {
+                        tmp = keyAList->at(i).at(j*2+k).toUpper();
+                        if(tmp >= '0' && tmp <= '9')
+                            Byt[k] = tmp.toLatin1() - '0';
+                        else if(tmp >= 'A' && tmp <= 'F')
+                            Byt[k] = tmp.toLatin1() - 'A' + 10;
+                    }
+                    buff += (Byt[0] << 4)|Byt[1];
+                }
+                for(int j = 0; j < 6; j++)
+                {
+                    unsigned char Byt[2];
+                    for(int k = 0; k < 2; k++)
+                    {
+                        tmp = keyBList->at(i).at(j*2+k).toUpper();
+                        if(tmp >= '0' && tmp <= '9')
+                            Byt[k] = tmp.toLatin1() - '0';
+                        else if(tmp >= 'A' && tmp <= 'F')
+                            Byt[k] = tmp.toLatin1() - 'A' + 10;
+                    }
+                    buff += (Byt[0] << 4)|Byt[1];
+                }
+            }
+        }
+        else
+        {
+
+        }
+        bool ret = file.write(buff) != -1;
+        file.close();
+        return ret;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void Mifare::data_key2Data()
 {
     for(int i = 0; i < cardType.sectors; i++)
     {
         QString tmp = "";
-        dataList->replace(cardType.blks[i] + cardType.blk[i] - 1, "????????????FF078069????????????");
         if(data_isKeyValid(keyAList->at(i)))
             tmp += keyAList->at(i);
         else
