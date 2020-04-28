@@ -101,6 +101,8 @@ public:
     void data_key2Data();
     void data_data2Key();
 
+    void data_setData(int block, const QString &data);
+    void data_setKey(int sector, bool isKeyA, const QString &key);
 public slots:
 signals:
 

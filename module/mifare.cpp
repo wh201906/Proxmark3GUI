@@ -417,28 +417,35 @@ void Mifare::restore()
 
 void Mifare::data_syncWithDataWidget(bool syncAll, int block)
 {
-    QString tmp = "";
+    QString tmp;
     if(syncAll)
     {
         for(int i = 0; i < cardType.blocks; i++)
         {
             tmp = "";
-            tmp += dataList->at(i).mid(0, 2);
-            for(int j = 1; j < 16; j++)
+            if(dataList->at(i) != "")
             {
-                tmp += " ";
-                tmp += dataList->at(i).mid(j * 2, 2);
+                tmp += dataList->at(i).mid(0, 2);
+                for(int j = 1; j < 16; j++)
+                {
+                    tmp += " ";
+                    tmp += dataList->at(i).mid(j * 2, 2);
+                }
             }
             ui->MF_dataWidget->item(i, 2)->setText(tmp);
         }
     }
     else
     {
-        tmp += dataList->at(block).mid(0, 2);
-        for(int j = 1; j < 16; j++)
+        tmp = "";
+        if(dataList->at(block) != "")
         {
-            tmp += " ";
-            tmp += dataList->at(block).mid(j * 2, 2);
+            tmp += dataList->at(block).mid(0, 2);
+            for(int j = 1; j < 16; j++)
+            {
+                tmp += " ";
+                tmp += dataList->at(block).mid(j * 2, 2);
+            }
         }
         ui->MF_dataWidget->item(block, 2)->setText(tmp);
     }
@@ -659,13 +666,13 @@ bool Mifare::data_saveDataFile(const QString& filename, bool isBin)
                     unsigned char Byt[2];
                     for(int k = 0; k < 2; k++)
                     {
-                        tmp = dataList->at(i).at(j*2+k).toUpper();
+                        tmp = dataList->at(i).at(j * 2 + k).toUpper();
                         if(tmp >= '0' && tmp <= '9')
                             Byt[k] = tmp.toLatin1() - '0';
                         else if(tmp >= 'A' && tmp <= 'F')
                             Byt[k] = tmp.toLatin1() - 'A' + 10;
                     }
-                    buff += (Byt[0] << 4)|Byt[1];
+                    buff += (Byt[0] << 4) | Byt[1];
                 }
             }
         }
@@ -703,26 +710,26 @@ bool Mifare::data_saveKeyFile(const QString& filename, bool isBin)
                     unsigned char Byt[2];
                     for(int k = 0; k < 2; k++)
                     {
-                        tmp = keyAList->at(i).at(j*2+k).toUpper();
+                        tmp = keyAList->at(i).at(j * 2 + k).toUpper();
                         if(tmp >= '0' && tmp <= '9')
                             Byt[k] = tmp.toLatin1() - '0';
                         else if(tmp >= 'A' && tmp <= 'F')
                             Byt[k] = tmp.toLatin1() - 'A' + 10;
                     }
-                    buff += (Byt[0] << 4)|Byt[1];
+                    buff += (Byt[0] << 4) | Byt[1];
                 }
                 for(int j = 0; j < 6; j++)
                 {
                     unsigned char Byt[2];
                     for(int k = 0; k < 2; k++)
                     {
-                        tmp = keyBList->at(i).at(j*2+k).toUpper();
+                        tmp = keyBList->at(i).at(j * 2 + k).toUpper();
                         if(tmp >= '0' && tmp <= '9')
                             Byt[k] = tmp.toLatin1() - '0';
                         else if(tmp >= 'A' && tmp <= 'F')
                             Byt[k] = tmp.toLatin1() - 'A' + 10;
                     }
-                    buff += (Byt[0] << 4)|Byt[1];
+                    buff += (Byt[0] << 4) | Byt[1];
                 }
             }
         }
@@ -781,4 +788,17 @@ void Mifare::data_data2Key()
         }
         data_syncWithKeyWidget();
     }
+}
+
+void Mifare::data_setData(int block, const QString& data)
+{
+    dataList->replace(block, data);
+}
+
+void Mifare::data_setKey(int sector, bool isKeyA, const QString& key)
+{
+    if(isKeyA)
+        keyAList->replace(sector, key);
+    else
+        keyBList->replace(sector, key);
 }

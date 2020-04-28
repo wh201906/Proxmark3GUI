@@ -98,6 +98,12 @@ private slots:
 
     void on_MF_key2DataBotton_clicked();
 
+    void on_MF_dataWidget_itemChanged(QTableWidgetItem *item);
+
+    void on_MF_File_clearButton_clicked();
+
+    void on_MF_keyWidget_itemChanged(QTableWidgetItem *item);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;

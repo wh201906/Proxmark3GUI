@@ -192,6 +192,54 @@ void MainWindow::on_MF_key2DataBotton_clicked()
     mifare->data_key2Data();
 }
 
+void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
+{
+
+    if(item->column() == 2)
+    {
+        QString data = item->text().replace(" ", "");
+        if(data == "" || mifare->data_isDataValid(data) == Mifare::DATA_NOSPACE)
+        {
+            mifare->data_setData(item->row(), data);
+        }
+        else
+        {
+            QMessageBox::information(this, tr("Info"), tr("Data must consists of 32 Hex symbols(Whitespace is allowed)"));
+        }
+        mifare->data_syncWithDataWidget(false, item->row());
+    }
+}
+
+void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
+{
+    if(item->column() == 1)
+    {
+        QString key = item->text().replace(" ", "");
+        if(key == "" || mifare->data_isKeyValid(key))
+        {
+            mifare->data_setKey(item->row(), true, key);
+        }
+        else
+        {
+            QMessageBox::information(this, tr("Info"), tr("Key must consists of 12 Hex symbols(Whitespace is allowed)"));
+        }
+        mifare->data_syncWithKeyWidget(false, item->row(), true);
+    }
+    else if(item->column() == 2)
+    {
+        QString key = item->text().replace(" ", "");
+        if(key == "" || mifare->data_isKeyValid(key))
+        {
+            mifare->data_setKey(item->row(), false, key);
+        }
+        else
+        {
+            QMessageBox::information(this, tr("Info"), tr("Key must consists of 12 Hex symbols(Whitespace is allowed)"));
+        }
+        mifare->data_syncWithKeyWidget(false, item->row(), false);
+    }
+}
+
 void MainWindow::on_MF_File_loadButton_clicked()
 {
     QString title = "";
@@ -259,6 +307,20 @@ void MainWindow::on_MF_File_saveButton_clicked()
         }
     }
     qDebug() << filename << selectedType;
+}
+
+void MainWindow::on_MF_File_clearButton_clicked()
+{
+    if(ui->MF_File_keyBox->isChecked())
+    {
+        mifare->data_clearKey();
+        mifare->data_syncWithKeyWidget();
+    }
+    else if(ui->MF_File_dataBox->isChecked())
+    {
+        mifare->data_clearData();
+        mifare->data_syncWithDataWidget();
+    }
 }
 
 void MainWindow::on_MF_Attack_infoButton_clicked()
