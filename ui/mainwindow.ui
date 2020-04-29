@@ -16,6 +16,9 @@
     <height>770</height>
    </size>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::ActionsContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>Proxmark3GUI</string>
   </property>
@@ -103,7 +106,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -143,6 +146,9 @@
               <family>Consolas</family>
               <pointsize>12</pointsize>
              </font>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::PreventContextMenu</enum>
             </property>
             <property name="acceptDrops">
              <bool>true</bool>
@@ -286,6 +292,9 @@
               <family>Consolas</family>
               <pointsize>12</pointsize>
              </font>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::PreventContextMenu</enum>
             </property>
             <property name="acceptDrops">
              <bool>true</bool>
@@ -1032,6 +1041,9 @@
                 <horstretch>1</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="contextMenuPolicy">
+               <enum>Qt::PreventContextMenu</enum>
               </property>
              </widget>
             </item>

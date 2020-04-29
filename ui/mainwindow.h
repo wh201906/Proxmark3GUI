@@ -14,6 +14,8 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
 #include <QMimeData>
+#include <QAction>
+#include <QDesktopServices>
 
 #include "common/pm3process.h"
 #include "module/mifare.h"
@@ -123,6 +125,7 @@ private:
     QLabel* connectStatusBar;
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
+    QAction* myInfo;
 
     void uiInit();
 
