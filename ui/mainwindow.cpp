@@ -219,7 +219,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
 
     if(item->column() == 2)
     {
-        QString data = item->text().replace(" ", "");
+        QString data = item->text().replace(" ", "").toUpper();
         if(data == "" || mifare->data_isDataValid(data) == Mifare::DATA_NOSPACE)
         {
             mifare->data_setData(item->row(), data);
@@ -236,7 +236,7 @@ void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
 {
     if(item->column() == 1)
     {
-        QString key = item->text().replace(" ", "");
+        QString key = item->text().replace(" ", "").toUpper();
         if(key == "" || mifare->data_isKeyValid(key))
         {
             mifare->data_setKey(item->row(), true, key);
