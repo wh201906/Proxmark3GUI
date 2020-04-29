@@ -10,6 +10,7 @@
 #include <QButtonGroup>
 #include <QRadioButton>
 #include <QFileDialog>
+#include <QFontDialog>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
 
@@ -103,6 +104,16 @@ private slots:
     void on_MF_File_clearButton_clicked();
 
     void on_MF_keyWidget_itemChanged(QTableWidgetItem *item);
+
+    void on_MF_fontButton_clicked();
+
+    void on_MF_UID_wipeButton_clicked();
+
+    void on_MF_UID_aboutUIDButton_clicked();
+
+    void on_MF_UID_setParaButton_clicked();
+
+    void on_MF_UID_lockButton_clicked();
 
 private:
     Ui::MainWindow* ui;

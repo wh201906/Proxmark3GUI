@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>859</width>
+    <width>870</width>
     <height>770</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>820</width>
+    <width>870</width>
     <height>770</height>
    </size>
   </property>
@@ -27,6 +27,21 @@
     </sizepolicy>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="spacing">
+     <number>5</number>
+    </property>
+    <property name="leftMargin">
+     <number>5</number>
+    </property>
+    <property name="topMargin">
+     <number>5</number>
+    </property>
+    <property name="rightMargin">
+     <number>5</number>
+    </property>
+    <property name="bottomMargin">
+     <number>5</number>
+    </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="sizeConstraint">
@@ -95,6 +110,21 @@
         <string>Mifare</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_7">
+        <property name="spacing">
+         <number>5</number>
+        </property>
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
@@ -110,7 +140,8 @@
             </property>
             <property name="font">
              <font>
-              <family>Courier</family>
+              <family>Consolas</family>
+              <pointsize>12</pointsize>
              </font>
             </property>
             <property name="selectionMode">
@@ -152,14 +183,14 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>25</width>
-                <height>25</height>
+                <width>20</width>
+                <height>20</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>25</width>
-                <height>25</height>
+                <width>20</width>
+                <height>20</height>
                </size>
               </property>
               <property name="text">
@@ -177,18 +208,50 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>25</width>
-                <height>25</height>
+                <width>20</width>
+                <height>20</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>25</width>
-                <height>25</height>
+                <width>20</width>
+                <height>20</height>
                </size>
               </property>
               <property name="text">
                <string>&lt;&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="MF_fontButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>20</horstretch>
+                <verstretch>20</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Courier</family>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>F</string>
               </property>
              </widget>
             </item>
@@ -217,7 +280,8 @@
             </property>
             <property name="font">
              <font>
-              <family>Courier</family>
+              <family>Consolas</family>
+              <pointsize>12</pointsize>
              </font>
             </property>
             <property name="selectionMode">
@@ -638,7 +702,7 @@
                  <number>5</number>
                 </property>
                 <item row="0" column="2">
-                 <widget class="QPushButton" name="MF_lockUIDButton">
+                 <widget class="QPushButton" name="MF_UID_lockButton">
                   <property name="text">
                    <string>Lock UFUID Card</string>
                   </property>
@@ -904,6 +968,21 @@
         <string>RawCommand</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="spacing">
+         <number>5</number>
+        </property>
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>

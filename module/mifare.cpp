@@ -18,10 +18,31 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent) : QObject(parent
 
 
 
-void Mifare::info()
+QString Mifare::info(bool isRequiringOutput)
 {
-    util->execCMD("hf 14a info");
-    ui->funcTab->setCurrentIndex(1);
+    if(isRequiringOutput)
+    {
+        QString result = util->execCMDWithOutput("hf 14a info", 500);
+        qDebug() << result << result.indexOf(QRegExp(ui->MF_RW_dataEdit->text()), 0);
+        result.replace("UID :", "|");
+        result.replace("ATQA :", "|");
+        result.replace("SAK :", "|");
+        result.replace("TYPE :", "|");
+        QStringList lis = result.split("|");
+        if(lis.length() > 4)
+        {
+            qDebug() << lis[1] + lis[2] + lis[3];
+            return lis[1] + lis[2] + lis[3];
+        }
+        else
+            return "";
+    }
+    else
+    {
+        util->execCMD("hf 14a info");
+        ui->funcTab->setCurrentIndex(1);
+        return "";
+    }
 }
 
 void Mifare::chk()
@@ -399,9 +420,31 @@ void Mifare::wipeC()
 
 void Mifare::setParameterC()
 {
-
+    QString result = info(true);
+    if(result == "")
+        QMessageBox::information(parent, tr("Info"), tr("Failed to read card."));
+    else
+    {
+        QStringList lis = result.split("\r\n");
+        lis[0].replace(" ", "");
+        lis[1].replace(" ", "");
+        lis[2].replace(" ", "");
+        MF_UID_parameterDialog dialog(lis[0].toUpper(), lis[1].toUpper(), lis[2].mid(0, 2).toUpper());
+        connect(&dialog, &MF_UID_parameterDialog::sendCMD, util, &Util::execCMD);
+        if(dialog.exec() == QDialog::Accepted)
+            ui->funcTab->setCurrentIndex(1);
+    }
 }
 
+void Mifare::lockC()
+{
+    util->execCMD("hf 14a raw -pa -b7 40");
+    util->execCMD("hf 14a raw -pa 43");
+    util->execCMD("hf 14a raw -pa E0 00 39 F7");
+    util->execCMD("hf 14a raw -pa E1 00 E1 EE");
+    util->execCMD("hf 14a raw -pa 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
+    util->execCMD("hf 14a raw 52");
+}
 
 void Mifare::dump()
 {

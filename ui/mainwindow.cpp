@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->MF_simGroupBox->setVisible(false); // developing...
+    ui->MF_sniffGroupBox->setVisible(false); // developing...
 
     pm3Thread = new QThread(this);
     pm3 = new PM3Process(pm3Thread);
@@ -190,6 +192,18 @@ void MainWindow::on_MF_data2KeyBotton_clicked()
 void MainWindow::on_MF_key2DataBotton_clicked()
 {
     mifare->data_key2Data();
+}
+
+void MainWindow::on_MF_fontButton_clicked()
+{
+    bool isOK = false;
+    QFont font = QFontDialog::getFont(&isOK, ui->MF_keyWidget->font(), this, tr("Plz select the font of data widget and key widget"));
+
+    if(isOK)
+    {
+        ui->MF_keyWidget->setFont(font);
+        ui->MF_dataWidget->setFont(font);
+    }
 }
 
 void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
@@ -393,6 +407,42 @@ void MainWindow::on_MF_UID_writeBlockButton_clicked()
     mifare->writeC();
 }
 
+void MainWindow::on_MF_UID_wipeButton_clicked()
+{
+    mifare->wipeC();
+}
+
+void MainWindow::on_MF_UID_aboutUIDButton_clicked()
+{
+    QString msg;
+    msg += tr("    Normally, the Block 0 of a typical Mifare card, which contains the UID, is locked during the manufacture. Users cannot write anything to Block 0 or set a new UID to a normal Mifare card.\n");
+    msg += tr("    Chinese Magic Cards(aka UID Cards) are some special cards whose Block 0 are writeable. And you can change UID by writing to it.\n");
+    msg += "\n";
+    msg += tr("There are two versions of Chinese Magic Cards, the Gen1 and the Gen2.\n");
+    msg += tr("    Gen1:\n    also called UID card in China. It responses to some backdoor commands so you can access any blocks without password. The Proxmark3 has a bunch of related commands(csetblk, cgetblk, ...) to deal with this type of card, and my GUI also support these commands.\n");
+    msg += tr("    Gen2:\n    doesn't response to the backdoor commands, which means that a reader cannot detect whether it is a Chinese Magic Card or not by sending backdoor commands.\n");
+    msg += "\n";
+    msg += tr("There are some types of Chinese Magic Card Gen2.\n");
+    msg += tr("    CUID Card:\n    the Block 0 is writeable, you can write to this block repeatedly by normal wrbl command.\n");
+    msg += tr("    (hf mf wrbl 0 A FFFFFFFFFFFF <the data you want to write>)\n");
+    msg += tr("    FUID Card:\n    you can only write to Block 0 once. After that, it seems like a typical Mifare card(Block 0 cannot be written to).\n");
+    msg += tr("    (some readers might try changing the Block 0, which could detect the CUID Card. In that case, you should use FUID card.)\n");
+    msg += tr("    UFUID Card:\n    It behaves like a CUID card(or UID card? I'm not sure) before you send some special command to lock it. Once it is locked, you cannot change its Block 0(just like a typical Mifare card).\n");
+    msg += "\n";
+    msg += tr("    Seemingly, these Chinese Magic Cards are more easily to be compromised by Nested Attack(it takes little time to get an unknown key).\n");
+    QMessageBox::information(this, tr("About UID Card"), msg);
+}
+
+void MainWindow::on_MF_UID_setParaButton_clicked()
+{
+    mifare->setParameterC();
+}
+
+void MainWindow::on_MF_UID_lockButton_clicked()
+{
+    mifare->lockC();
+}
+
 void MainWindow::on_MF_Sniff_sniffButton_clicked()
 {
     mifare->sniff();
@@ -453,7 +503,7 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->verticalHeader()->setVisible(false);
     ui->MF_dataWidget->setColumnWidth(0, 35);
     ui->MF_dataWidget->setColumnWidth(1, 35);
-    ui->MF_dataWidget->setColumnWidth(2, 400);
+    ui->MF_dataWidget->setColumnWidth(2, 430);
 
     ui->MF_keyWidget->setColumnCount(3);
     ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
@@ -461,8 +511,8 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("KeyB")));
     ui->MF_keyWidget->verticalHeader()->setVisible(false);
     ui->MF_keyWidget->setColumnWidth(0, 35);
-    ui->MF_keyWidget->setColumnWidth(1, 110);
-    ui->MF_keyWidget->setColumnWidth(2, 110);
+    ui->MF_keyWidget->setColumnWidth(1, 115);
+    ui->MF_keyWidget->setColumnWidth(2, 115);
 
     MF_widgetReset();
     typeBtnGroup = new QButtonGroup(this);

@@ -4,6 +4,7 @@
 #include "common/util.h"
 #include "ui_mainwindow.h"
 #include "ui/mf_attack_hardnesteddialog.h"
+#include "ui/mf_uid_parameterdialog.h"
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -15,7 +16,7 @@ class Mifare : public QObject
 public:
     explicit Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent = nullptr);
 
-    void info();
+    QString info(bool isRequiringOutput = false);
     void chk();
     void nested();
     void hardnested();
@@ -103,6 +104,7 @@ public:
 
     void data_setData(int block, const QString &data);
     void data_setKey(int sector, bool isKeyA, const QString &key);
+    void lockC();
 public slots:
 signals:
 
@@ -117,6 +119,7 @@ private:
     QRegExp* dataPattern;
     QRegExp* chkKeyPattern;
     QRegExp* nestedKeyPattern;
+    QRegExp* UIDPattern;
 };
 
 #endif // MIFARE_H

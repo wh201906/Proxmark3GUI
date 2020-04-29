@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Set Parameter</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -47,16 +47,6 @@
       <widget class="QLineEdit" name="SAKLineEdit"/>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>The parameter will not change if you leave it empty.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
