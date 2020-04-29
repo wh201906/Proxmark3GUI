@@ -618,7 +618,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="QGroupBox" name="MF_NormalGroupBox">
+              <widget class="QGroupBox" name="MF_normalGroupBox">
                <property name="title">
                 <string>Normal(Require Password)</string>
                </property>

@@ -36,6 +36,7 @@ void MainWindow::initUI() // will be called by main.app
     ui->retranslateUi(this);
     uiInit();
     signalInit();
+    setState(false);
 }
 
 // ******************** basic functions ********************
@@ -78,6 +79,7 @@ void MainWindow::on_PM3_connectButton_clicked()
 void MainWindow::onPM3StateChanged(bool st, QString info)
 {
     pm3state = st;
+    setState(st);
     if(st == true)
     {
         setStatusBar(PM3VersionBar, info);
@@ -92,6 +94,7 @@ void MainWindow::onPM3StateChanged(bool st, QString info)
 void MainWindow::on_PM3_disconnectButton_clicked()
 {
     pm3state = false;
+    setState(false);
     emit killPM3();
     emit setSerialListener("", false);
     setStatusBar(connectStatusBar, tr("Not Connected"));
@@ -344,12 +347,16 @@ void MainWindow::on_MF_Attack_infoButton_clicked()
 
 void MainWindow::on_MF_Attack_chkButton_clicked()
 {
+    setState(false);
     mifare->chk();
+    setState(true);
 }
 
 void MainWindow::on_MF_Attack_nestedButton_clicked()
 {
+    setState(false);
     mifare->nested();
+    setState(true);
 }
 
 void MainWindow::on_MF_Attack_hardnestedButton_clicked()
@@ -359,22 +366,30 @@ void MainWindow::on_MF_Attack_hardnestedButton_clicked()
 
 void MainWindow::on_MF_RW_readAllButton_clicked()
 {
+    setState(false);
     mifare->readAll();
+    setState(true);
 }
 
 void MainWindow::on_MF_RW_readBlockButton_clicked()
 {
+    setState(false);
     mifare->read();
+    setState(true);
 }
 
 void MainWindow::on_MF_RW_writeBlockButton_clicked()
 {
+    setState(false);
     mifare->write();
+    setState(true);
 }
 
 void MainWindow::on_MF_RW_writeAllButton_clicked()
 {
+    setState(false);
     mifare->writeAll();
+    setState(true);
 }
 
 void MainWindow::on_MF_RW_dumpButton_clicked()
@@ -389,22 +404,30 @@ void MainWindow::on_MF_RW_restoreButton_clicked()
 
 void MainWindow::on_MF_UID_readAllButton_clicked()
 {
+    setState(false);
     mifare->readAllC();
+    setState(true);
 }
 
 void MainWindow::on_MF_UID_readBlockButton_clicked()
 {
+    setState(false);
     mifare->readC();
+    setState(true);
 }
 
 void MainWindow::on_MF_UID_writeAllButton_clicked()
 {
+    setState(false);
     mifare->writeAllC();
+    setState(true);
 }
 
 void MainWindow::on_MF_UID_writeBlockButton_clicked()
 {
+    setState(false);
     mifare->writeC();
+    setState(true);
 }
 
 void MainWindow::on_MF_UID_wipeButton_clicked()
@@ -435,7 +458,9 @@ void MainWindow::on_MF_UID_aboutUIDButton_clicked()
 
 void MainWindow::on_MF_UID_setParaButton_clicked()
 {
+    setState(false);
     mifare->setParameterC();
+    setState(true);
 }
 
 void MainWindow::on_MF_UID_lockButton_clicked()
@@ -445,7 +470,9 @@ void MainWindow::on_MF_UID_lockButton_clicked()
 
 void MainWindow::on_MF_Sniff_sniffButton_clicked()
 {
+    setState(false);
     mifare->sniff();
+    setState(true);
 }
 
 void MainWindow::on_MF_Sniff_listButton_clicked()
@@ -597,6 +624,25 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event) // drag support
         }
     }
     return QMainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::setState(bool st)
+{
+    if(!st && pm3state)
+    {
+        setStatusBar(programStatusBar, tr("Running"));
+    }
+    else
+    {
+        setStatusBar(programStatusBar, tr("Idle"));
+    }
+    ui->MF_attackGroupBox->setEnabled(st);
+    ui->MF_normalGroupBox->setEnabled(st);
+    ui->MF_UIDGroupBox->setEnabled(st);
+    ui->MF_simGroupBox->setEnabled(st);
+    ui->MF_sniffGroupBox->setEnabled(st);
+    ui->Raw_CMDEdit->setEnabled(st);
+    ui->Raw_sendCMDButton->setEnabled(st);
 }
 
 // ***********************************************

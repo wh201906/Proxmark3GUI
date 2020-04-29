@@ -137,6 +137,7 @@ private:
     void signalInit();
     void MF_widgetReset();
     void setTableItem(QTableWidget *widget, int row, int column, const QString &text);
+    void setState(bool st);
 signals:
     void connectPM3(const QString path, const QString port);
     void killPM3();
