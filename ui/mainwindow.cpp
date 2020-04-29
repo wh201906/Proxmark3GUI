@@ -522,6 +522,9 @@ void MainWindow::uiInit()
     typeBtnGroup->addButton(ui->MF_Type_4kButton, 4);
     connect(typeBtnGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), this, &MainWindow::MF_onTypeChanged);
 
+    ui->MF_keyWidget->installEventFilter(this);
+    ui->MF_dataWidget->installEventFilter(this);
+
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
     on_PM3_refreshPortButton_clicked();
 }
@@ -554,4 +557,46 @@ void MainWindow::setTableItem(QTableWidget* widget, int row, int column, const Q
         widget->setItem(row, column, new QTableWidgetItem());
     widget->item(row, column)->setText(text);
 }
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event) // drag support
+{
+    if(event->type() == QEvent::DragEnter)
+    {
+        QDragEnterEvent* dragEvent = static_cast<QDragEnterEvent*>(event);
+        dragEvent->acceptProposedAction();
+        return true;
+    }
+    else if(event->type() == QEvent::Drop)
+    {
+        QDropEvent* dropEvent = static_cast<QDropEvent*>(event);
+        if(watched == ui->MF_keyWidget)
+        {
+            const QMimeData* mime = dropEvent->mimeData();
+            if(mime->hasUrls())
+            {
+                QList<QUrl> urls = mime->urls();
+                if(urls.length() == 1)
+                {
+                    mifare->data_loadKeyFile(urls[0].toLocalFile());
+                    return true;
+                }
+            }
+        }
+        else if(watched == ui->MF_dataWidget)
+        {
+            const QMimeData* mime = dropEvent->mimeData();
+            if(mime->hasUrls())
+            {
+                QList<QUrl> urls = mime->urls();
+                if(urls.length() == 1)
+                {
+                    mifare->data_loadDataFile(urls[0].toLocalFile());
+                    return true;
+                }
+            }
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
 // ***********************************************

@@ -13,6 +13,7 @@
 #include <QFontDialog>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
+#include <QMimeData>
 
 #include "common/pm3process.h"
 #include "module/mifare.h"
@@ -33,6 +34,7 @@ public:
     ~MainWindow();
 
     void initUI();
+    bool eventFilter(QObject *watched, QEvent *event);
 public slots:
     void refreshOutput(const QString &output);
     void refreshCMD(const QString &cmd);

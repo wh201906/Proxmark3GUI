@@ -14,18 +14,30 @@ int main(int argc, char *argv[])
     QVariant lang = settings->value("lang", "null");
     if(lang == "null")
     {
+#ifdef Q_OS_WIN
         lang = "lang/en_US.qm";
+#else
+        lang = "lang/en_US.ts";
+#endif
         QStringList langList;
         langList.append("English");
         langList.append("简体中文");
         QString seletedText = QInputDialog::getItem(&w, "", "Choose a language:", langList, 0, false);
         if(seletedText == "English")
         {
+#ifdef Q_OS_WIN
             lang = "lang/en_US.qm";
+#else
+            lang = "lang/en_US.ts";
+#endif
         }
         else if(seletedText == "简体中文")
         {
+#ifdef Q_OS_WIN
             lang = "lang/zh_CN.qm";
+#else
+            lang = "lang/zh_CN.ts";
+#endif
         }
     }
     QTranslator* translator = new QTranslator(&w);
