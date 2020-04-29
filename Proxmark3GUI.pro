@@ -17,22 +17,36 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    pm3process.cpp
+    common/pm3process.cpp \
+    common/util.cpp \
+    module/mifare.cpp \
+    ui/mf_uid_parameterdialog.cpp \
+    ui/mainwindow.cpp \
+    ui/mf_attack_hardnesteddialog.cpp \
 
 HEADERS += \
-    mainwindow.h \
-    pm3process.h
+    common/pm3process.h \
+    common/util.h \
+    module/mifare.h \
+    ui/mf_uid_parameterdialog.h \
+    ui/mainwindow.h \
+    ui/mf_attack_hardnesteddialog.h \
 
 FORMS += \
-    mainwindow.ui
+    ui/mf_uid_parameterdialog.ui \
+    ui/mainwindow.ui \
+    ui/mf_attack_hardnesteddialog.ui
+
+TRANSLATIONS += \
+    lang/zh_CN.ts \
+    lang/en_US.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-VERSION = 0.0.1
+VERSION = 0.1
 QMAKE_TARGET_PRODUCT = "Proxmark3GUI"
 QMAKE_TARGET_DESCRIPTION = "Proxmark3GUI"
 QMAKE_TARGET_COMPANY = "wh201906"
