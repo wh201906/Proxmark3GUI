@@ -274,7 +274,7 @@ void MainWindow::on_MF_File_loadButton_clicked()
     else if(ui->MF_File_keyBox->isChecked())
     {
         title = tr("Plz select the key file:");
-        filename = QFileDialog::getOpenFileName(this, title, "./", tr("Binary Key Files(*.bin *.dump);;All Files(*.*)"));
+        filename = QFileDialog::getOpenFileName(this, title, "./", tr("Binary Key Files(*.bin *.dump);;Binary Data Files(*.bin *.dump);;All Files(*.*)"));
         qDebug() << filename;
         if(filename != "")
         {

@@ -120,6 +120,7 @@ private:
     QRegExp* chkKeyPattern;
     QRegExp* nestedKeyPattern;
     QRegExp* UIDPattern;
+    QString bin2text(const QByteArray &buff, int start, int length);
 };
 
 #endif // MIFARE_H
