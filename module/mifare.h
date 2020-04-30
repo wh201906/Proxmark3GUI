@@ -105,6 +105,9 @@ public:
     void data_setData(int block, const QString &data);
     void data_setKey(int sector, bool isKeyA, const QString &key);
     void lockC();
+    void writeAllE();
+    void readAllE();
+    void wipeE();
 public slots:
 signals:
 

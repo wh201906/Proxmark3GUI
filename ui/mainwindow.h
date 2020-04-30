@@ -22,7 +22,8 @@
 #include "common/util.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 QT_END_NAMESPACE
@@ -118,6 +119,12 @@ private slots:
     void on_MF_UID_setParaButton_clicked();
 
     void on_MF_UID_lockButton_clicked();
+
+    void on_MF_Sim_loadDataButton_clicked();
+
+    void on_MF_Sim_writeAllButton_clicked();
+
+    void on_MF_Sim_clearButton_clicked();
 
 private:
     Ui::MainWindow* ui;

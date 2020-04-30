@@ -6,10 +6,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->MF_simGroupBox->setVisible(false); // developing...
+//    ui->MF_simGroupBox->setVisible(false); // developing...
     ui->MF_sniffGroupBox->setVisible(false); // developing...
     myInfo = new QAction("wh201906", this);
-    connect(myInfo, &QAction::triggered, [ = ]() {
+    connect(myInfo, &QAction::triggered, [ = ]()
+    {
         QDesktopServices::openUrl(QUrl("https://github.com/wh201906"));
     });
     this->addAction(myInfo);
@@ -473,6 +474,25 @@ void MainWindow::on_MF_UID_lockButton_clicked()
     mifare->lockC();
 }
 
+void MainWindow::on_MF_Sim_loadDataButton_clicked()
+{
+    setState(false);
+    mifare->writeAllE();
+    setState(true);
+}
+
+void MainWindow::on_MF_Sim_writeAllButton_clicked()
+{
+    setState(false);
+    mifare->readAllE();
+    setState(true);
+}
+
+void MainWindow::on_MF_Sim_clearButton_clicked()
+{
+    mifare->wipeE();
+}
+
 void MainWindow::on_MF_Sniff_sniffButton_clicked()
 {
     setState(false);
@@ -651,3 +671,5 @@ void MainWindow::setState(bool st)
 }
 
 // ***********************************************
+
+
