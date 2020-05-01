@@ -5,6 +5,7 @@
 #include "ui_mainwindow.h"
 #include "ui/mf_attack_hardnesteddialog.h"
 #include "ui/mf_uid_parameterdialog.h"
+#include "ui/mf_sim_simdialog.h"
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -108,6 +109,7 @@ public:
     void writeAllE();
     void readAllE();
     void wipeE();
+    void simulate();
 public slots:
 signals:
 

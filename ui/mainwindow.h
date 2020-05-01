@@ -126,6 +126,8 @@ private slots:
 
     void on_MF_Sim_clearButton_clicked();
 
+    void on_MF_Sim_simButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;

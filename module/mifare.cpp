@@ -445,6 +445,18 @@ void Mifare::writeAllC()
     }
 }
 
+void Mifare::dump()
+{
+    util->execCMD("hf mf dump");
+    ui->funcTab->setCurrentIndex(1);
+}
+
+void Mifare::restore()
+{
+    util->execCMD("hf mf restore");
+    ui->funcTab->setCurrentIndex(1);
+}
+
 void Mifare::wipeC()
 {
     util->execCMD(
@@ -550,17 +562,12 @@ void Mifare::wipeE()
     util->execCMD("hf mf eclr");
 }
 
-void Mifare::dump()
+void Mifare::simulate()
 {
-    util->execCMD("hf mf dump");
-    ui->funcTab->setCurrentIndex(1);
+    MF_Sim_simDialog dialog;
+    dialog.exec();
 }
 
-void Mifare::restore()
-{
-    util->execCMD("hf mf restore");
-    ui->funcTab->setCurrentIndex(1);
-}
 
 void Mifare::data_syncWithDataWidget(bool syncAll, int block)
 {

@@ -673,3 +673,8 @@ void MainWindow::setState(bool st)
 // ***********************************************
 
 
+
+void MainWindow::on_MF_Sim_simButton_clicked()
+{
+    mifare->simulate();
+}
