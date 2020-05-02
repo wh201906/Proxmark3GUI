@@ -564,8 +564,10 @@ void Mifare::wipeE()
 
 void Mifare::simulate()
 {
-    MF_Sim_simDialog dialog;
-    dialog.exec();
+    MF_Sim_simDialog dialog(cardType.type);
+    connect(&dialog, &MF_Sim_simDialog::sendCMD, util, &Util::execCMD);
+    if(dialog.exec() == QDialog::Accepted)
+        ui->funcTab->setCurrentIndex(1);
 }
 
 

@@ -2,6 +2,7 @@
 #define MF_SIM_SIMDIALOG_H
 
 #include <QDialog>
+#include <QDebug>
 
 namespace Ui
 {
@@ -13,7 +14,7 @@ class MF_Sim_simDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MF_Sim_simDialog(QWidget *parent = nullptr);
+    explicit MF_Sim_simDialog(int cardType, QWidget *parent = nullptr);
     ~MF_Sim_simDialog();
 
 private slots:
@@ -23,6 +24,11 @@ private slots:
 
 private:
     Ui::MF_Sim_simDialog *ui;
+    int cardType;
+signals:
+    void sendCMD(QString cmd);
+private slots:
+    void on_buttonBox_accepted();
 };
 
 #endif // MF_SIM_SIMDIALOG_H
