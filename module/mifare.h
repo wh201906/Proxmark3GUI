@@ -110,6 +110,8 @@ public:
     void readAllE();
     void wipeE();
     void simulate();
+    void loadSniff(const QString& file);
+    void saveSniff(const QString& file);
 public slots:
 signals:
 

@@ -570,6 +570,17 @@ void Mifare::simulate()
         ui->funcTab->setCurrentIndex(1);
 }
 
+void Mifare::loadSniff(const QString& file)
+{
+    util->execCMD("hf list mf -l " + file);
+    ui->funcTab->setCurrentIndex(1);
+}
+
+void Mifare::saveSniff(const QString& file)
+{
+    util->execCMD("hf list mf -s " + file);
+    ui->funcTab->setCurrentIndex(1);
+}
 
 void Mifare::data_syncWithDataWidget(bool syncAll, int block)
 {

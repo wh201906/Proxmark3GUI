@@ -128,6 +128,10 @@ private slots:
 
     void on_MF_Sim_simButton_clicked();
 
+    void on_MF_Sniff_loadButton_clicked();
+
+    void on_MF_Sniff_saveButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;

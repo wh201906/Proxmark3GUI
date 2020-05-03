@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent):
 {
     ui->setupUi(this);
 //    ui->MF_simGroupBox->setVisible(false); // developing...
-    ui->MF_sniffGroupBox->setVisible(false); // developing...
+//    ui->MF_sniffGroupBox->setVisible(false); // developing...
     myInfo = new QAction("wh201906", this);
     connect(myInfo, &QAction::triggered, [ = ]()
     {
@@ -677,4 +677,47 @@ void MainWindow::setState(bool st)
 void MainWindow::on_MF_Sim_simButton_clicked()
 {
     mifare->simulate();
+}
+
+void MainWindow::on_MF_Sniff_loadButton_clicked() // use a tmp file to support complicated path
+{
+    QString title = "";
+    QString filename = "";
+
+    title = tr("Plz select the trace file:");
+    filename = QFileDialog::getOpenFileName(this, title, "./", tr("Trace Files(*.trc);;All Files(*.*)"));
+    qDebug() << filename;
+    if(filename != "")
+    {
+        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
+        if(QFile::copy(filename, "./" + tmpFile))
+        {
+            mifare->loadSniff(tmpFile);
+            QFile::remove("./" + tmpFile);
+        }
+        else
+        {
+            QMessageBox::information(this, tr("Info"), tr("Failed to open") + "\n" + filename);
+        }
+    }
+}
+
+void MainWindow::on_MF_Sniff_saveButton_clicked()
+{
+    QString title = "";
+    QString filename = "";
+
+    title = tr("Plz select the location to save trace file:");
+    filename = QFileDialog::getSaveFileName(this, title, "./", tr("Trace Files(*.trc)"));
+    qDebug() << filename;
+    if(filename != "")
+    {
+        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
+        mifare->saveSniff(tmpFile);
+        if(!QFile::copy("./" + tmpFile, filename))
+        {
+            QMessageBox::information(this, tr("Info"), tr("Failed to save to") + "\n" + filename);
+        }
+    }
+
 }
