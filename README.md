@@ -28,6 +28,9 @@ A GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 
 ## Update Log:
 
+### V0.1.1
++ Complete Mifare module(support simulate and sniff)
+
 ### V0.1
 + Able to deal with Mifare card and related files
 
