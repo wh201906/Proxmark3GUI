@@ -105,9 +105,6 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="currentIndex">
-       <number>1</number>
-      </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
         <string>Mifare</string>
@@ -609,6 +606,13 @@
                    <string>B</string>
                   </property>
                  </item>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Data:</string>
+                 </property>
                 </widget>
                </item>
               </layout>

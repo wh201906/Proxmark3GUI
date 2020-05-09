@@ -1,6 +1,6 @@
 ﻿#include "mifare.h"
 
-Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent) : QObject(parent)
+Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
 {
     this->parent = parent;
     util = addr;
@@ -9,14 +9,12 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent) : QObject(parent
     keyAList = new QStringList();
     keyBList = new QStringList();
     dataList = new QStringList();
-    data_clearKey(); // fill with blank Qstring
+    data_clearKey();  // fill with blank Qstring
     data_clearData(); // fill with blank Qstring
     dataPattern = new QRegExp("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
     chkKeyPattern = new QRegExp("\\|\\d{3}\\|.+\\|.+\\|");
     nestedKeyPattern = new QRegExp("\\|\\d{3}\\|.+\\|.+\\|.+\\|.+\\|");
 }
-
-
 
 QString Mifare::info(bool isRequiringOutput)
 {
@@ -47,14 +45,19 @@ QString Mifare::info(bool isRequiringOutput)
 
 void Mifare::chk()
 {
-    QString result = util->execCMDWithOutput("hf mf chk *" + QString::number(cardType.type) + " ?", 1000 + cardType.type * 1000);
+    QString result = util->execCMDWithOutput(
+                         "hf mf chk *"
+                         + QString::number(cardType.type)
+                         + " ?",
+                         1000 + cardType.type * 1000);
     qDebug() << result;
 
     int offset = 0;
     QString tmp, tmp2;
     for(int i = 0; i < cardType.sectors; i++)
     {
-        offset = result.indexOf(*chkKeyPattern, offset);
+        offset = chkKeyPattern->indexIn(result, offset);
+//        offset = result.indexOf(*chkKeyPattern, offset);
         tmp = result.mid(offset, 39).toUpper();
         offset += 39;
         qDebug() << tmp << offset;
@@ -70,13 +73,17 @@ void Mifare::chk()
 
 void Mifare::nested()
 {
-    QString result = util->execCMDWithOutput("hf mf nested " + QString::number(cardType.type) + " *");
+    QString result = util->execCMDWithOutput(
+                         "hf mf nested "
+                         + QString::number(cardType.type)
+                         + " *");
 
     int offset = 0;
     QString tmp;
     for(int i = 0; i < cardType.sectors; i++)
     {
-        offset = result.indexOf(*nestedKeyPattern, offset);
+        offset = nestedKeyPattern->indexIn(result, offset);
+//        offset = result.indexOf(*nestedKeyPattern, offset);
         tmp = result.mid(offset, 47).toUpper();
         offset += 47;
         if(tmp.at(23) == '1')
@@ -111,15 +118,17 @@ void Mifare::read()
 {
     int waitTime = 300;
     int currblk = ui->MF_RW_blockBox->currentText().toInt();
-    QString result = util->execCMDWithOutput("hf mf rdbl "
-                     + QString::number(currblk)
-                     + " "
-                     + ui->MF_RW_keyTypeBox->currentText()
-                     + " "
-                     + ui->MF_RW_keyEdit->text(), waitTime);
+    QString result = util->execCMDWithOutput(
+                         "hf mf rdbl "
+                         + QString::number(currblk)
+                         + " "
+                         + ui->MF_RW_keyTypeBox->currentText()
+                         + " "
+                         + ui->MF_RW_keyEdit->text(),
+                         waitTime);
     if(result.indexOf("isOk:01") != -1)
     {
-        result = result.mid(result.indexOf(*dataPattern, 0), 47).toUpper();
+        result = result.mid(dataPattern->indexIn(result), 47).toUpper();
         if((currblk < 128 && ((currblk + 1) % 4 == 0)) || ((currblk + 1) % 8 == 0)) // process key block
         {
             if(ui->MF_RW_keyTypeBox->currentText() == "A")
@@ -130,10 +139,12 @@ void Mifare::read()
                 }
                 ui->MF_RW_dataEdit->setText(result);
                 QString tmpKey = result.right(18).replace(" ", "");
-                result = util->execCMDWithOutput("hf mf rdbl "
-                                                 + ui->MF_RW_keyTypeBox->currentText()
-                                                 + " B "
-                                                 + tmpKey, waitTime);
+                result = util->execCMDWithOutput(
+                             "hf mf rdbl "
+                             + ui->MF_RW_keyTypeBox->currentText()
+                             + " B "
+                             + tmpKey,
+                             waitTime);
                 if(result.indexOf("isOk:01") == -1)
                 {
                     result = ui->MF_RW_dataEdit->text();
@@ -145,7 +156,10 @@ void Mifare::read()
             {
                 for(int i = 0; i < 6; i++)
                 {
-                    result = result.replace(30 + i * 3, 2, ui->MF_RW_keyEdit->text().mid(i * 2, 2));
+                    result = result.replace(
+                                 30 + i * 3,
+                                 2,
+                                 ui->MF_RW_keyEdit->text().mid(i * 2, 2));
                 }
                 result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
                 ui->MF_RW_dataEdit->setText(result);
@@ -176,10 +190,12 @@ void Mifare::readAll()
         // check keys and read the first block of each sector
         if(data_isKeyValid(keyAList->at(i)))
         {
-            result = util->execCMDWithOutput("hf mf rdsc "
-                                             + QString::number(i)
-                                             + " A "
-                                             + keyAList->at(i), waitTime);
+            result = util->execCMDWithOutput(
+                         "hf mf rdsc "
+                         + QString::number(i)
+                         + " A "
+                         + keyAList->at(i),
+                         waitTime);
             qDebug() << result;
             offset = result.indexOf("isOk:01");
             if(offset != -1)
@@ -187,7 +203,8 @@ void Mifare::readAll()
                 isKeyAValid = true;
                 for(int j = 0; j < cardType.blk[i]; j++)
                 {
-                    offset = result.indexOf(*dataPattern, offset);
+                    offset = dataPattern->indexIn(result, offset);
+//                    offset = result.indexOf(*dataPattern, offset);
                     tmp = result.mid(offset, 47).toUpper();
                     offset += 47;
                     qDebug() << tmp;
@@ -199,10 +216,12 @@ void Mifare::readAll()
         }
         if(data_isKeyValid(keyBList->at(i)))
         {
-            result = util->execCMDWithOutput("hf mf rdsc "
-                                             + QString::number(i)
-                                             + " B "
-                                             + keyBList->at(i), waitTime);
+            result = util->execCMDWithOutput(
+                         "hf mf rdsc "
+                         + QString::number(i)
+                         + " B "
+                         + keyBList->at(i),
+                         waitTime);
             qDebug() << result;
             offset = result.indexOf("isOk:01");
             if(offset != -1)
@@ -210,7 +229,8 @@ void Mifare::readAll()
                 isKeyBValid = true;
                 for(int j = 0; j < cardType.blk[i]; j++)
                 {
-                    offset = result.indexOf(*dataPattern, offset);
+                    offset = dataPattern->indexIn(result, offset);
+//                    offset = result.indexOf(*dataPattern, offset);
                     tmp = result.mid(offset, 47).toUpper();
                     offset += 47;
                     qDebug() << tmp;
@@ -227,7 +247,8 @@ void Mifare::readAll()
             // fill the MF_dataWidget with the known valid key
             //
             // check whether the MF_dataWidget contains the valid key,
-            // and fill MF_keyWidget(when you only have KeyA but the ReadBlock output contains the KeyB)
+            // and fill MF_keyWidget(when you only have KeyA but the ReadBlock output
+            // contains the KeyB)
             //
             // the structure is not symmetric, since you cannot get KeyA from output
             // this program will only process the provided KeyA(in MF_keyWidget)
@@ -248,13 +269,16 @@ void Mifare::readAll()
                 dataList->replace(cardType.blks[i] + cardType.blk[i] - 1, result);
                 data_syncWithDataWidget(false, cardType.blks[i] + cardType.blk[i] - 1);
             }
-            else // now isKeyAValid == true, the output might contains the KeyB
+            else   // now isKeyAValid == true, the output might contains the KeyB
             {
-                QString tmpKey = dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12);
-                result = util->execCMDWithOutput("hf mf rdbl "
-                                                 + QString::number(cardType.blks[i] + cardType.blk[i] - 1)
-                                                 + " B "
-                                                 + tmpKey, waitTime);
+                QString tmpKey =
+                    dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12);
+                result = util->execCMDWithOutput(
+                             "hf mf rdbl "
+                             + QString::number(cardType.blks[i] + cardType.blk[i] - 1)
+                             + " B "
+                             + tmpKey,
+                             waitTime);
                 if(result.indexOf("isOk:01") != -1)
                 {
                     keyBList->replace(i, tmpKey);
@@ -265,7 +289,6 @@ void Mifare::readAll()
                     result = dataList->at(cardType.blks[i] + cardType.blk[i] - 1);
                     result = result.replace(20, 12, "????????????");
                     dataList->replace(cardType.blks[i] + cardType.blk[i] - 1, result);
-
                 }
             }
             data_syncWithDataWidget(false, cardType.blks[i] + cardType.blk[i] - 1);
@@ -276,14 +299,12 @@ void Mifare::readAll()
 void Mifare::write()
 {
     int waitTime = 300;
-    QString result = util->execCMDWithOutput("hf mf wrbl "
-                     + ui->MF_RW_blockBox->currentText()
-                     + " "
-                     + ui->MF_RW_keyTypeBox->currentText()
-                     + " "
-                     + ui->MF_RW_keyEdit->text()
-                     + " "
-                     + ui->MF_RW_dataEdit->text().replace(" ", ""), waitTime);
+    QString result = util->execCMDWithOutput(
+                         "hf mf wrbl " + ui->MF_RW_blockBox->currentText() + " " +
+                         ui->MF_RW_keyTypeBox->currentText() + " " +
+                         ui->MF_RW_keyEdit->text() + " " +
+                         ui->MF_RW_dataEdit->text().replace(" ", ""),
+                         waitTime);
     if(result.indexOf("isOk:01") != -1)
     {
         QMessageBox::information(parent, tr("Info"), tr("Success!"));
@@ -302,27 +323,32 @@ void Mifare::writeAll()
     {
         for(int j = 0; j < cardType.blk[i]; j++)
         {
-            result = ""; // if the KeyA is invalid and the result is not empty, the KeyB will not be tested.
+            result = ""; // if the KeyA is invalid and the result is not empty, the
+            // KeyB will not be tested.
             if(data_isDataValid(dataList->at(cardType.blks[i] + j)) != DATA_NOSPACE || dataList->at(cardType.blks[i] + j).contains('?'))
                 continue;
             if(data_isKeyValid(keyAList->at(i)))
             {
-                result = util->execCMDWithOutput("hf mf wrbl "
-                                                 + QString::number(cardType.blks[i] + j)
-                                                 + " A "
-                                                 + keyAList->at(i)
-                                                 + " "
-                                                 + dataList->at(cardType.blks[i] + j), waitTime);
+                result = util->execCMDWithOutput(
+                             "hf mf wrbl " +
+                             QString::number(cardType.blks[i] + j)
+                             + " A "
+                             + keyAList->at(i)
+                             + " "
+                             + dataList->at(cardType.blks[i] + j),
+                             waitTime);
             }
             qDebug() << i << j << result.indexOf("isOk:01") << data_isKeyValid(keyBList->at(i));
             if(result.indexOf("isOk:01") == -1 && data_isKeyValid(keyBList->at(i)))
             {
-                result = util->execCMDWithOutput("hf mf wrbl "
-                                                 + QString::number(cardType.blks[i] + j)
-                                                 + " B "
-                                                 + keyBList->at(i)
-                                                 + " "
-                                                 + dataList->at(cardType.blks[i] + j), waitTime);
+                result = util->execCMDWithOutput(
+                             "hf mf wrbl "
+                             + QString::number(cardType.blks[i] + j)
+                             + " B "
+                             + keyBList->at(i)
+                             + " "
+                             + dataList->at(cardType.blks[i] + j),
+                             waitTime);
             }
         }
     }
@@ -332,11 +358,13 @@ void Mifare::readC()
 {
     int waitTime = 300;
     int currblk = ui->MF_RW_blockBox->currentText().toInt();
-    QString result = util->execCMDWithOutput("hf mf cgetblk "
-                     + QString::number(currblk), waitTime);
+    QString result = util->execCMDWithOutput(
+                         "hf mf cgetblk "
+                         + QString::number(currblk),
+                         waitTime);
     if(result.indexOf("No chinese") == -1)
     {
-        result = result.mid(result.indexOf(*dataPattern, 0), 47).toUpper();
+        result = result.mid(dataPattern->indexIn(result), 47).toUpper();
         ui->MF_RW_dataEdit->setText(result);
     }
 }
@@ -350,15 +378,18 @@ void Mifare::readAllC()
     int offset = 0;
     for(int i = 0; i < cardType.sectors; i++)
     {
-        result = util->execCMDWithOutput("hf mf cgetsc "
-                                         + QString::number(i), waitTime);
+        result = util->execCMDWithOutput(
+                     "hf mf cgetsc "
+                     + QString::number(i),
+                     waitTime);
         qDebug() << result;
         if(result.indexOf("No chinese") == -1)
         {
             offset = 0;
             for(int j = 0; j < cardType.blk[i]; j++)
             {
-                offset = result.indexOf(*dataPattern, offset);
+                offset = dataPattern->indexIn(result, offset);
+//                offset = result.indexOf(*dataPattern, offset);
                 tmp = result.mid(offset, 47).toUpper();
                 offset += 47;
                 qDebug() << tmp;
@@ -377,10 +408,12 @@ void Mifare::readAllC()
 void Mifare::writeC()
 {
     int waitTime = 150;
-    QString result = util->execCMDWithOutput("hf mf csetblk "
-                     + ui->MF_RW_blockBox->currentText()
-                     + " "
-                     + ui->MF_RW_dataEdit->text().replace(" ", ""), waitTime);
+    QString result = util->execCMDWithOutput(
+                         "hf mf csetblk "
+                         + ui->MF_RW_blockBox->currentText()
+                         + " "
+                         + ui->MF_RW_dataEdit->text().replace(" ", ""),
+                         waitTime);
     if(result.indexOf("No chinese") == -1)
     {
         QMessageBox::information(parent, tr("Info"), tr("Success!"));
@@ -399,22 +432,37 @@ void Mifare::writeAllC()
     {
         for(int j = 0; j < cardType.blk[i]; j++)
         {
-            result = ""; // if the KeyA is invalid and the result is not empty, the KeyB will not be tested.
+            result = "";
             if(data_isDataValid(dataList->at(cardType.blks[i] + j)) != DATA_NOSPACE || dataList->at(cardType.blks[i] + j).contains('?'))
                 continue;
-            result = util->execCMDWithOutput("hf mf csetblk "
-                                             + QString::number(cardType.blks[i] + j)
-                                             + " "
-                                             + dataList->at(cardType.blks[i] + j), waitTime);
+            result = util->execCMDWithOutput(
+                         "hf mf csetblk "
+                         + QString::number(cardType.blks[i] + j)
+                         + " "
+                         + dataList->at(cardType.blks[i] + j),
+                         waitTime);
         }
     }
 }
 
+void Mifare::dump()
+{
+    util->execCMD("hf mf dump");
+    ui->funcTab->setCurrentIndex(1);
+}
+
+void Mifare::restore()
+{
+    util->execCMD("hf mf restore");
+    ui->funcTab->setCurrentIndex(1);
+}
+
 void Mifare::wipeC()
 {
-    util->execCMD("hf mf cwipe "
-                  + QString::number(cardType.type)
-                  + " f");
+    util->execCMD(
+        "hf mf cwipe "
+        + QString::number(cardType.type)
+        + " f");
     ui->funcTab->setCurrentIndex(1);
 }
 
@@ -446,15 +494,91 @@ void Mifare::lockC()
     util->execCMD("hf 14a raw 52");
 }
 
-void Mifare::dump()
+void Mifare::writeAllE()
 {
-    util->execCMD("hf mf dump");
+    const int waitTime = 200;
+    QString result;
+    for(int i = 0; i < cardType.sectors; i++)
+    {
+        for(int j = 0; j < cardType.blk[i]; j++)
+        {
+            result = "";
+            if(data_isDataValid(dataList->at(cardType.blks[i] + j)) != DATA_NOSPACE || dataList->at(cardType.blks[i] + j).contains('?'))
+                continue;
+            result = util->execCMDWithOutput(
+                         "hf mf eset "
+                         + QString::number(cardType.blks[i] + j)
+                         + " "
+                         + dataList->at(cardType.blks[i] + j),
+                         waitTime);
+        }
+    }
+    util->execCMDWithOutput("hf mf eget", waitTime); // to refresh output buffer;
+}
+
+void Mifare::readAllE()
+{
+    QString result;
+    const int waitTime = 200;
+
+    QString tmp;
+    int offset = 0;
+    for(int i = 0; i < cardType.sectors; i++)
+    {
+        offset = 0;
+        for(int j = 0; j < cardType.blk[i]; j++)
+        {
+
+            qDebug() << "**********" ;
+            result = util->execCMDWithOutput(
+                         "hf mf eget "
+                         + QString::number(cardType.blks[i] + j),
+                         waitTime);
+            qDebug() << result ;
+
+            offset = dataPattern->indexIn(result);
+//          offset = result.indexOf(*dataPattern, offset); // When I find the data position in this way, the Regex might fail to match.
+
+            tmp = result.mid(offset, 47).toUpper();
+            qDebug() << tmp << offset;
+            qDebug() << "**********" ;
+
+            if(offset == -1)
+                continue;
+            tmp.replace(" ", "");
+            dataList->replace(cardType.blks[i] + j, tmp);
+            data_syncWithDataWidget(false, cardType.blks[i] + j);
+        }
+        keyAList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).left(12));
+        keyBList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12));
+        data_syncWithKeyWidget(false, i, true);
+        data_syncWithKeyWidget(false, i, false);
+
+    }
+}
+
+void Mifare::wipeE()
+{
+    util->execCMD("hf mf eclr");
+}
+
+void Mifare::simulate()
+{
+    MF_Sim_simDialog dialog(cardType.type);
+    connect(&dialog, &MF_Sim_simDialog::sendCMD, util, &Util::execCMD);
+    if(dialog.exec() == QDialog::Accepted)
+        ui->funcTab->setCurrentIndex(1);
+}
+
+void Mifare::loadSniff(const QString& file)
+{
+    util->execCMD("hf list mf -l " + file);
     ui->funcTab->setCurrentIndex(1);
 }
 
-void Mifare::restore()
+void Mifare::saveSniff(const QString& file)
 {
-    util->execCMD("hf mf restore");
+    util->execCMD("hf list mf -s " + file);
     ui->funcTab->setCurrentIndex(1);
 }
 
@@ -531,7 +655,7 @@ void Mifare::data_clearKey()
     }
 }
 
-bool Mifare::data_isKeyValid(const QString& key)
+bool Mifare::data_isKeyValid(const QString &key)
 {
     if(key.length() != 12)
         return false;
@@ -543,7 +667,8 @@ bool Mifare::data_isKeyValid(const QString& key)
     return true;
 }
 
-Mifare::DataType Mifare::data_isDataValid(QString data) // "?" will not been processd there
+Mifare::DataType
+Mifare::data_isDataValid(QString data) // "?" will not been processd there
 {
     if(data.length() == 47)
     {
@@ -597,7 +722,7 @@ void Mifare::setCardType(int type)
     }
 }
 
-bool Mifare::data_loadDataFile(const QString& filename)
+bool Mifare::data_loadDataFile(const QString &filename)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::ReadOnly))
@@ -605,14 +730,10 @@ bool Mifare::data_loadDataFile(const QString& filename)
         QByteArray buff;
         buff = file.read(10000);
         bool isBin = false;
-        for(int i = 0; i < cardType.blocks * 16; i++) // Detect the file type
+        for(int i = 0; i < cardType.blocks * 16; i++)  // Detect the file type
         {
-//                qDebug() << (unsigned char)buff[i];
-            if(!((buff[i] >= 'A' && buff[i] <= 'F') ||
-                    (buff[i] >= 'a' && buff[i] <= 'f') ||
-                    (buff[i] >= '0' && buff[i] <= '9') ||
-                    buff[i] == '\n' ||
-                    buff[i] == '\r'))
+            //                qDebug() << (unsigned char)buff[i];
+            if(!((buff[i] >= 'A' && buff[i] <= 'F') || (buff[i] >= 'a' && buff[i] <= 'f') || (buff[i] >= '0' && buff[i] <= '9') || buff[i] == '\n' || buff[i] == '\r'))
             {
                 isBin = true;
                 break;
@@ -648,7 +769,7 @@ bool Mifare::data_loadDataFile(const QString& filename)
     }
 }
 
-bool Mifare::data_loadKeyFile(const QString& filename)
+bool Mifare::data_loadKeyFile(const QString &filename)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::ReadOnly))
@@ -685,11 +806,13 @@ bool Mifare::data_loadKeyFile(const QString& filename)
     }
 }
 
-QString Mifare::bin2text(const QByteArray& buff, int i, int length)
+QString Mifare::bin2text(const QByteArray &buff, int i, int length)
 {
     QString ret = "";
     char LByte, RByte;
-    char map[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    char map[16] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                    '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+                   };
     for(int j = 0; j < length; j++)
     {
         LByte = map[(unsigned char)buff[i * length + j] >> 4];
@@ -701,7 +824,7 @@ QString Mifare::bin2text(const QByteArray& buff, int i, int length)
     return ret;
 }
 
-bool Mifare::data_saveDataFile(const QString& filename, bool isBin)
+bool Mifare::data_saveDataFile(const QString &filename, bool isBin)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::WriteOnly))
@@ -745,7 +868,7 @@ bool Mifare::data_saveDataFile(const QString& filename, bool isBin)
     }
 }
 
-bool Mifare::data_saveKeyFile(const QString& filename, bool isBin)
+bool Mifare::data_saveKeyFile(const QString &filename, bool isBin)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::WriteOnly))
@@ -786,7 +909,6 @@ bool Mifare::data_saveKeyFile(const QString& filename, bool isBin)
         }
         else
         {
-
         }
         bool ret = file.write(buff) != -1;
         file.close();
@@ -841,12 +963,12 @@ void Mifare::data_data2Key()
     }
 }
 
-void Mifare::data_setData(int block, const QString& data)
+void Mifare::data_setData(int block, const QString &data)
 {
     dataList->replace(block, data);
 }
 
-void Mifare::data_setKey(int sector, bool isKeyA, const QString& key)
+void Mifare::data_setKey(int sector, bool isKeyA, const QString &key)
 {
     if(isKeyA)
         keyAList->replace(sector, key);
