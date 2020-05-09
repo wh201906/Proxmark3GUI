@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Simulate</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -299,7 +299,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string> Generate random nonces instead of sequential nonces. Standard reader attack won't work with this option, only moebius attack works.</string>
+        <string>Generate random nonces instead of sequential nonces. Standard reader attack won't work with this option, only moebius attack works</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>

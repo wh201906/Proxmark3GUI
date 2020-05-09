@@ -608,6 +608,13 @@
                  </item>
                 </widget>
                </item>
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Data:</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </item>
              <item>

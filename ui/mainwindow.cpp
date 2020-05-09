@@ -50,7 +50,6 @@ void MainWindow::initUI() // will be called by main.app
 void MainWindow::on_PM3_refreshPortButton_clicked()
 {
     ui->PM3_portBox->clear();
-    ui->PM3_portBox->addItem("");
     QSerialPort serial;
     QStringList serialList;
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
@@ -493,6 +492,55 @@ void MainWindow::on_MF_Sim_clearButton_clicked()
     mifare->wipeE();
 }
 
+void MainWindow::on_MF_Sim_simButton_clicked()
+{
+    mifare->simulate();
+}
+
+void MainWindow::on_MF_Sniff_loadButton_clicked() // use a tmp file to support complicated path
+{
+    QString title = "";
+    QString filename = "";
+
+    title = tr("Plz select the trace file:");
+    filename = QFileDialog::getOpenFileName(this, title, "./", tr("Trace Files(*.trc);;All Files(*.*)"));
+    qDebug() << filename;
+    if(filename != "")
+    {
+        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
+        if(QFile::copy(filename, "./" + tmpFile))
+        {
+            mifare->loadSniff(tmpFile);
+            QFile::remove("./" + tmpFile);
+        }
+        else
+        {
+            QMessageBox::information(this, tr("Info"), tr("Failed to open") + "\n" + filename);
+        }
+    }
+}
+
+void MainWindow::on_MF_Sniff_saveButton_clicked()
+{
+    QString title = "";
+    QString filename = "";
+
+    title = tr("Plz select the location to save trace file:");
+    filename = QFileDialog::getSaveFileName(this, title, "./", tr("Trace Files(*.trc)"));
+    qDebug() << filename;
+    if(filename != "")
+    {
+        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
+        mifare->saveSniff(tmpFile);
+        if(!QFile::copy("./" + tmpFile, filename))
+        {
+            QMessageBox::information(this, tr("Info"), tr("Failed to save to") + "\n" + filename);
+        }
+        QFile::remove("./" + tmpFile);
+    }
+
+}
+
 void MainWindow::on_MF_Sniff_sniffButton_clicked()
 {
     setState(false);
@@ -674,50 +722,4 @@ void MainWindow::setState(bool st)
 
 
 
-void MainWindow::on_MF_Sim_simButton_clicked()
-{
-    mifare->simulate();
-}
 
-void MainWindow::on_MF_Sniff_loadButton_clicked() // use a tmp file to support complicated path
-{
-    QString title = "";
-    QString filename = "";
-
-    title = tr("Plz select the trace file:");
-    filename = QFileDialog::getOpenFileName(this, title, "./", tr("Trace Files(*.trc);;All Files(*.*)"));
-    qDebug() << filename;
-    if(filename != "")
-    {
-        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
-        if(QFile::copy(filename, "./" + tmpFile))
-        {
-            mifare->loadSniff(tmpFile);
-            QFile::remove("./" + tmpFile);
-        }
-        else
-        {
-            QMessageBox::information(this, tr("Info"), tr("Failed to open") + "\n" + filename);
-        }
-    }
-}
-
-void MainWindow::on_MF_Sniff_saveButton_clicked()
-{
-    QString title = "";
-    QString filename = "";
-
-    title = tr("Plz select the location to save trace file:");
-    filename = QFileDialog::getSaveFileName(this, title, "./", tr("Trace Files(*.trc)"));
-    qDebug() << filename;
-    if(filename != "")
-    {
-        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
-        mifare->saveSniff(tmpFile);
-        if(!QFile::copy("./" + tmpFile, filename))
-        {
-            QMessageBox::information(this, tr("Info"), tr("Failed to save to") + "\n" + filename);
-        }
-    }
-
-}
