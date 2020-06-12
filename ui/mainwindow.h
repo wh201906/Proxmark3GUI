@@ -16,6 +16,9 @@
 #include <QMimeData>
 #include <QAction>
 #include <QDesktopServices>
+#include <QGroupBox>
+#include <QSizePolicy>
+#include <QSettings>
 
 #include "common/pm3process.h"
 #include "module/mifare.h"
@@ -132,6 +135,8 @@ private slots:
 
     void on_MF_Sniff_saveButton_clicked();
 
+    void on_GroupBox_clicked(bool checked);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
@@ -139,6 +144,7 @@ private:
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
     QAction* myInfo;
+    QSettings* settings;
 
     void uiInit();
 

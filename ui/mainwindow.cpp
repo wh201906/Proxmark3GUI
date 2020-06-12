@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent):
     });
     this->addAction(myInfo);
 
+    settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
+
     pm3Thread = new QThread(this);
     pm3 = new PM3Process(pm3Thread);
 //    pm3->moveToThread(pm3Thread);
@@ -625,6 +627,28 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->installEventFilter(this);
     ui->MF_dataWidget->installEventFilter(this);
 
+    settings->beginGroup("UI_grpbox_preference");
+
+    QStringList boxNames = settings->allKeys();
+    QGroupBox* boxptr;
+    foreach(QString name, boxNames)
+    {
+        boxptr = this->findChild<QGroupBox*>(name);
+        if(boxptr == nullptr)
+            continue;
+        if(settings->value(name, true).toBool())
+        {
+            boxptr->setMaximumHeight(16777215);
+            boxptr->setChecked(true);
+        }
+        else
+        {
+            boxptr->setMaximumHeight(20);
+            boxptr->setChecked(false);
+        }
+    }
+    settings->endGroup();
+
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
     on_PM3_refreshPortButton_clicked();
 }
@@ -639,6 +663,14 @@ void MainWindow::signalInit()
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
 
     connect(util, &Util::write, pm3, &PM3Process::write);
+
+    connect(ui->MF_typeGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_fileGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_RWGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_normalGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_UIDGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_simGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_sniffGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
 }
 
 void MainWindow::setStatusBar(QLabel* target, const QString & text)
@@ -718,8 +750,22 @@ void MainWindow::setState(bool st)
     ui->Raw_sendCMDButton->setEnabled(st);
 }
 
+void MainWindow::on_GroupBox_clicked(bool checked)
+{
+    QGroupBox* box = dynamic_cast<QGroupBox*>(sender());
+
+    settings->beginGroup("UI_grpbox_preference");
+    if(checked)
+    {
+        box->setMaximumHeight(16777215);
+        settings->setValue(box->objectName(), true);
+    }
+    else
+    {
+        box->setMaximumHeight(20);
+        settings->setValue(box->objectName(), false);
+    }
+    settings->endGroup();
+}
+
 // ***********************************************
-
-
-
-

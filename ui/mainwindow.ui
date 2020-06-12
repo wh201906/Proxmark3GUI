@@ -317,7 +317,7 @@
              <string>Card Type</string>
             </property>
             <property name="checkable">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <property name="topMargin">
@@ -364,6 +364,9 @@
            <widget class="QGroupBox" name="MF_fileGroupBox">
             <property name="title">
              <string>File</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <property name="topMargin">
@@ -435,6 +438,9 @@
            <widget class="QGroupBox" name="MF_attackGroupBox">
             <property name="title">
              <string>Attack</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <property name="topMargin">
@@ -518,6 +524,9 @@
          <widget class="QGroupBox" name="MF_RWGroupBox">
           <property name="title">
            <string>Read/Write</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
@@ -635,6 +644,9 @@
                <property name="title">
                 <string>Normal(Require Password)</string>
                </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
                <layout class="QGridLayout" name="gridLayout_2">
                 <property name="topMargin">
                  <number>5</number>
@@ -712,6 +724,9 @@
               <widget class="QGroupBox" name="MF_UIDGroupBox">
                <property name="title">
                 <string>Chinese Magic Card(Without Password)</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
                </property>
                <layout class="QGridLayout" name="gridLayout">
                 <property name="topMargin">
@@ -818,6 +833,9 @@
             <property name="title">
              <string>Simulate</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout_11">
              <property name="topMargin">
               <number>5</number>
@@ -895,6 +913,9 @@
            <widget class="QGroupBox" name="MF_sniffGroupBox">
             <property name="title">
              <string>Sniff</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <property name="topMargin">
