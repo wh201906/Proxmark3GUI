@@ -567,6 +567,7 @@ void MainWindow::MF_widgetReset()
     {
         setTableItem(ui->MF_dataWidget, i, 0, "");
         setTableItem(ui->MF_dataWidget, i, 1, QString::number(i));
+        ui->MF_dataWidget->item(i, 1)->setCheckState(Qt::Checked);
         setTableItem(ui->MF_dataWidget, i, 2, "");
         ui->MF_RW_blockBox->addItem(QString::number(i));
     }
@@ -604,7 +605,7 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Data")));
     ui->MF_dataWidget->verticalHeader()->setVisible(false);
     ui->MF_dataWidget->setColumnWidth(0, 35);
-    ui->MF_dataWidget->setColumnWidth(1, 35);
+    ui->MF_dataWidget->setColumnWidth(1, 55);
     ui->MF_dataWidget->setColumnWidth(2, 430);
 
     ui->MF_keyWidget->setColumnCount(3);

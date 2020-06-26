@@ -180,25 +180,14 @@
              </spacer>
             </item>
             <item>
+             <widget class="QCheckBox" name="MF_checkAllBox">
+              <property name="text">
+               <string>All</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="MF_data2KeyBotton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
               <property name="text">
                <string>&gt;&gt;</string>
               </property>
@@ -206,24 +195,6 @@
             </item>
             <item>
              <widget class="QPushButton" name="MF_key2DataBotton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
               <property name="text">
                <string>&lt;&lt;</string>
               </property>
@@ -231,33 +202,8 @@
             </item>
             <item>
              <widget class="QPushButton" name="MF_fontButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>20</horstretch>
-                <verstretch>20</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Courier</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
               <property name="text">
-               <string>F</string>
+               <string>Fonts</string>
               </property>
              </widget>
             </item>
@@ -674,14 +620,14 @@
                 <item row="0" column="0">
                  <widget class="QPushButton" name="MF_RW_readAllButton">
                   <property name="text">
-                   <string>Read All</string>
+                   <string>Read Selected</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QPushButton" name="MF_RW_writeAllButton">
                   <property name="text">
-                   <string>Write All</string>
+                   <string>Write Selected</string>
                   </property>
                  </widget>
                 </item>
@@ -766,14 +712,14 @@
                 <item row="0" column="0">
                  <widget class="QPushButton" name="MF_UID_readAllButton">
                   <property name="text">
-                   <string>Read All</string>
+                   <string>Read Selected</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QPushButton" name="MF_UID_writeAllButton">
                   <property name="text">
-                   <string>Write All</string>
+                   <string>Write Selected</string>
                   </property>
                  </widget>
                 </item>

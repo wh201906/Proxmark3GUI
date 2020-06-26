@@ -845,7 +845,7 @@ bool Mifare::data_saveDataFile(const QString &filename, bool isBin)
             {
                 for(int j = 0; j < 16; j++)
                 {
-                    unsigned char Byt[2];
+                    unsigned char Byt[2] = {0x0, 0x0};
                     for(int k = 0; k < 2; k++)
                     {
                         tmp = dataList->at(i).at(j * 2 + k).toUpper();
@@ -889,7 +889,7 @@ bool Mifare::data_saveKeyFile(const QString &filename, bool isBin)
             {
                 for(int j = 0; j < 6; j++)
                 {
-                    unsigned char Byt[2];
+                    unsigned char Byt[2] = {0x0, 0x0};
                     for(int k = 0; k < 2; k++)
                     {
                         tmp = keyAList->at(i).at(j * 2 + k).toUpper();
@@ -902,7 +902,7 @@ bool Mifare::data_saveKeyFile(const QString &filename, bool isBin)
                 }
                 for(int j = 0; j < 6; j++)
                 {
-                    unsigned char Byt[2];
+                    unsigned char Byt[2] = {0x0, 0x0};
                     for(int k = 0; k < 2; k++)
                     {
                         tmp = keyBList->at(i).at(j * 2 + k).toUpper();
