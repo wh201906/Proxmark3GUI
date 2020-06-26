@@ -251,7 +251,7 @@ void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
     }
     else if(item->column() == 2)
     {
-        QString key = item->text().replace(" ", "");
+        QString key = item->text().replace(" ", "").toUpper();
         if(key == "" || mifare->data_isKeyValid(key))
         {
             mifare->data_setKey(item->row(), false, key);
