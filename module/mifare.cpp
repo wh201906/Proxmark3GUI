@@ -323,8 +323,7 @@ void Mifare::writeAll()
     {
         for(int j = 0; j < cardType.blk[i]; j++)
         {
-            result = ""; // if the KeyA is invalid and the result is not empty, the
-            // KeyB will not be tested.
+            result = ""; // if the KeyA is valid and the result is not empty, the KeyB will not be tested.
             if(data_isDataValid(dataList->at(cardType.blks[i] + j)) != DATA_NOSPACE || dataList->at(cardType.blks[i] + j).contains('?'))
                 continue;
             if(data_isKeyValid(keyAList->at(i)))
@@ -347,6 +346,15 @@ void Mifare::writeAll()
                              + " B "
                              + keyBList->at(i)
                              + " "
+                             + dataList->at(cardType.blks[i] + j),
+                             waitTime);
+            }
+            if(result.indexOf("isOk:01") == -1 && keyAList->at(i) != "FFFFFFFFFFFF") // Try default key. It's useful when writing to a blank card
+            {
+                result = util->execCMDWithOutput(
+                             "hf mf wrbl "
+                             + QString::number(cardType.blks[i] + j)
+                             + " A FFFFFFFFFFFF "
                              + dataList->at(cardType.blks[i] + j),
                              waitTime);
             }
