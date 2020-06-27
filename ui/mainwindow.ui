@@ -105,6 +105,9 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
         <string>Mifare</string>
@@ -182,7 +185,10 @@
             <item>
              <widget class="QCheckBox" name="MF_checkAllBox">
               <property name="text">
-               <string>All</string>
+               <string>Check All</string>
+              </property>
+              <property name="tristate">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -606,28 +612,28 @@
                 <item row="2" column="0">
                  <widget class="QPushButton" name="MF_RW_readBlockButton">
                   <property name="text">
-                   <string>Read Block</string>
+                   <string>Read One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="1">
                  <widget class="QPushButton" name="MF_RW_writeBlockButton">
                   <property name="text">
-                   <string>Write Block</string>
+                   <string>Write One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0">
                  <widget class="QPushButton" name="MF_RW_readAllButton">
                   <property name="text">
-                   <string>Read Selected</string>
+                   <string>Read Checked</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QPushButton" name="MF_RW_writeAllButton">
                   <property name="text">
-                   <string>Write Selected</string>
+                   <string>Write Checked</string>
                   </property>
                  </widget>
                 </item>
@@ -698,28 +704,28 @@
                 <item row="2" column="0">
                  <widget class="QPushButton" name="MF_UID_readBlockButton">
                   <property name="text">
-                   <string>Read Block</string>
+                   <string>Read One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="1">
                  <widget class="QPushButton" name="MF_UID_writeBlockButton">
                   <property name="text">
-                   <string>Write Block</string>
+                   <string>Write One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0">
                  <widget class="QPushButton" name="MF_UID_readAllButton">
                   <property name="text">
-                   <string>Read Selected</string>
+                   <string>Read Checked</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QPushButton" name="MF_UID_writeAllButton">
                   <property name="text">
-                   <string>Write Selected</string>
+                   <string>Write Checked</string>
                   </property>
                  </widget>
                 </item>

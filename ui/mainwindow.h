@@ -137,6 +137,8 @@ private slots:
 
     void on_GroupBox_clicked(bool checked);
 
+    void on_MF_checkAllBox_stateChanged(int arg1);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
