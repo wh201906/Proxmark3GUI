@@ -30,6 +30,12 @@ public:
     void dump();
     void restore();
 
+    enum KeyType
+    {
+        KEY_A,
+        KEY_B,
+    };
+
     enum DataType
     {
         DATA_INVALID,
@@ -84,7 +90,7 @@ public:
     bool data_isKeyValid(const QString &key);
     Mifare::DataType data_isDataValid(QString data);
     void data_syncWithDataWidget(bool syncAll = true, int block = 0);
-    void data_syncWithKeyWidget(bool syncAll = true, int sector = 0, bool isKeyA = true);
+    void data_syncWithKeyWidget(bool syncAll = true, int sector = 0, KeyType keyType = KEY_A);
 
     CardType cardType;
     Mifare::CardType getCardType();
@@ -104,7 +110,7 @@ public:
     void data_data2Key();
 
     void data_setData(int block, const QString &data);
-    void data_setKey(int sector, bool isKeyA, const QString &key);
+    void data_setKey(int sector, KeyType keyType, const QString &key);
     void lockC();
     void writeAllE();
     void readAllE();

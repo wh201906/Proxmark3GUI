@@ -337,26 +337,26 @@ void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
         QString key = item->text().replace(" ", "").toUpper();
         if(key == "" || mifare->data_isKeyValid(key))
         {
-            mifare->data_setKey(item->row(), true, key);
+            mifare->data_setKey(item->row(), Mifare::KEY_A, key);
         }
         else
         {
             QMessageBox::information(this, tr("Info"), tr("Key must consists of 12 Hex symbols(Whitespace is allowed)"));
         }
-        mifare->data_syncWithKeyWidget(false, item->row(), true);
+        mifare->data_syncWithKeyWidget(false, item->row(), Mifare::KEY_A);
     }
     else if(item->column() == 2)
     {
         QString key = item->text().replace(" ", "").toUpper();
         if(key == "" || mifare->data_isKeyValid(key))
         {
-            mifare->data_setKey(item->row(), false, key);
+            mifare->data_setKey(item->row(), Mifare::KEY_B, key);
         }
         else
         {
             QMessageBox::information(this, tr("Info"), tr("Key must consists of 12 Hex symbols(Whitespace is allowed)"));
         }
-        mifare->data_syncWithKeyWidget(false, item->row(), false);
+        mifare->data_syncWithKeyWidget(false, item->row(), Mifare::KEY_B);
     }
 }
 

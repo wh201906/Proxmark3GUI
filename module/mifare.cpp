@@ -282,7 +282,7 @@ void Mifare::readAll()
                 if(result.indexOf("isOk:01") != -1)
                 {
                     keyBList->replace(i, tmpKey);
-                    data_syncWithKeyWidget(false, i, false);
+                    data_syncWithKeyWidget(false, i, KEY_B);
                 }
                 else
                 {
@@ -407,8 +407,8 @@ void Mifare::readAllC()
             }
             keyAList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).left(12));
             keyBList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12));
-            data_syncWithKeyWidget(false, i, true);
-            data_syncWithKeyWidget(false, i, false);
+            data_syncWithKeyWidget(false, i, KEY_A);
+            data_syncWithKeyWidget(false, i, KEY_B);
         }
     }
 }
@@ -559,8 +559,8 @@ void Mifare::readAllE()
         }
         keyAList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).left(12));
         keyBList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12));
-        data_syncWithKeyWidget(false, i, true);
-        data_syncWithKeyWidget(false, i, false);
+        data_syncWithKeyWidget(false, i, KEY_A);
+        data_syncWithKeyWidget(false, i, KEY_B);
 
     }
 }
@@ -626,7 +626,7 @@ void Mifare::data_syncWithDataWidget(bool syncAll, int block)
     }
 }
 
-void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, bool isKeyA)
+void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, KeyType keyType)
 {
     if(syncAll)
     {
@@ -638,7 +638,7 @@ void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, bool isKeyA)
     }
     else
     {
-        if(isKeyA)
+        if(keyType == KEY_A)
             ui->MF_keyWidget->item(sector, 1)->setText(keyAList->at(sector));
         else
             ui->MF_keyWidget->item(sector, 2)->setText(keyBList->at(sector));
@@ -976,9 +976,9 @@ void Mifare::data_setData(int block, const QString &data)
     dataList->replace(block, data);
 }
 
-void Mifare::data_setKey(int sector, bool isKeyA, const QString &key)
+void Mifare::data_setKey(int sector, KeyType keyType, const QString &key)
 {
-    if(isKeyA)
+    if(keyType == KEY_A)
         keyAList->replace(sector, key);
     else
         keyBList->replace(sector, key);
