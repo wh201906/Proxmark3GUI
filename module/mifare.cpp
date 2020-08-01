@@ -114,6 +114,72 @@ void Mifare::list()
     ui->funcTab->setCurrentIndex(1);
 }
 
+QString Mifare::_readblk(int blockId, KeyType keyType, QString& key, int waitTime)
+{
+    QString data;
+    QString result;
+    if(util->getClientType() == Util::OFFICIAL)
+    {
+        result = util->execCMDWithOutput(
+                     "hf mf rdbl "
+                     + QString::number(blockId)
+                     + " "
+                     + (char)keyType
+                     + " "
+                     + key,
+                     waitTime);
+        if(result.indexOf("isOk:01") != -1)
+        {
+            result = result.mid(dataPattern->indexIn(result), 47).toUpper();
+            if((blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 8 == 0)) // process key block
+            {
+                if(keyType == KEY_A)
+                {
+                    for(int i = 0; i < 6; i++)
+                    {
+                        result = result.replace(i * 3, 2, key.mid(i * 2, 2));
+                    }
+                    data = result;
+                    QString tmpKey = result.right(18).replace(" ", "");
+                    result = util->execCMDWithOutput(
+                                 "hf mf rdbl "
+                                 + QString::number(blockId)
+                                 + " B "
+                                 + tmpKey,
+                                 waitTime);
+                    if(result.indexOf("isOk:01") == -1)
+                    {
+                        result = data;
+                        result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
+                        data = result;
+                    }
+                }
+                else
+                {
+                    for(int i = 0; i < 6; i++)
+                    {
+                        result = result.replace(
+                                     30 + i * 3,
+                                     2,
+                                     key.mid(i * 2, 2));
+                    }
+                    result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
+                    data = result;
+                }
+            }
+            else
+            {
+                data = result;
+            }
+        }
+        else
+        {
+            data = "";
+        }
+        return data;
+    }
+}
+
 void Mifare::read()
 {
     int waitTime = 300;

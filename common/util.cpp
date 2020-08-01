@@ -1,10 +1,11 @@
 ﻿#include "util.h"
 
-Util::Util(QObject *parent) : QObject(parent)
+Util::Util(Util::ClientType clientType, QObject *parent) : QObject(parent)
 {
     isRequiringOutput = false;
     requiredOutput = new QString();
     timeStamp = QTime::currentTime();
+    this->clientType = clientType;
 }
 
 void Util::processOutput(QString output)
@@ -31,7 +32,7 @@ QString Util::execCMDWithOutput(QString cmd, unsigned long timeout)
     isRequiringOutput = true;
     requiredOutput->clear();
     execCMD(cmd);
-    while( QTime::currentTime() < targetTime)
+    while(QTime::currentTime() < targetTime)
     {
         QApplication::processEvents();
         if(timeStamp > currTime)
@@ -47,6 +48,10 @@ QString Util::execCMDWithOutput(QString cmd, unsigned long timeout)
 void Util::delay(unsigned int msec)
 {
     QTime timer = QTime::currentTime().addMSecs(msec);
-    while( QTime::currentTime() < timer )
+    while(QTime::currentTime() < timer)
         QApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+Util::ClientType Util::getClientType()
+{
+    return this->clientType;
 }

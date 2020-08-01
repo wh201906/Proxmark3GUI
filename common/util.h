@@ -13,11 +13,17 @@ class Util : public QObject
 {
     Q_OBJECT
 public:
-    explicit Util(QObject *parent = nullptr);
+    enum ClientType
+    {
+        OFFICIAL,
+        ICEMAN,
+    };
+    explicit Util(Util::ClientType clientType, QObject *parent = nullptr);
 
     void execCMD(QString cmd);
     QString execCMDWithOutput(QString cmd, unsigned long timeout = 2000);
     void delay(unsigned int msec);
+    ClientType getClientType();
 public slots:
     void processOutput(QString output);
 
@@ -28,6 +34,7 @@ private:
 signals:
     void refreshOutput(const QString& output);
     void write(QString data);
+    ClientType clientType;
 };
 
 #endif // UTIL_H

@@ -32,8 +32,8 @@ public:
 
     enum KeyType
     {
-        KEY_A,
-        KEY_B,
+        KEY_A = 'A',
+        KEY_B = 'B',
     };
 
     enum DataType
@@ -87,7 +87,7 @@ public:
 
     void data_clearData();
     void data_clearKey();
-    bool data_isKeyValid(const QString &key);
+    bool data_isKeyValid(const QString& key);
     Mifare::DataType data_isDataValid(QString data);
     void data_syncWithDataWidget(bool syncAll = true, int block = 0);
     void data_syncWithKeyWidget(bool syncAll = true, int sector = 0, KeyType keyType = KEY_A);
@@ -102,15 +102,15 @@ public:
     void wipeC();
     void setParameterC();
 
-    bool data_loadDataFile(const QString &filename);
-    bool data_loadKeyFile(const QString &filename);
+    bool data_loadDataFile(const QString& filename);
+    bool data_loadKeyFile(const QString& filename);
     bool data_saveDataFile(const QString& filename, bool isBin);
-    bool data_saveKeyFile(const QString &filename, bool isBin);
+    bool data_saveKeyFile(const QString& filename, bool isBin);
     void data_key2Data();
     void data_data2Key();
 
-    void data_setData(int block, const QString &data);
-    void data_setKey(int sector, KeyType keyType, const QString &key);
+    void data_setData(int block, const QString& data);
+    void data_setKey(int sector, KeyType keyType, const QString& key);
     void lockC();
     void writeAllE();
     void readAllE();
@@ -133,7 +133,9 @@ private:
     QRegExp* chkKeyPattern;
     QRegExp* nestedKeyPattern;
     QRegExp* UIDPattern;
-    QString bin2text(const QByteArray &buff, int start, int length);
+    QString bin2text(const QByteArray& buff, int start, int length);
+
+    QString _readblk(int blockId, KeyType keyType, QString &key, int waitTime);
 };
 
 #endif // MIFARE_H
