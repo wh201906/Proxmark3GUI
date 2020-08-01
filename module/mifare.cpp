@@ -1049,3 +1049,19 @@ void Mifare::data_setKey(int sector, KeyType keyType, const QString &key)
     else
         keyBList->replace(sector, key);
 }
+
+void Mifare::data_fillKeys()
+{
+    for(int i = 0; i < cardType.sectors; i++)
+    {
+        if(!data_isKeyValid(keyAList->at(i)))
+        {
+            keyAList->replace(i, "FFFFFFFFFFFF");
+        }
+        if(!data_isKeyValid(keyBList->at(i)))
+        {
+            keyBList->replace(i, "FFFFFFFFFFFF");
+        }
+    }
+    data_syncWithKeyWidget();
+}

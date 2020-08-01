@@ -193,23 +193,30 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="MF_data2KeyBotton">
+             <widget class="QPushButton" name="MF_data2KeyButton">
               <property name="text">
-               <string>&gt;&gt;</string>
+               <string>KeyBlocks-&gt;Key</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="MF_key2DataBotton">
+             <widget class="QPushButton" name="MF_key2DataButton">
               <property name="text">
-               <string>&lt;&lt;</string>
+               <string>KeyBlocks&lt;-Key</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="MF_fillKeysButton">
+              <property name="text">
+               <string>Fill Keys</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="MF_fontButton">
               <property name="text">
-               <string>Fonts</string>
+               <string>Set Fonts</string>
               </property>
              </widget>
             </item>

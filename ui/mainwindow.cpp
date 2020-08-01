@@ -223,14 +223,19 @@ void MainWindow::on_MF_checkAllBox_stateChanged(int arg1)
     ui->MF_checkAllBox->blockSignals(false);
 }
 
-void MainWindow::on_MF_data2KeyBotton_clicked()
+void MainWindow::on_MF_data2KeyButton_clicked()
 {
     mifare->data_data2Key();
 }
 
-void MainWindow::on_MF_key2DataBotton_clicked()
+void MainWindow::on_MF_key2DataButton_clicked()
 {
     mifare->data_key2Data();
+}
+
+void MainWindow::on_MF_fillKeysButton_clicked()
+{
+    mifare->data_fillKeys();
 }
 
 void MainWindow::on_MF_fontButton_clicked()

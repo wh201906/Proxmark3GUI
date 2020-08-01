@@ -103,9 +103,9 @@ private slots:
 
     void on_MF_File_saveButton_clicked();
 
-    void on_MF_data2KeyBotton_clicked();
+    void on_MF_data2KeyButton_clicked();
 
-    void on_MF_key2DataBotton_clicked();
+    void on_MF_key2DataButton_clicked();
 
     void on_MF_dataWidget_itemChanged(QTableWidgetItem *item);
 
@@ -138,6 +138,8 @@ private slots:
     void on_GroupBox_clicked(bool checked);
 
     void on_MF_checkAllBox_stateChanged(int arg1);
+
+    void on_MF_fillKeysButton_clicked();
 
 private:
     Ui::MainWindow* ui;

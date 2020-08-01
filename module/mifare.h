@@ -118,6 +118,7 @@ public:
     void simulate();
     void loadSniff(const QString& file);
     void saveSniff(const QString& file);
+    void data_fillKeys();
 public slots:
 signals:
 
