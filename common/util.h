@@ -31,10 +31,10 @@ private:
     bool isRequiringOutput;
     QString* requiredOutput;
     QTime timeStamp;
+    ClientType clientType;
 signals:
     void refreshOutput(const QString& output);
     void write(QString data);
-    ClientType clientType;
 };
 
 #endif // UTIL_H

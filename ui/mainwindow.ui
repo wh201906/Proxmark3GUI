@@ -281,14 +281,14 @@
              <item>
               <widget class="QRadioButton" name="MF_Type_miniButton">
                <property name="text">
-                <string>MINI</string>
+                <string extracomment="320">MINI</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QRadioButton" name="MF_Type_1kButton">
                <property name="text">
-                <string>1K</string>
+                <string extracomment="1024">1K</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -298,14 +298,14 @@
              <item>
               <widget class="QRadioButton" name="MF_Type_2kButton">
                <property name="text">
-                <string>2K</string>
+                <string extracomment="2048">2K</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QRadioButton" name="MF_Type_4kButton">
                <property name="text">
-                <string>4K</string>
+                <string extracomment="4096">4K</string>
                </property>
               </widget>
              </item>

@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent):
     pm3Thread->start();
     pm3state = false;
 
-    util = new Util(this);
+    util = new Util(Util::OFFICIAL, this);
     mifare = new Mifare(ui, util, this);
 
 }
@@ -178,7 +178,15 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
     qDebug() << id << typeBtnGroup->checkedId();
     if(!st)
     {
-        int result = QMessageBox::question(this, tr("Info"), tr("When Changeing card type, the data and keys in this app will be cleard.") + "\n" + tr("Continue?"), QMessageBox::Yes | QMessageBox::No);
+        int result;
+        if(id > typeBtnGroup->checkedId()) // id is specified in uiInit() with a proper order, so I can compare the size by id.
+        {
+            result = QMessageBox::question(this, tr("Info"), tr("When Changeing card type, the data and keys in this app will be cleard.") + "\n" + tr("Continue?"), QMessageBox::Yes | QMessageBox::No);
+        }
+        else
+        {
+            result = QMessageBox::Yes;
+        }
         if(result == QMessageBox::Yes)
         {
             qDebug() << "Yes";
@@ -753,6 +761,8 @@ void MainWindow::uiInit()
         }
     }
     settings->endGroup();
+
+
 
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
     on_PM3_refreshPortButton_clicked();
