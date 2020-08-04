@@ -54,7 +54,7 @@ void Mifare::chk()
 
     int offset = 0;
     QString tmp, tmp2;
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         offset = chkKeyPattern->indexIn(result, offset);
 //        offset = result.indexOf(*chkKeyPattern, offset);
@@ -80,7 +80,7 @@ void Mifare::nested()
 
     int offset = 0;
     QString tmp;
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         offset = nestedKeyPattern->indexIn(result, offset);
 //        offset = result.indexOf(*nestedKeyPattern, offset);
@@ -96,7 +96,7 @@ void Mifare::nested()
 
 void Mifare::hardnested()
 {
-    MF_Attack_hardnestedDialog dialog(cardType.blocks);
+    MF_Attack_hardnestedDialog dialog(cardType.block_size);
     connect(&dialog, &MF_Attack_hardnestedDialog::sendCMD, util, &Util::execCMD);
     if(dialog.exec() == QDialog::Accepted)
         ui->funcTab->setCurrentIndex(1);
@@ -236,85 +236,57 @@ void Mifare::read()
 {
     int blockId = ui->MF_RW_blockBox->currentText().toInt();
     Mifare::KeyType keyType = (Mifare::KeyType)(ui->MF_RW_keyTypeBox->currentData().toInt());
-    QString result = _readblk(blockId, keyType, ui->MF_RW_keyEdit->text());
+    QString result = _readblk(blockId, keyType, ui->MF_RW_keyEdit->text().toUpper());
     if(result != "")
     {
         ui->MF_RW_dataEdit->setText(result);
     }
     else
     {
-        ui->MF_RW_dataEdit->setText(tr("Failed"));
+        ui->MF_RW_dataEdit->setText(tr("Failed!"));
     }
 }
 
-void Mifare::readAll()
+void Mifare::readAll() // note:cannot handle some situations(special trailer block)
 {
+    QStringList data;
     QString result;
     bool isKeyAValid;
     bool isKeyBValid;
     const int waitTime = 150;
 
     QString tmp;
-    int offset = 0;
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         result = "";
         isKeyAValid = false;
         isKeyBValid = false;
 
         // check keys and read the first block of each sector
-        if(data_isKeyValid(keyAList->at(i)))
+        data = _readsec(i, Mifare::KEY_A, keyAList->at(i));
+        if(data.size() > 0)
         {
-            result = util->execCMDWithOutput(
-                         "hf mf rdsc "
-                         + QString::number(i)
-                         + " A "
-                         + keyAList->at(i),
-                         waitTime);
-            qDebug() << result;
-            offset = result.indexOf("isOk:01");
-            if(offset != -1)
+            isKeyAValid = true;
+            for(int j = 0; j < cardType.blk[i]; j++)
             {
-                isKeyAValid = true;
-                for(int j = 0; j < cardType.blk[i]; j++)
-                {
-                    offset = dataPattern->indexIn(result, offset);
-//                    offset = result.indexOf(*dataPattern, offset);
-                    tmp = result.mid(offset, 47).toUpper();
-                    offset += 47;
-                    qDebug() << tmp;
-                    tmp.replace(" ", "");
-                    dataList->replace(cardType.blks[i] + j, tmp);
-                    data_syncWithDataWidget(false, cardType.blks[i] + j);
-                }
+                dataList->replace(cardType.blks[i] + j, data[j]);
+                data_syncWithDataWidget(false, cardType.blks[i] + j);
             }
         }
-        if(data_isKeyValid(keyBList->at(i)))
+
+        data.clear();
+        data = _readsec(i, Mifare::KEY_B, keyBList->at(i));
+        if(data.size() > 0)
         {
-            result = util->execCMDWithOutput(
-                         "hf mf rdsc "
-                         + QString::number(i)
-                         + " B "
-                         + keyBList->at(i),
-                         waitTime);
-            qDebug() << result;
-            offset = result.indexOf("isOk:01");
-            if(offset != -1)
+            isKeyBValid = true;
+            for(int j = 0; j < cardType.blk[i]; j++)
             {
-                isKeyBValid = true;
-                for(int j = 0; j < cardType.blk[i]; j++)
-                {
-                    offset = dataPattern->indexIn(result, offset);
-//                    offset = result.indexOf(*dataPattern, offset);
-                    tmp = result.mid(offset, 47).toUpper();
-                    offset += 47;
-                    qDebug() << tmp;
-                    tmp.replace(" ", "");
-                    dataList->replace(cardType.blks[i] + j, tmp);
-                    data_syncWithDataWidget(false, cardType.blks[i] + j);
-                }
+                dataList->replace(cardType.blks[i] + j, data[j]);
+                data_syncWithDataWidget(false, cardType.blks[i] + j);
             }
         }
+
+        // check keys and read the first block of each sector
 
         if(isKeyAValid || isKeyBValid)
         {
@@ -348,13 +320,8 @@ void Mifare::readAll()
             {
                 QString tmpKey =
                     dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12);
-                result = util->execCMDWithOutput(
-                             "hf mf rdbl "
-                             + QString::number(cardType.blks[i] + cardType.blk[i] - 1)
-                             + " B "
-                             + tmpKey,
-                             waitTime);
-                if(result.indexOf("isOk:01") != -1)
+                result = _readblk(cardType.blks[i] + cardType.blk[i] - 1, Mifare::KEY_B, tmpKey);
+                if(result != "")
                 {
                     keyBList->replace(i, tmpKey);
                     data_syncWithKeyWidget(false, i, KEY_B);
@@ -394,7 +361,7 @@ void Mifare::writeAll()
 {
     const int waitTime = 300;
     QString result;
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         for(int j = 0; j < cardType.blk[i]; j++)
         {
@@ -459,7 +426,7 @@ void Mifare::readAllC()
 
     QString tmp;
     int offset = 0;
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         result = util->execCMDWithOutput(
                      "hf mf cgetsc "
@@ -511,7 +478,7 @@ void Mifare::writeAllC()
 {
     const int waitTime = 150;
     QString result;
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         for(int j = 0; j < cardType.blk[i]; j++)
         {
@@ -581,7 +548,7 @@ void Mifare::writeAllE()
 {
     const int waitTime = 200;
     QString result;
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         for(int j = 0; j < cardType.blk[i]; j++)
         {
@@ -606,7 +573,7 @@ void Mifare::readAllE()
 
     QString tmp;
     int offset = 0;
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         offset = 0;
         for(int j = 0; j < cardType.blk[i]; j++)
@@ -670,7 +637,7 @@ void Mifare::data_syncWithDataWidget(bool syncAll, int block)
     QString tmp;
     if(syncAll)
     {
-        for(int i = 0; i < cardType.blocks; i++)
+        for(int i = 0; i < cardType.block_size; i++)
         {
             tmp = "";
             if(dataList->at(i) != "")
@@ -705,7 +672,7 @@ void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, KeyType keyType)
 {
     if(syncAll)
     {
-        for(int i = 0; i < cardType.sectors; i++)
+        for(int i = 0; i < cardType.sector_size; i++)
         {
             ui->MF_keyWidget->item(i, 1)->setText(keyAList->at(i));
             ui->MF_keyWidget->item(i, 2)->setText(keyBList->at(i));
@@ -723,7 +690,7 @@ void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, KeyType keyType)
 void Mifare::data_clearData()
 {
     dataList->clear();
-    for(int i = 0; i < cardType.blocks; i++)
+    for(int i = 0; i < cardType.block_size; i++)
         dataList->append("");
 }
 
@@ -731,7 +698,7 @@ void Mifare::data_clearKey()
 {
     keyAList->clear();
     keyBList->clear();
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         keyAList->append("");
         keyBList->append("");
@@ -813,7 +780,7 @@ bool Mifare::data_loadDataFile(const QString &filename)
         QByteArray buff;
         buff = file.read(10000);
         bool isBin = false;
-        for(int i = 0; i < cardType.blocks * 16; i++)  // Detect the file type
+        for(int i = 0; i < cardType.block_size * 16; i++)  // Detect the file type
         {
             //                qDebug() << (unsigned char)buff[i];
             if(!((buff[i] >= 'A' && buff[i] <= 'F') || (buff[i] >= 'a' && buff[i] <= 'f') || (buff[i] >= '0' && buff[i] <= '9') || buff[i] == '\n' || buff[i] == '\r'))
@@ -824,9 +791,9 @@ bool Mifare::data_loadDataFile(const QString &filename)
         }
         if(isBin)
         {
-            if(file.size() < cardType.blocks * 16)
+            if(file.size() < cardType.block_size * 16)
                 return false;
-            for(int i = 0; i < cardType.blocks; i++)
+            for(int i = 0; i < cardType.block_size; i++)
             {
                 QString tmp = bin2text(buff, i, 16);
                 dataList->replace(i, tmp.toUpper());
@@ -834,9 +801,9 @@ bool Mifare::data_loadDataFile(const QString &filename)
         }
         else
         {
-            QString tmp = buff.left(cardType.blocks * 34);
+            QString tmp = buff.left(cardType.block_size * 34);
             QStringList tmpList = tmp.split("\r\n");
-            for(int i = 0; i < cardType.blocks; i++)
+            for(int i = 0; i < cardType.block_size; i++)
             {
                 dataList->replace(i, tmpList[i].toUpper());
                 qDebug() << tmpList[i];
@@ -859,10 +826,10 @@ bool Mifare::data_loadKeyFile(const QString &filename)
     {
         QByteArray buff;
         buff = file.read(10000);
-        bool isKey = file.size() <= cardType.sectors * 14;
+        bool isKey = file.size() <= cardType.sector_size * 14;
         if(isKey)
         {
-            for(int i = 0; i < cardType.sectors; i++)
+            for(int i = 0; i < cardType.sector_size; i++)
             {
                 QString tmp = bin2text(buff, i, 12);
                 keyAList->replace(i, tmp.left(12).toUpper());
@@ -871,7 +838,7 @@ bool Mifare::data_loadKeyFile(const QString &filename)
         }
         else
         {
-            for(int i = 0; i < cardType.sectors; i++)
+            for(int i = 0; i < cardType.sector_size; i++)
             {
                 int blk = cardType.blks[i] + cardType.blk[i] - 1;
                 QString tmp = bin2text(buff, blk, 16);
@@ -916,7 +883,7 @@ bool Mifare::data_saveDataFile(const QString &filename, bool isBin)
         QChar tmp;
         if(isBin)
         {
-            for(int i = 0; i < cardType.blocks; i++)
+            for(int i = 0; i < cardType.block_size; i++)
             {
                 for(int j = 0; j < 16; j++)
                 {
@@ -935,7 +902,7 @@ bool Mifare::data_saveDataFile(const QString &filename, bool isBin)
         }
         else
         {
-            for(int i = 0; i < cardType.blocks; i++)
+            for(int i = 0; i < cardType.block_size; i++)
             {
                 buff += dataList->at(i);
                 buff += "\r\n";
@@ -960,7 +927,7 @@ bool Mifare::data_saveKeyFile(const QString &filename, bool isBin)
         QChar tmp;
         if(isBin)
         {
-            for(int i = 0; i < cardType.sectors; i++)
+            for(int i = 0; i < cardType.sector_size; i++)
             {
                 for(int j = 0; j < 6; j++)
                 {
@@ -1005,7 +972,7 @@ bool Mifare::data_saveKeyFile(const QString &filename, bool isBin)
 
 void Mifare::data_key2Data()
 {
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         QString tmp = "";
         if(data_isKeyValid(keyAList->at(i)))
@@ -1030,7 +997,7 @@ void Mifare::data_key2Data()
 
 void Mifare::data_data2Key()
 {
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         if(dataList->at(cardType.blks[i] + cardType.blk[i] - 1) == "")
         {
@@ -1061,7 +1028,7 @@ void Mifare::data_setKey(int sector, KeyType keyType, const QString &key)
 
 void Mifare::data_fillKeys()
 {
-    for(int i = 0; i < cardType.sectors; i++)
+    for(int i = 0; i < cardType.sector_size; i++)
     {
         if(!data_isKeyValid(keyAList->at(i)))
         {

@@ -211,11 +211,11 @@ void MainWindow::on_MF_selectAllBox_stateChanged(int arg1)
         ui->MF_selectAllBox->setTristate(false);
         ui->MF_selectAllBox->setCheckState(Qt::Checked);
     }
-    for(int i = 0; i < mifare->cardType.blocks; i++)
+    for(int i = 0; i < mifare->cardType.block_size; i++)
     {
         ui->MF_dataWidget->item(i, 1)->setCheckState(ui->MF_selectAllBox->checkState());
     }
-    for(int i = 0; i < mifare->cardType.sectors; i++)
+    for(int i = 0; i < mifare->cardType.sector_size; i++)
     {
         ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(ui->MF_selectAllBox->checkState());
     }
@@ -262,7 +262,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
             ui->MF_dataWidget->item(i + item->row(), 1)->setCheckState(item->checkState());
             qDebug() << i << mifare->cardType.blk[item->row()] << i + item->row() << ui->MF_dataWidget->item(i + item->row(), 1)->text();
         }
-        for(int i = 0; i < mifare->cardType.sectors; i++)
+        for(int i = 0; i < mifare->cardType.sector_size; i++)
         {
             if(ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->checkState() == Qt::Checked)
             {
@@ -273,7 +273,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         {
             ui->MF_selectAllBox->setCheckState(Qt::Unchecked);
         }
-        else if(selectedSectors == mifare->cardType.sectors)
+        else if(selectedSectors == mifare->cardType.sector_size)
         {
             ui->MF_selectAllBox->setCheckState(Qt::Checked);
         }
@@ -287,7 +287,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         int selectedSubBlocks = 0;
         int selectedBlocks = 0;
 
-        for(int i = 0; i < mifare->cardType.blocks; i++)
+        for(int i = 0; i < mifare->cardType.block_size; i++)
         {
             if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
             {
@@ -305,7 +305,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         {
             ui->MF_selectAllBox->setCheckState(Qt::Unchecked);
         }
-        else if(selectedBlocks == mifare->cardType.blocks)
+        else if(selectedBlocks == mifare->cardType.block_size)
         {
             ui->MF_selectAllBox->setCheckState(Qt::Checked);
         }
@@ -673,8 +673,8 @@ void MainWindow::on_MF_Sniff_listButton_clicked()
 
 void MainWindow::MF_widgetReset()
 {
-    int secs = mifare->cardType.sectors;
-    int blks = mifare->cardType.blocks;
+    int secs = mifare->cardType.sector_size;
+    int blks = mifare->cardType.block_size;
     ui->MF_RW_blockBox->clear();
     ui->MF_keyWidget->setRowCount(secs);
     ui->MF_dataWidget->setRowCount(blks);

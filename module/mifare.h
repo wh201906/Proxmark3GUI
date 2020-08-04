@@ -47,8 +47,8 @@ public:
     struct CardType
     {
         int type;
-        int sectors;
-        int blocks;
+        int sector_size;
+        int block_size;
         int blk[40];
         int blks[40];
     };
