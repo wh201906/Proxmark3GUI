@@ -108,18 +108,32 @@ void Mifare::sniff()
     ui->funcTab->setCurrentIndex(1);
 }
 
+void Mifare::snoop()
+{
+    util->execCMD("hf 14a snoop");
+    ui->funcTab->setCurrentIndex(1);
+}
+
 void Mifare::list()
 {
     util->execCMD("hf list mf");
     ui->funcTab->setCurrentIndex(1);
 }
 
-QString Mifare::_readblk(int blockId, KeyType keyType, QString& key, int waitTime)
+QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int waitTime)
 {
     QString data;
     QString result;
+    bool isKeyBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 8 == 0);
+
+    if(!data_isKeyValid(key))
+    {
+        return "";
+    }
+
     if(util->getClientType() == Util::OFFICIAL)
     {
+        // use the given key type to read the target block
         result = util->execCMDWithOutput(
                      "hf mf rdbl "
                      + QString::number(blockId)
@@ -131,44 +145,44 @@ QString Mifare::_readblk(int blockId, KeyType keyType, QString& key, int waitTim
         if(result.indexOf("isOk:01") != -1)
         {
             result = result.mid(dataPattern->indexIn(result), 47).toUpper();
-            if((blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 8 == 0)) // process key block
+
+            // when the target block is a key block and the given key type is keyA, try to check whether the keyB is valid
+            // if the given key type is keyB, it will never get the keyA from the key block
+            if(!isKeyBlock)
             {
-                if(keyType == KEY_A)
+                data = result;
+            }
+            else if(isKeyBlock && keyType == KEY_A)
+            {
+                for(int i = 0; i < 6; i++)
                 {
-                    for(int i = 0; i < 6; i++)
-                    {
-                        result = result.replace(i * 3, 2, key.mid(i * 2, 2));
-                    }
-                    data = result;
-                    QString tmpKey = result.right(18).replace(" ", "");
-                    result = util->execCMDWithOutput(
-                                 "hf mf rdbl "
-                                 + QString::number(blockId)
-                                 + " B "
-                                 + tmpKey,
-                                 waitTime);
-                    if(result.indexOf("isOk:01") == -1)
-                    {
-                        result = data;
-                        result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
-                        data = result;
-                    }
+                    result = result.replace(i * 3, 2, key.mid(i * 2, 2));
                 }
-                else
+                data = result;
+                QString tmpKey = result.right(18).replace(" ", "");
+                result = util->execCMDWithOutput(
+                             "hf mf rdbl "
+                             + QString::number(blockId)
+                             + " B "
+                             + tmpKey,
+                             waitTime);
+                if(result.indexOf("isOk:01") == -1)
                 {
-                    for(int i = 0; i < 6; i++)
-                    {
-                        result = result.replace(
-                                     30 + i * 3,
-                                     2,
-                                     key.mid(i * 2, 2));
-                    }
-                    result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
+                    result = data;
+                    result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
                     data = result;
                 }
             }
-            else
+            else if(isKeyBlock && keyType == KEY_B)
             {
+                for(int i = 0; i < 6; i++) // use the given keyB to replace revelant part of block data
+                {
+                    result = result.replace(
+                                 30 + i * 3,
+                                 2,
+                                 key.mid(i * 2, 2));
+                }
+                result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? "); // fill the keyA part with ?
                 data = result;
             }
         }
@@ -176,65 +190,60 @@ QString Mifare::_readblk(int blockId, KeyType keyType, QString& key, int waitTim
         {
             data = "";
         }
+    }
+    return data.remove(" ");
+}
+
+QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, int waitTime)
+{
+    QStringList data;
+    QString result, tmp;
+    int offset = 0;
+
+    if(!data_isKeyValid(key))
+    {
         return data;
     }
+
+    if(util->getClientType() == Util::OFFICIAL)
+    {
+        result = util->execCMDWithOutput(
+                     "hf mf rdsc "
+                     + QString::number(sectorId)
+                     + " "
+                     + (char)keyType
+                     + " "
+                     + key,
+                     waitTime);
+        offset = result.indexOf("isOk:01");
+        if(offset != -1)
+        {
+            for(int i = 0; i < cardType.blk[sectorId]; i++)
+            {
+                offset = dataPattern->indexIn(result, offset);
+                tmp = result.mid(offset, 47).toUpper();
+                offset += 47;
+                qDebug() << tmp;
+                tmp.remove(" ");
+                data.append(tmp);
+            }
+        }
+    }
+    return data;
 }
 
 void Mifare::read()
 {
-    int waitTime = 300;
-    int currblk = ui->MF_RW_blockBox->currentText().toInt();
-    QString result = util->execCMDWithOutput(
-                         "hf mf rdbl "
-                         + QString::number(currblk)
-                         + " "
-                         + ui->MF_RW_keyTypeBox->currentText()
-                         + " "
-                         + ui->MF_RW_keyEdit->text(),
-                         waitTime);
-    if(result.indexOf("isOk:01") != -1)
+    int blockId = ui->MF_RW_blockBox->currentText().toInt();
+    Mifare::KeyType keyType = (Mifare::KeyType)(ui->MF_RW_keyTypeBox->currentData().toInt());
+    QString result = _readblk(blockId, keyType, ui->MF_RW_keyEdit->text());
+    if(result != "")
     {
-        result = result.mid(dataPattern->indexIn(result), 47).toUpper();
-        if((currblk < 128 && ((currblk + 1) % 4 == 0)) || ((currblk + 1) % 8 == 0)) // process key block
-        {
-            if(ui->MF_RW_keyTypeBox->currentText() == "A")
-            {
-                for(int i = 0; i < 6; i++)
-                {
-                    result = result.replace(i * 3, 2, ui->MF_RW_keyEdit->text().mid(i * 2, 2));
-                }
-                ui->MF_RW_dataEdit->setText(result);
-                QString tmpKey = result.right(18).replace(" ", "");
-                result = util->execCMDWithOutput(
-                             "hf mf rdbl "
-                             + ui->MF_RW_keyTypeBox->currentText()
-                             + " B "
-                             + tmpKey,
-                             waitTime);
-                if(result.indexOf("isOk:01") == -1)
-                {
-                    result = ui->MF_RW_dataEdit->text();
-                    result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
-                    ui->MF_RW_dataEdit->setText(result);
-                }
-            }
-            else
-            {
-                for(int i = 0; i < 6; i++)
-                {
-                    result = result.replace(
-                                 30 + i * 3,
-                                 2,
-                                 ui->MF_RW_keyEdit->text().mid(i * 2, 2));
-                }
-                result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? ");
-                ui->MF_RW_dataEdit->setText(result);
-            }
-        }
-        else
-        {
-            ui->MF_RW_dataEdit->setText(result);
-        }
+        ui->MF_RW_dataEdit->setText(result);
+    }
+    else
+    {
+        ui->MF_RW_dataEdit->setText(tr("Failed"));
     }
 }
 

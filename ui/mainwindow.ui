@@ -183,9 +183,9 @@
              </spacer>
             </item>
             <item>
-             <widget class="QCheckBox" name="MF_checkAllBox">
+             <widget class="QCheckBox" name="MF_selectAllBox">
               <property name="text">
-               <string>Check All</string>
+               <string>Select All</string>
               </property>
               <property name="tristate">
                <bool>false</bool>
@@ -564,16 +564,6 @@
                    <height>16777215</height>
                   </size>
                  </property>
-                 <item>
-                  <property name="text">
-                   <string>A</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>B</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
                <item>
@@ -584,6 +574,13 @@
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="testButton">
+               <property name="text">
+                <string>test</string>
+               </property>
+              </widget>
              </item>
              <item>
               <spacer name="horizontalSpacer_3">
@@ -827,6 +824,12 @@
              </item>
              <item>
               <widget class="QPushButton" name="MF_Sim_writeAllButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Read All</string>
                </property>
@@ -847,6 +850,12 @@
              </item>
              <item>
               <widget class="QPushButton" name="MF_Sim_simButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Simulate</string>
                </property>
@@ -910,9 +919,28 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="MF_Sniff_listButton">
+              <widget class="QPushButton" name="MF_Sniff_snoopButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
-                <string>List Sniff Data</string>
+                <string>Snoop</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Sniff_listButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>List Data</string>
                </property>
               </widget>
              </item>

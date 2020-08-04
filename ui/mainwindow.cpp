@@ -202,25 +202,25 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
     typeBtnGroup->blockSignals(false);
 }
 
-void MainWindow::on_MF_checkAllBox_stateChanged(int arg1)
+void MainWindow::on_MF_selectAllBox_stateChanged(int arg1)
 {
     ui->MF_dataWidget->blockSignals(true);
-    ui->MF_checkAllBox->blockSignals(true);
+    ui->MF_selectAllBox->blockSignals(true);
     if(arg1 == Qt::PartiallyChecked)
     {
-        ui->MF_checkAllBox->setTristate(false);
-        ui->MF_checkAllBox->setCheckState(Qt::Checked);
+        ui->MF_selectAllBox->setTristate(false);
+        ui->MF_selectAllBox->setCheckState(Qt::Checked);
     }
     for(int i = 0; i < mifare->cardType.blocks; i++)
     {
-        ui->MF_dataWidget->item(i, 1)->setCheckState(ui->MF_checkAllBox->checkState());
+        ui->MF_dataWidget->item(i, 1)->setCheckState(ui->MF_selectAllBox->checkState());
     }
     for(int i = 0; i < mifare->cardType.sectors; i++)
     {
-        ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(ui->MF_checkAllBox->checkState());
+        ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(ui->MF_selectAllBox->checkState());
     }
     ui->MF_dataWidget->blockSignals(false);
-    ui->MF_checkAllBox->blockSignals(false);
+    ui->MF_selectAllBox->blockSignals(false);
 }
 
 void MainWindow::on_MF_data2KeyButton_clicked()
@@ -253,7 +253,7 @@ void MainWindow::on_MF_fontButton_clicked()
 void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
 {
     ui->MF_dataWidget->blockSignals(true);
-    ui->MF_checkAllBox->blockSignals(true);
+    ui->MF_selectAllBox->blockSignals(true);
     if(item->column() == 0)
     {
         int selectedSectors = 0;
@@ -271,15 +271,15 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         }
         if(selectedSectors == 0)
         {
-            ui->MF_checkAllBox->setCheckState(Qt::Unchecked);
+            ui->MF_selectAllBox->setCheckState(Qt::Unchecked);
         }
         else if(selectedSectors == mifare->cardType.sectors)
         {
-            ui->MF_checkAllBox->setCheckState(Qt::Checked);
+            ui->MF_selectAllBox->setCheckState(Qt::Checked);
         }
         else
         {
-            ui->MF_checkAllBox->setCheckState(Qt::PartiallyChecked);
+            ui->MF_selectAllBox->setCheckState(Qt::PartiallyChecked);
         }
     }
     else if(item->column() == 1)
@@ -303,15 +303,15 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         }
         if(selectedBlocks == 0)
         {
-            ui->MF_checkAllBox->setCheckState(Qt::Unchecked);
+            ui->MF_selectAllBox->setCheckState(Qt::Unchecked);
         }
         else if(selectedBlocks == mifare->cardType.blocks)
         {
-            ui->MF_checkAllBox->setCheckState(Qt::Checked);
+            ui->MF_selectAllBox->setCheckState(Qt::Checked);
         }
         else
         {
-            ui->MF_checkAllBox->setCheckState(Qt::PartiallyChecked);
+            ui->MF_selectAllBox->setCheckState(Qt::PartiallyChecked);
         }
         if(selectedSubBlocks == 0)
         {
@@ -340,7 +340,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         mifare->data_syncWithDataWidget(false, item->row());
     }
     ui->MF_dataWidget->blockSignals(false);
-    ui->MF_checkAllBox->blockSignals(false);
+    ui->MF_selectAllBox->blockSignals(false);
 }
 
 void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
@@ -659,6 +659,13 @@ void MainWindow::on_MF_Sniff_sniffButton_clicked()
     setState(true);
 }
 
+void MainWindow::on_MF_Sniff_snoopButton_clicked()
+{
+    setState(false);
+    mifare->snoop();
+    setState(true);
+}
+
 void MainWindow::on_MF_Sniff_listButton_clicked()
 {
     mifare->list();
@@ -673,7 +680,7 @@ void MainWindow::MF_widgetReset()
     ui->MF_dataWidget->setRowCount(blks);
 
     ui->MF_dataWidget->blockSignals(true);
-    ui->MF_checkAllBox->blockSignals(true);
+    ui->MF_selectAllBox->blockSignals(true);
 
     for(int i = 0; i < blks; i++)
     {
@@ -692,10 +699,10 @@ void MainWindow::MF_widgetReset()
         setTableItem(ui->MF_dataWidget, mifare->cardType.blks[i], 0, QString::number(i));
         ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::Checked);
     }
-    ui->MF_checkAllBox->setCheckState(Qt::Checked);
+    ui->MF_selectAllBox->setCheckState(Qt::Checked);
 
     ui->MF_dataWidget->blockSignals(false);
-    ui->MF_checkAllBox->blockSignals(false);
+    ui->MF_selectAllBox->blockSignals(false);
 }
 // ************************************************
 
@@ -767,7 +774,8 @@ void MainWindow::uiInit()
     }
     settings->endGroup();
 
-
+    ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
+    ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
 
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
     on_PM3_refreshPortButton_clicked();
@@ -889,3 +897,10 @@ void MainWindow::on_GroupBox_clicked(bool checked)
 }
 
 // ***********************************************
+
+
+
+void MainWindow::on_testButton_clicked()
+{
+    mifare->_readsec(0, Mifare::KEY_A, "FFFFFFFFFFFF");
+}

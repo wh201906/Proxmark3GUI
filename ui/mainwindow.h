@@ -137,9 +137,13 @@ private slots:
 
     void on_GroupBox_clicked(bool checked);
 
-    void on_MF_checkAllBox_stateChanged(int arg1);
+    void on_MF_selectAllBox_stateChanged(int arg1);
 
     void on_MF_fillKeysButton_clicked();
+
+    void on_MF_Sniff_snoopButton_clicked();
+
+    void on_testButton_clicked();
 
 private:
     Ui::MainWindow* ui;
