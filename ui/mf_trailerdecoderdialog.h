@@ -37,39 +37,12 @@ private:
     QRegularExpressionValidator* validator;
     QButtonGroup* sizeGroup;
     void setTableItem(QTableWidget *widget, int row, int column, AccessType accessType);
-    AccessType dataCondition[8][4] =
-    {
-        {ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB},
-        {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_NEVER},
-        {ACC_KEY_AB, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
-        {ACC_KEY_AB, ACC_KEY_B, ACC_KEY_B, ACC_KEY_AB},
-        {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_KEY_AB},
-        {ACC_KEY_B, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
-        {ACC_KEY_B, ACC_NEVER, ACC_NEVER, ACC_NEVER},
-        {ACC_NEVER, ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    };
-    AccessType trailerReadCondition[8][3] =
-    {
-        {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-        {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-        {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-        {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-        {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-        {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-        {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-        {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    };
-    AccessType trailerWriteCondition[8][3] =
-    {
-        {ACC_KEY_A, ACC_NEVER, ACC_KEY_A},
-        {ACC_NEVER, ACC_NEVER, ACC_NEVER},
-        {ACC_KEY_B, ACC_NEVER, ACC_KEY_B},
-        {ACC_NEVER, ACC_NEVER, ACC_NEVER},
-        {ACC_KEY_A, ACC_KEY_A, ACC_KEY_A},
-        {ACC_KEY_B, ACC_KEY_B, ACC_KEY_B},
-        {ACC_NEVER, ACC_KEY_B, ACC_NEVER},
-        {ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    };
+
+    // If I don't make them static, the app will crash(these arrays might take too much space)
+    static AccessType dataCondition[8][4];
+    static AccessType trailerReadCondition[8][3];
+    static AccessType trailerWriteCondition[8][3];
+
 };
 
 #endif // MF_TRAILERDECODERDIALOG_H

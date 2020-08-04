@@ -1,6 +1,40 @@
 ﻿#include "mf_trailerdecoderdialog.h"
 #include "ui_mf_trailerdecoderdialog.h"
 
+MF_trailerDecoderDialog::AccessType MF_trailerDecoderDialog::dataCondition[8][4] =
+{
+    {ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB},
+    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_AB, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_AB, ACC_KEY_B, ACC_KEY_B, ACC_KEY_AB},
+    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_KEY_AB},
+    {ACC_KEY_B, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_B, ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER, ACC_NEVER},
+};
+MF_trailerDecoderDialog::AccessType MF_trailerDecoderDialog::trailerReadCondition[8][3] =
+{
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+};
+MF_trailerDecoderDialog::AccessType MF_trailerDecoderDialog::trailerWriteCondition[8][3] =
+{
+    {ACC_KEY_A, ACC_NEVER, ACC_KEY_A},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_B, ACC_NEVER, ACC_KEY_B},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_A, ACC_KEY_A, ACC_KEY_A},
+    {ACC_KEY_B, ACC_KEY_B, ACC_KEY_B},
+    {ACC_NEVER, ACC_KEY_B, ACC_NEVER},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
+};
+
 MF_trailerDecoderDialog::MF_trailerDecoderDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MF_trailerDecoderDialog)
@@ -55,10 +89,30 @@ void MF_trailerDecoderDialog::on_accessBitsEdit_textEdited(const QString &arg1)
         quint8 ACBits[4];
         for(int i = 0; i < 4; i++)
         {
-            ACBits[i] = (((halfBytes[4] >> i) & 1) << 2) & (((halfBytes[5] >> i) & 1) << 1) & (((halfBytes[2] >> i) & 1) << 0);
+            ACBits[i] = (((halfBytes[4] >> i) & 1) << 2) | (((halfBytes[5] >> i) & 1) << 1) | (((halfBytes[2] >> i) & 1) << 0);
         }
         bool isKeyBReadable = ACBits[3] == 0 || ACBits[3] == 1 || ACBits[3] == 4;
-        setTableItem(ui->trailerBlockWidget, 0, 0, "X");
+        for(int j = 0; j < 3; j++)
+        {
+            setTableItem(ui->trailerBlockWidget, 0, j, trailerReadCondition[ACBits[3]][j]);
+            setTableItem(ui->trailerBlockWidget, 1, j, trailerWriteCondition[ACBits[3]][j]);
+        }
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                AccessType type = dataCondition[ACBits[i]][j];
+                if(type == ACC_KEY_B && isKeyBReadable)
+                {
+                    type = ACC_NEVER;
+                }
+                else if(type == ACC_KEY_AB && isKeyBReadable)
+                {
+                    type = ACC_KEY_A;
+                }
+                setTableItem(ui->dataBlockWidget, i, j, type);
+            }
+        }
     }
 }
 
