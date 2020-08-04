@@ -214,6 +214,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="MF_trailerDecoderButton">
+              <property name="text">
+               <string>Trailer Decoder</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="MF_fontButton">
               <property name="text">
                <string>Set Fonts</string>
@@ -630,14 +637,14 @@
                 <item row="0" column="0">
                  <widget class="QPushButton" name="MF_RW_readAllButton">
                   <property name="text">
-                   <string>Read Checked</string>
+                   <string>Read Selected</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QPushButton" name="MF_RW_writeAllButton">
                   <property name="text">
-                   <string>Write Checked</string>
+                   <string>Write Selected</string>
                   </property>
                  </widget>
                 </item>
@@ -722,14 +729,14 @@
                 <item row="0" column="0">
                  <widget class="QPushButton" name="MF_UID_readAllButton">
                   <property name="text">
-                   <string>Read Checked</string>
+                   <string>Read Selected</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
                  <widget class="QPushButton" name="MF_UID_writeAllButton">
                   <property name="text">
-                   <string>Write Checked</string>
+                   <string>Write Selected</string>
                   </property>
                  </widget>
                 </item>

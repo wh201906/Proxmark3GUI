@@ -23,6 +23,7 @@
 #include "common/pm3process.h"
 #include "module/mifare.h"
 #include "common/util.h"
+#include "ui/mf_trailerdecoderdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -145,6 +146,8 @@ private slots:
 
     void on_testButton_clicked();
 
+    void on_MF_trailerDecoderButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
@@ -162,6 +165,8 @@ private:
 
     Mifare* mifare;
     Util* util;
+
+    MF_trailerDecoderDialog* decDialog;
 
 
     void signalInit();

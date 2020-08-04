@@ -904,3 +904,9 @@ void MainWindow::on_testButton_clicked()
 {
     mifare->_readsec(0, Mifare::KEY_A, "FFFFFFFFFFFF");
 }
+
+void MainWindow::on_MF_trailerDecoderButton_clicked()
+{
+    decDialog = new MF_trailerDecoderDialog(this);
+    decDialog->show();
+}
