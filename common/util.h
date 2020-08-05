@@ -8,6 +8,7 @@
 #include <QApplication>
 #include <QTime>
 #include <QTimer>
+#include <QMetaType>
 
 class Util : public QObject
 {
@@ -15,10 +16,13 @@ class Util : public QObject
 public:
     enum ClientType
     {
-        OFFICIAL,
-        ICEMAN,
+        CLIENTTYPE_OFFICIAL,
+        CLIENTTYPE_ICEMAN,
     };
-    explicit Util(Util::ClientType clientType, QObject *parent = nullptr);
+
+    Q_ENUM(Util::ClientType)
+
+    explicit Util(QObject *parent = nullptr);
 
     void execCMD(QString cmd);
     QString execCMDWithOutput(QString cmd, unsigned long timeout = 2000);
@@ -26,6 +30,7 @@ public:
     ClientType getClientType();
 public slots:
     void processOutput(QString output);
+    void setClientType(Util::ClientType clientType);
 
 private:
     bool isRequiringOutput;

@@ -131,7 +131,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int w
         return "";
     }
 
-    if(util->getClientType() == Util::OFFICIAL)
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         // use the given key type to read the target block
         result = util->execCMDWithOutput(
@@ -205,7 +205,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         return data;
     }
 
-    if(util->getClientType() == Util::OFFICIAL)
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         result = util->execCMDWithOutput(
                      "hf mf rdsc "

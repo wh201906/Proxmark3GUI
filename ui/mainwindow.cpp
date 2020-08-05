@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent):
     pm3Thread->start();
     pm3state = false;
 
-    util = new Util(Util::OFFICIAL, this);
+    util = new Util(this);
     mifare = new Mifare(ui, util, this);
 
 }
@@ -784,6 +784,7 @@ void MainWindow::uiInit()
 void MainWindow::signalInit()
 {
     connect(pm3, &PM3Process::newOutput, util, &Util::processOutput);
+    connect(pm3, &PM3Process::changeClientType, util, &Util::setClientType);
     connect(util, &Util::refreshOutput, this, &MainWindow::refreshOutput);
 
     connect(this, &MainWindow::connectPM3, pm3, &PM3Process::connectPM3);

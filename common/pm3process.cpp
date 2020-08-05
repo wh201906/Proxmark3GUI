@@ -16,16 +16,25 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
 
 void PM3Process::connectPM3(const QString path, const QString port)
 {
+    QString result;
     setRequiringOutput(true);
 
     // using "-f" option to make the client output flushed after every print.
     start(path, QStringList() << port << "-f", QProcess::Unbuffered | QProcess::ReadWrite);
     if(waitForStarted(10000))
     {
-        while(waitForReadyRead(1000))
-            ;
+        waitForReadyRead(1000);
         setRequiringOutput(false);
-        QString result = *requiredOutput;
+        result = *requiredOutput;
+        if(result.indexOf("[=]") != -1)
+        {
+            emit changeClientType(Util::CLIENTTYPE_ICEMAN);
+            setRequiringOutput(true);
+            write("hw version\r\n");
+            waitForReadyRead(1000);
+            result = *requiredOutput;
+            setRequiringOutput(false);
+        }
         if(result.indexOf("os: ") != -1) // make sure the PM3 is connected
         {
             result = result.mid(result.indexOf("os: "));
