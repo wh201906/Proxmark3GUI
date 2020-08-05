@@ -26,10 +26,10 @@ void Util::execCMD(QString cmd)
     emit write(cmd + "\r\n");
 }
 
-QString Util::execCMDWithOutput(QString cmd, unsigned long timeout)
+QString Util::execCMDWithOutput(QString cmd, unsigned long waitTime)
 {
     QTime currTime = QTime::currentTime();
-    QTime targetTime = QTime::currentTime().addMSecs(timeout);
+    QTime targetTime = QTime::currentTime().addMSecs(waitTime);
     isRequiringOutput = true;
     requiredOutput->clear();
     execCMD(cmd);
@@ -39,7 +39,7 @@ QString Util::execCMDWithOutput(QString cmd, unsigned long timeout)
         if(timeStamp > currTime)
         {
             currTime = timeStamp;
-            targetTime = timeStamp.addMSecs(timeout);
+            targetTime = timeStamp.addMSecs(waitTime);
         }
     }
     isRequiringOutput = false;

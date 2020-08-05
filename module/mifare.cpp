@@ -102,31 +102,78 @@ void Mifare::chk()
         }
 
     }
-
     data_syncWithKeyWidget();
 }
 
 void Mifare::nested()
 {
-    QString result = util->execCMDWithOutput(
+    QRegularExpressionMatch reMatch;
+    QString result;
+    int offset = 0;
+    QString data;
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        result = util->execCMDWithOutput(
+                     "hf mf nested "
+                     + QString::number(cardType.type)
+                     + " *", 10000);
+    }
+    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        QString knownKeyInfo = "";
+        for(int i = 0; i < cardType.sector_size; i++)
+        {
+            if(data_isKeyValid(keyAList->at(i)))
+            {
+                knownKeyInfo = " " + QString::number(i * 4) + " A " + keyAList->at(i);
+                break;
+            }
+        }
+        if(knownKeyInfo == "")
+        {
+            for(int i = 0; i < cardType.sector_size; i++)
+            {
+                if(data_isKeyValid(keyBList->at(i)))
+                {
+                    knownKeyInfo = " " + QString::number(i * 4) + " B " + keyBList->at(i);
+                    break;
+                }
+            }
+        }
+        if(knownKeyInfo != "")
+        {
+            result = util->execCMDWithOutput(
                          "hf mf nested "
                          + QString::number(cardType.type)
-                         + " *");
+                         + knownKeyInfo, 10000);
+        }
+        else
+        {
+            QMessageBox::information(parent, tr("Info"), tr("Plz provide at least one known key"));
+        }
 
-    int offset = 0;
-    QString tmp;
+    }
     for(int i = 0; i < cardType.sector_size; i++)
     {
-//        offset = nestedKeyPattern->indexIn(result, offset);
-//        offset = result.indexOf(*nestedKeyPattern, offset);
-        tmp = result.mid(offset, 47).toUpper();
-        offset += 47;
-        if(tmp.at(23) == '1')
-            keyAList->replace(i, tmp.mid(7, 12).trimmed());
-        if(tmp.at(44) == '1')
-            keyBList->replace(i, tmp.mid(28, 12).trimmed());
+        reMatch = keyPattern_res->match(result, offset);
+        offset = reMatch.capturedStart();
+        if(reMatch.hasMatch())
+        {
+            data = reMatch.captured().toUpper();
+            offset += data.length();
+            QStringList cells = data.remove(" ").split("|");
+            if(cells.at(3) == "1")
+            {
+                keyAList->replace(i, cells.at(2));
+            }
+            if(cells.at(5) == "1")
+            {
+                keyBList->replace(i, cells.at(4));
+            }
+        }
     }
     data_syncWithKeyWidget();
+
 }
 
 void Mifare::hardnested()
@@ -288,7 +335,6 @@ void Mifare::readAll() // note:cannot handle some situations(special trailer blo
     QString result;
     bool isKeyAValid;
     bool isKeyBValid;
-    const int waitTime = 150;
 
     QString tmp;
     for(int i = 0; i < cardType.sector_size; i++)
