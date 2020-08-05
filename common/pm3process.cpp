@@ -17,6 +17,7 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
 void PM3Process::connectPM3(const QString path, const QString port)
 {
     QString result;
+    Util::ClientType clientType = Util::CLIENTTYPE_OFFICIAL;
     setRequiringOutput(true);
 
     // using "-f" option to make the client output flushed after every print.
@@ -28,7 +29,7 @@ void PM3Process::connectPM3(const QString path, const QString port)
         result = *requiredOutput;
         if(result.indexOf("[=]") != -1)
         {
-            emit changeClientType(Util::CLIENTTYPE_ICEMAN);
+            clientType = Util::CLIENTTYPE_ICEMAN;
             setRequiringOutput(true);
             write("hw version\r\n");
             waitForReadyRead(1000);
@@ -37,6 +38,7 @@ void PM3Process::connectPM3(const QString path, const QString port)
         }
         if(result.indexOf("os: ") != -1) // make sure the PM3 is connected
         {
+            emit changeClientType(clientType);
             result = result.mid(result.indexOf("os: "));
             result = result.left(result.indexOf("\r\n"));
             result = result.mid(3, result.lastIndexOf(" ") - 3);

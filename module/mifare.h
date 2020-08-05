@@ -135,8 +135,8 @@ private:
     QStringList* keyBList;
     QStringList* dataList;
     QRegExp* dataPattern;
-    QRegExp* chkKeyPattern;
-    QRegExp* nestedKeyPattern;
+    QRegularExpression* keyPattern_res;
+    QRegularExpression* keyPattern;
     QRegExp* UIDPattern;
     QString bin2text(const QByteArray& buff, int start, int length);
 

@@ -9,42 +9,45 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
     keyAList = new QStringList();
     keyBList = new QStringList();
     dataList = new QStringList();
-    data_clearKey();  // fill with blank Qstring
-    data_clearData(); // fill with blank Qstring
+    data_clearKey();  // fill with blank QString
+    data_clearData(); // fill with blank QString
     dataPattern = new QRegExp("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
-    chkKeyPattern = new QRegExp("\\|\\d{3}\\|.+\\|.+\\|");
-    nestedKeyPattern = new QRegExp("\\|\\d{3}\\|.+\\|.+\\|.+\\|.+\\|");
+    keyPattern_res = new QRegularExpression("\\|\\d{3}\\|.+?\\|.+?\\|.+?\\|.+?\\|");
+    keyPattern = new QRegularExpression("\\|\\d{3}\\|.+?\\|.+?\\|");
 }
 
 QString Mifare::info(bool isRequiringOutput)
 {
-    if(isRequiringOutput)
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
-        QString result = util->execCMDWithOutput("hf 14a info", 500);
-        qDebug() << result << result.indexOf(QRegExp(ui->MF_RW_dataEdit->text()), 0);
-        result.replace("UID :", "|");
-        result.replace("ATQA :", "|");
-        result.replace("SAK :", "|");
-        result.replace("TYPE :", "|");
-        QStringList lis = result.split("|");
-        if(lis.length() > 4)
+        if(isRequiringOutput)
         {
-            qDebug() << lis[1] + lis[2] + lis[3];
-            return lis[1] + lis[2] + lis[3];
+            QString result = util->execCMDWithOutput("hf 14a info", 500);
+            result.replace("UID :", "|||");
+            result.replace("ATQA :", "|||");
+            result.replace("SAK :", "|||");
+            result.replace("TYPE :", "|||");
+            QStringList lis = result.split("|||");
+            if(lis.length() > 4)
+            {
+                qDebug() << lis[1] + lis[2] + lis[3];
+                return lis[1] + lis[2] + lis[3];
+            }
+            else
+                return "";
         }
         else
+        {
+            util->execCMD("hf 14a info");
+            ui->funcTab->setCurrentIndex(1);
             return "";
-    }
-    else
-    {
-        util->execCMD("hf 14a info");
-        ui->funcTab->setCurrentIndex(1);
-        return "";
+        }
     }
 }
 
 void Mifare::chk()
 {
+    QRegularExpressionMatch reMatch;
     QString result = util->execCMDWithOutput(
                          "hf mf chk *"
                          + QString::number(cardType.type)
@@ -53,21 +56,53 @@ void Mifare::chk()
     qDebug() << result;
 
     int offset = 0;
-    QString tmp, tmp2;
-    for(int i = 0; i < cardType.sector_size; i++)
+    QString data;
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
-        offset = chkKeyPattern->indexIn(result, offset);
-//        offset = result.indexOf(*chkKeyPattern, offset);
-        tmp = result.mid(offset, 39).toUpper();
-        offset += 39;
-        qDebug() << tmp << offset;
-        tmp2 = tmp.mid(7, 12).trimmed();
-        if(tmp2 != "?")
-            keyAList->replace(i, tmp2);
-        tmp2 = tmp.mid(24, 12).trimmed();
-        if(tmp2 != "?")
-            keyBList->replace(i, tmp2);
+        for(int i = 0; i < cardType.sector_size; i++)
+        {
+            reMatch = keyPattern->match(result, offset);
+            offset = reMatch.capturedStart();
+            if(reMatch.hasMatch())
+            {
+                data = reMatch.captured().toUpper();
+                offset += data.length();
+                QStringList cells = data.remove(" ").split("|");
+                if(!cells.at(2).contains("?"))
+                {
+                    keyAList->replace(i, cells.at(2));
+                }
+                if(!cells.at(3).contains("?"))
+                {
+                    keyBList->replace(i, cells.at(3));
+                }
+            }
+        }
     }
+    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        for(int i = 0; i < cardType.sector_size; i++)
+        {
+            reMatch = keyPattern_res->match(result, offset);
+            offset = reMatch.capturedStart();
+            if(reMatch.hasMatch())
+            {
+                data = reMatch.captured().toUpper();
+                offset += data.length();
+                QStringList cells = data.remove(" ").split("|");
+                if(cells.at(3) == "1")
+                {
+                    keyAList->replace(i, cells.at(2));
+                }
+                if(cells.at(5) == "1")
+                {
+                    keyBList->replace(i, cells.at(4));
+                }
+            }
+        }
+
+    }
+
     data_syncWithKeyWidget();
 }
 
@@ -82,7 +117,7 @@ void Mifare::nested()
     QString tmp;
     for(int i = 0; i < cardType.sector_size; i++)
     {
-        offset = nestedKeyPattern->indexIn(result, offset);
+//        offset = nestedKeyPattern->indexIn(result, offset);
 //        offset = result.indexOf(*nestedKeyPattern, offset);
         tmp = result.mid(offset, 47).toUpper();
         offset += 47;

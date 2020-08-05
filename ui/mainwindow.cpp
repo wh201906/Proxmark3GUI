@@ -6,8 +6,6 @@ MainWindow::MainWindow(QWidget *parent):
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//    ui->MF_simGroupBox->setVisible(false); // developing...
-//    ui->MF_sniffGroupBox->setVisible(false); // developing...
     myInfo = new QAction("wh201906", this);
     connect(myInfo, &QAction::triggered, [ = ]()
     {
@@ -94,6 +92,7 @@ void MainWindow::onPM3StateChanged(bool st, QString info)
     }
     else
     {
+        setStatusBar(PM3VersionBar, "");
         setStatusBar(connectStatusBar, tr("Not Connected"));
     }
 }
