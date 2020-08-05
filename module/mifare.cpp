@@ -11,7 +11,7 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
     dataList = new QStringList();
     data_clearKey();  // fill with blank QString
     data_clearData(); // fill with blank QString
-    dataPattern = new QRegExp("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
+    dataPattern = new QRegularExpression("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
     keyPattern_res = new QRegularExpression("\\|\\d{3}\\|.+?\\|.+?\\|.+?\\|.+?\\|");
     keyPattern = new QRegularExpression("\\|\\d{3}\\|.+?\\|.+?\\|");
 }
@@ -213,7 +213,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int w
         return "";
     }
 
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         // use the given key type to read the target block
         result = util->execCMDWithOutput(
@@ -226,22 +226,14 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int w
                      waitTime);
         if(result.indexOf("isOk:01") != -1)
         {
-            result = result.mid(dataPattern->indexIn(result), 47).toUpper();
-
+            data = dataPattern->match(result).captured().toUpper();
+            data.remove(" ");
             // when the target block is a key block and the given key type is keyA, try to check whether the keyB is valid
             // if the given key type is keyB, it will never get the keyA from the key block
-            if(!isKeyBlock)
+            if(isKeyBlock && keyType == KEY_A)
             {
-                data = result;
-            }
-            else if(isKeyBlock && keyType == KEY_A)
-            {
-                for(int i = 0; i < 6; i++)
-                {
-                    result = result.replace(i * 3, 2, key.mid(i * 2, 2));
-                }
-                data = result;
-                QString tmpKey = result.right(18).replace(" ", "");
+                data.replace(0, 12, key);
+                QString tmpKey = data.right(12);
                 result = util->execCMDWithOutput(
                              "hf mf rdbl "
                              + QString::number(blockId)
@@ -250,22 +242,13 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int w
                              waitTime);
                 if(result.indexOf("isOk:01") == -1)
                 {
-                    result = data;
-                    result = result.replace(30, 17, "?? ?? ?? ?? ?? ??");
-                    data = result;
+                    data.replace(20, 12, "????????????");
                 }
             }
             else if(isKeyBlock && keyType == KEY_B)
             {
-                for(int i = 0; i < 6; i++) // use the given keyB to replace revelant part of block data
-                {
-                    result = result.replace(
-                                 30 + i * 3,
-                                 2,
-                                 key.mid(i * 2, 2));
-                }
-                result = result.replace(0, 18, "?? ?? ?? ?? ?? ?? "); // fill the keyA part with ?
-                data = result;
+                data.replace(20, 12, key);;
+                data.replace(0, 12, "????????????"); // fill the keyA part with ?
             }
         }
         else
@@ -273,13 +256,14 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int w
             data = "";
         }
     }
-    return data.remove(" ");
+    return data;
 }
 
 QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, int waitTime)
 {
     QStringList data;
     QString result, tmp;
+    QRegularExpressionMatch reMatch;
     int offset = 0;
 
     if(!data_isKeyValid(key))
@@ -287,7 +271,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         return data;
     }
 
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         result = util->execCMDWithOutput(
                      "hf mf rdsc "
@@ -302,12 +286,15 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         {
             for(int i = 0; i < cardType.blk[sectorId]; i++)
             {
-                offset = dataPattern->indexIn(result, offset);
-                tmp = result.mid(offset, 47).toUpper();
-                offset += 47;
-                qDebug() << tmp;
-                tmp.remove(" ");
-                data.append(tmp);
+                reMatch = dataPattern->match(result, offset);
+                offset = reMatch.capturedStart();
+                if(reMatch.hasMatch())
+                {
+                    tmp = reMatch.captured().toUpper();
+                    offset += tmp.length();
+                    tmp.remove(" ");
+                    data.append(tmp);
+                }
             }
         }
     }
@@ -495,7 +482,7 @@ void Mifare::readC()
                          waitTime);
     if(result.indexOf("No chinese") == -1)
     {
-        result = result.mid(dataPattern->indexIn(result), 47).toUpper();
+//        result = result.mid(dataPattern->indexIn(result), 47).toUpper();
         ui->MF_RW_dataEdit->setText(result);
     }
 }
@@ -519,7 +506,7 @@ void Mifare::readAllC()
             offset = 0;
             for(int j = 0; j < cardType.blk[i]; j++)
             {
-                offset = dataPattern->indexIn(result, offset);
+//                offset = dataPattern->indexIn(result, offset);
 //                offset = result.indexOf(*dataPattern, offset);
                 tmp = result.mid(offset, 47).toUpper();
                 offset += 47;
@@ -667,7 +654,7 @@ void Mifare::readAllE()
                          waitTime);
             qDebug() << result ;
 
-            offset = dataPattern->indexIn(result);
+//            offset = dataPattern->indexIn(result);
 //          offset = result.indexOf(*dataPattern, offset); // When I find the data position in this way, the Regex might fail to match.
 
             tmp = result.mid(offset, 47).toUpper();

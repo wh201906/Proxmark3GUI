@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QMessageBox>
 class Mifare : public QObject
 {
@@ -134,10 +134,9 @@ private:
     QStringList* keyAList;
     QStringList* keyBList;
     QStringList* dataList;
-    QRegExp* dataPattern;
+    QRegularExpression* dataPattern;
     QRegularExpression* keyPattern_res;
     QRegularExpression* keyPattern;
-    QRegExp* UIDPattern;
     QString bin2text(const QByteArray& buff, int start, int length);
 
     //QString _readblk(int blockId, KeyType keyType, const QString &key, int waitTime = 300);
