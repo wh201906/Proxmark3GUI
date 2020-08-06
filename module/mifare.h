@@ -72,8 +72,8 @@ public:
 
     void data_clearData();
     void data_clearKey();
-    bool data_isKeyValid(const QString& key);
-    Mifare::DataType data_isDataValid(QString data);
+    static bool data_isKeyValid(const QString& key);
+    static Mifare::DataType data_isDataValid(const QString& data);
     void data_syncWithDataWidget(bool syncAll = true, int block = 0);
     void data_syncWithKeyWidget(bool syncAll = true, int sector = 0, KeyType keyType = KEY_A);
 
@@ -107,6 +107,7 @@ public:
 
     QString _readblk(int blockId, KeyType keyType, const QString &key, int waitTime = 300);
     QStringList _readsec(int sectorId, KeyType keyType, const QString &key, int waitTime = 300);
+    static QList<quint8> data_getACBits(const QString &text);
 public slots:
 signals:
 

@@ -15,6 +15,10 @@ MF_trailerDecoderDialog::MF_trailerDecoderDialog(QWidget *parent) :
     sizeGroup->addButton(ui->size4Button, 4);
     sizeGroup->addButton(ui->size16Button, 16);
     connect(sizeGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), this, &MF_trailerDecoderDialog::on_blockSizeChanged);
+    connect(ui->C0Box, &QSpinBox::textChanged, this, &MF_trailerDecoderDialog::on_boxChanged);
+    connect(ui->C1Box, &QSpinBox::textChanged, this, &MF_trailerDecoderDialog::on_boxChanged);
+    connect(ui->C2Box, &QSpinBox::textChanged, this, &MF_trailerDecoderDialog::on_boxChanged);
+    connect(ui->C3Box, &QSpinBox::textChanged, this, &MF_trailerDecoderDialog::on_boxChanged);
 
     ui->dataBlockWidget->setRowCount(3);
     ui->dataBlockWidget->setColumnCount(4);
@@ -26,37 +30,26 @@ MF_trailerDecoderDialog::~MF_trailerDecoderDialog()
 {
     delete ui;
 }
-void MF_trailerDecoderDialog::on_accessBitsEdit_textEdited(const QString &arg1)
+void MF_trailerDecoderDialog::on_accessBitsEdit_textChanged(const QString &arg1)
 {
-    QString input = arg1;
-    input.remove(" ");
-    if(input.length() < 6)
-    {
-        ui->isAccessBitsValidLabel->setText("");
-        return;
-    }
-    input = input.left(6);
-    quint32 result = input.toUInt(nullptr, 16);
-    quint8 halfBytes[6];
-    for(int i = 0; i < 6; i++)
-    {
-        halfBytes[i] = (result >> ((5 - i) * 4)) & 0xf;
-    }
-    qDebug() << result;
-    if((~halfBytes[0] & 0xf) != halfBytes[5] || (~halfBytes[1] & 0xf) != halfBytes[2] || (~halfBytes[3] & 0xf) != halfBytes[4])
+    ui->C0Box->blockSignals(true);
+    ui->C1Box->blockSignals(true);
+    ui->C2Box->blockSignals(true);
+    ui->C3Box->blockSignals(true);
+    QList<quint8> ACBits = Mifare::data_getACBits(arg1);
+    if(ACBits.size() == 0)
     {
         ui->isAccessBitsValidLabel->setStyleSheet("color:rgb(200, 0, 0)");
-        ui->isAccessBitsValidLabel->setText(tr("Invalid! It could make the whole sector blocked irreversibly!"));
+        ui->isAccessBitsValidLabel->setText(tr("Invalid!\nIt could make the whole sector blocked irreversibly!"));
     }
     else
     {
+        ui->C0Box->setValue(ACBits[0]);
+        ui->C1Box->setValue(ACBits[1]);
+        ui->C2Box->setValue(ACBits[2]);
+        ui->C3Box->setValue(ACBits[3]);
         ui->isAccessBitsValidLabel->setStyleSheet("color:rgb(0, 200, 0)");
         ui->isAccessBitsValidLabel->setText(tr("Valid"));
-        quint8 ACBits[4];
-        for(int i = 0; i < 4; i++)
-        {
-            ACBits[i] = (((halfBytes[4] >> i) & 1) << 2) | (((halfBytes[5] >> i) & 1) << 1) | (((halfBytes[2] >> i) & 1) << 0);
-        }
         bool isKeyBReadable = ACBits[3] == 0 || ACBits[3] == 1 || ACBits[3] == 4;
         for(int j = 0; j < 3; j++)
         {
@@ -80,6 +73,10 @@ void MF_trailerDecoderDialog::on_accessBitsEdit_textEdited(const QString &arg1)
             }
         }
     }
+    ui->C0Box->blockSignals(false);
+    ui->C1Box->blockSignals(false);
+    ui->C2Box->blockSignals(false);
+    ui->C3Box->blockSignals(false);
 }
 
 void MF_trailerDecoderDialog::on_blockSizeChanged(int id, bool st)
@@ -124,4 +121,34 @@ void MF_trailerDecoderDialog::setTableItem(QTableWidget* widget, int row, int co
         text = "KeyA+B";
     }
     widget->item(row, column)->setText(text);
+}
+
+void MF_trailerDecoderDialog::on_boxChanged(const QString &arg1)
+{
+    quint8 ACBits[4];
+    ACBits[0] = ui->C0Box->value();
+    ACBits[1] = ui->C1Box->value();
+    ACBits[2] = ui->C2Box->value();
+    ACBits[3] = ui->C3Box->value();
+    quint8 halfBytes[6] = {0, 0, 0, 0, 0, 0};
+    for(int i = 0; i < 4; i++)
+    {
+        halfBytes[2] |= (((ACBits[i] >> 0) & 1) << i);
+        halfBytes[5] |= (((ACBits[i] >> 1) & 1) << i);
+        halfBytes[4] |= (((ACBits[i] >> 2) & 1) << i);
+    }
+    halfBytes[0] = (~halfBytes[5]) & 0xf;
+    halfBytes[1] = (~halfBytes[2]) & 0xf;
+    halfBytes[3] = (~halfBytes[4]) & 0xf;
+
+    QString result;
+    for(int i = 0; i < 3; i++)
+    {
+        result += QString::number(halfBytes[i * 2], 16);
+        result += QString::number(halfBytes[i * 2 + 1], 16);
+        result += " ";
+    }
+    result = result.toUpper();
+    ui->accessBitsEdit->setText(result);
+
 }

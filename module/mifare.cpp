@@ -295,19 +295,13 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int w
         {
             data = dataPattern->match(result).captured().toUpper();
             data.remove(" ");
-            // when the target block is a key block and the given key type is keyA, try to check whether the keyB is valid
-            // if the given key type is keyB, it will never get the keyA from the key block
+            // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
+            // if the given key type is KeyB, it will never get the KeyA from the key block
             if(isKeyBlock && keyType == KEY_A)
             {
                 data.replace(0, 12, key);
-                QString tmpKey = data.right(12);
-                result = util->execCMDWithOutput(
-                             "hf mf rdbl "
-                             + QString::number(blockId)
-                             + " B "
-                             + tmpKey,
-                             waitTime);
-                if(result.indexOf("isOk:01") == -1)
+                QList<quint8> ACBits = data_getACBits(data.mid(12, 8));
+                if(ACBits[3] == 2 || ACBits[3] == 3 || ACBits[3] == 5 || ACBits[3] == 6 || ACBits[3] == 7) // in these cases, the KeyB cannot be read by KeyA
                 {
                     data.replace(20, 12, "????????????");
                 }
@@ -852,8 +846,7 @@ bool Mifare::data_isKeyValid(const QString &key)
     return true;
 }
 
-Mifare::DataType
-Mifare::data_isDataValid(QString data) // "?" will not been processd there
+Mifare::DataType Mifare::data_isDataValid(const QString& data) // "?" will not been processd there
 {
     if(data.length() == 47)
     {
@@ -1176,3 +1169,31 @@ void Mifare::data_fillKeys()
     }
     data_syncWithKeyWidget();
 }
+
+QList<quint8> Mifare::data_getACBits(const QString& text) //return empty QList if the text is invalid
+{
+    QString input = text;
+    QList<quint8> result;
+    input.remove(" ");
+    if(input.length() < 6)
+    {
+        return result;
+    }
+    input = input.left(6);
+    quint32 val = input.toUInt(nullptr, 16);
+    quint8 halfBytes[6];
+    for(int i = 0; i < 6; i++)
+    {
+        halfBytes[i] = (val >> ((5 - i) * 4)) & 0xf;
+    }
+    qDebug() << val;
+    if((~halfBytes[0] & 0xf) == halfBytes[5] && (~halfBytes[1] & 0xf) == halfBytes[2] && (~halfBytes[3] & 0xf) == halfBytes[4])
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            result.append((((halfBytes[4] >> i) & 1) << 2) | (((halfBytes[5] >> i) & 1) << 1) | (((halfBytes[2] >> i) & 1) << 0));
+        }
+    }
+    return result;
+}
+
