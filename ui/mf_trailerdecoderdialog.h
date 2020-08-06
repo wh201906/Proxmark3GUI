@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QButtonGroup>
 #include <QTableWidget>
+#include "../module/mifare.h"
 
 namespace Ui
 {
@@ -19,13 +20,6 @@ class MF_trailerDecoderDialog : public QDialog
 public:
     explicit MF_trailerDecoderDialog(QWidget *parent = nullptr);
     ~MF_trailerDecoderDialog();
-    enum AccessType
-    {
-        ACC_NEVER = 0,
-        ACC_KEY_A = 1,
-        ACC_KEY_B = 2,
-        ACC_KEY_AB = 3,
-    };
 
 private slots:
 
@@ -36,12 +30,7 @@ private:
     Ui::MF_trailerDecoderDialog *ui;
     QRegularExpressionValidator* validator;
     QButtonGroup* sizeGroup;
-    void setTableItem(QTableWidget *widget, int row, int column, AccessType accessType);
-
-    // If I don't make them static, the app will crash(these arrays might take too much space)
-    static AccessType dataCondition[8][4];
-    static AccessType trailerReadCondition[8][3];
-    static AccessType trailerWriteCondition[8][3];
+    void setTableItem(QTableWidget *widget, int row, int column, Mifare::AccessType accessType);
 
 };
 

@@ -1,40 +1,6 @@
 ﻿#include "mf_trailerdecoderdialog.h"
 #include "ui_mf_trailerdecoderdialog.h"
 
-MF_trailerDecoderDialog::AccessType MF_trailerDecoderDialog::dataCondition[8][4] =
-{
-    {ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB},
-    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_AB, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_AB, ACC_KEY_B, ACC_KEY_B, ACC_KEY_AB},
-    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_KEY_AB},
-    {ACC_KEY_B, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_B, ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER, ACC_NEVER},
-};
-MF_trailerDecoderDialog::AccessType MF_trailerDecoderDialog::trailerReadCondition[8][3] =
-{
-    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-};
-MF_trailerDecoderDialog::AccessType MF_trailerDecoderDialog::trailerWriteCondition[8][3] =
-{
-    {ACC_KEY_A, ACC_NEVER, ACC_KEY_A},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_B, ACC_NEVER, ACC_KEY_B},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_A, ACC_KEY_A, ACC_KEY_A},
-    {ACC_KEY_B, ACC_KEY_B, ACC_KEY_B},
-    {ACC_NEVER, ACC_KEY_B, ACC_NEVER},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
-};
-
 MF_trailerDecoderDialog::MF_trailerDecoderDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MF_trailerDecoderDialog)
@@ -94,21 +60,21 @@ void MF_trailerDecoderDialog::on_accessBitsEdit_textEdited(const QString &arg1)
         bool isKeyBReadable = ACBits[3] == 0 || ACBits[3] == 1 || ACBits[3] == 4;
         for(int j = 0; j < 3; j++)
         {
-            setTableItem(ui->trailerBlockWidget, 0, j, trailerReadCondition[ACBits[3]][j]);
-            setTableItem(ui->trailerBlockWidget, 1, j, trailerWriteCondition[ACBits[3]][j]);
+            setTableItem(ui->trailerBlockWidget, 0, j, Mifare::trailerReadCondition[ACBits[3]][j]);
+            setTableItem(ui->trailerBlockWidget, 1, j, Mifare::trailerWriteCondition[ACBits[3]][j]);
         }
         for(int i = 0; i < 3; i++)
         {
             for(int j = 0; j < 4; j++)
             {
-                AccessType type = dataCondition[ACBits[i]][j];
-                if(type == ACC_KEY_B && isKeyBReadable)
+                Mifare::AccessType type = Mifare::dataCondition[ACBits[i]][j];
+                if(type == Mifare::ACC_KEY_B && isKeyBReadable)
                 {
-                    type = ACC_NEVER;
+                    type = Mifare::ACC_NEVER;
                 }
-                else if(type == ACC_KEY_AB && isKeyBReadable)
+                else if(type == Mifare::ACC_KEY_AB && isKeyBReadable)
                 {
-                    type = ACC_KEY_A;
+                    type = Mifare::ACC_KEY_A;
                 }
                 setTableItem(ui->dataBlockWidget, i, j, type);
             }
@@ -136,24 +102,24 @@ void MF_trailerDecoderDialog::on_blockSizeChanged(int id, bool st)
     }
 }
 
-void MF_trailerDecoderDialog::setTableItem(QTableWidget* widget, int row, int column, AccessType accessType)
+void MF_trailerDecoderDialog::setTableItem(QTableWidget* widget, int row, int column, Mifare::AccessType accessType)
 {
     if(widget->item(row, column) == nullptr)
         widget->setItem(row, column, new QTableWidgetItem());
     QString text;
-    if(accessType == ACC_NEVER)
+    if(accessType == Mifare::ACC_NEVER)
     {
         text = "X";
     }
-    else if(accessType == ACC_KEY_A)
+    else if(accessType == Mifare::ACC_KEY_A)
     {
         text = "KeyA";
     }
-    else if(accessType == ACC_KEY_B)
+    else if(accessType == Mifare::ACC_KEY_B)
     {
         text = "KeyB";
     }
-    else if(accessType == ACC_KEY_AB)
+    else if(accessType == Mifare::ACC_KEY_AB)
     {
         text = "KeyA+B";
     }

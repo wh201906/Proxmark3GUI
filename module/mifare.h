@@ -53,38 +53,22 @@ public:
         int blks[40];
     };
 
-    const CardType card_mini =
+    enum AccessType
     {
-        0,
-        5,
-        20,
-        {4, 4, 4, 4, 4},
-        {0, 4, 8, 12, 16}
+        ACC_NEVER = 0,
+        ACC_KEY_A = 1,
+        ACC_KEY_B = 2,
+        ACC_KEY_AB = 3,
     };
-    const CardType card_1k =
-    {
-        1,
-        16,
-        64,
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60}
-    };
-    const CardType card_2k =
-    {
-        2,
-        32,
-        128,
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-        {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124}
-    };
-    const CardType card_4k =
-    {
-        4,
-        40,
-        256,
-        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 16, 16, 16, 16, 16, 16, 16, 16},
-        {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 144, 160, 176, 192, 208, 224, 240}
-    };
+
+    static const CardType card_mini;
+    static const CardType card_1k;
+    static const CardType card_2k;
+    static const CardType card_4k;
+
+    static const AccessType dataCondition[8][4];
+    static const AccessType trailerReadCondition[8][3];
+    static const AccessType trailerWriteCondition[8][3];
 
     void data_clearData();
     void data_clearKey();

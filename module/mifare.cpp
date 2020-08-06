@@ -1,5 +1,72 @@
 ﻿#include "mifare.h"
 
+const Mifare::CardType Mifare::card_mini =
+{
+    0,
+    5,
+    20,
+    {4, 4, 4, 4, 4},
+    {0, 4, 8, 12, 16}
+};
+const Mifare::CardType Mifare::card_1k =
+{
+    1,
+    16,
+    64,
+    {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60}
+};
+const Mifare::CardType Mifare::card_2k =
+{
+    2,
+    32,
+    128,
+    {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124}
+};
+const Mifare::CardType Mifare::card_4k =
+{
+    4,
+    40,
+    256,
+    {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 16, 16, 16, 16, 16, 16, 16, 16},
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 144, 160, 176, 192, 208, 224, 240}
+};
+
+const Mifare::AccessType Mifare::dataCondition[8][4] =
+{
+    {ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB},
+    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_AB, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_AB, ACC_KEY_B, ACC_KEY_B, ACC_KEY_AB},
+    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_KEY_AB},
+    {ACC_KEY_B, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_B, ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER, ACC_NEVER},
+};
+const Mifare::AccessType Mifare::trailerReadCondition[8][3] =
+{
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+};
+const Mifare::AccessType Mifare::trailerWriteCondition[8][3] =
+{
+    {ACC_KEY_A, ACC_NEVER, ACC_KEY_A},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_B, ACC_NEVER, ACC_KEY_B},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_A, ACC_KEY_A, ACC_KEY_A},
+    {ACC_KEY_B, ACC_KEY_B, ACC_KEY_B},
+    {ACC_NEVER, ACC_KEY_B, ACC_NEVER},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
+};
+
 Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
 {
     this->parent = parent;
