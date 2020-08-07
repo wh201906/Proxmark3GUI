@@ -77,7 +77,7 @@ private slots:
 
     void on_MF_Sniff_listButton_clicked();
 
-    void on_MF_RW_readAllButton_clicked();
+    void on_MF_RW_readSelectedButton_clicked();
 
     void on_MF_RW_readBlockButton_clicked();
 

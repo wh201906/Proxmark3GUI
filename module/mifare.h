@@ -25,7 +25,7 @@ public:
     void snoop();
     void list();
     void read();
-    void readAll();
+    void readSelected(const QList<int>& selectedBlocks);
     void write();
     void writeAll();
     void dump();
@@ -105,8 +105,6 @@ public:
     void saveSniff(const QString& file);
     void data_fillKeys();
 
-    QString _readblk(int blockId, KeyType keyType, const QString &key, int waitTime = 300);
-    QStringList _readsec(int sectorId, KeyType keyType, const QString &key, int waitTime = 300);
     static QList<quint8> data_getACBits(const QString &text);
 public slots:
 signals:
@@ -124,8 +122,9 @@ private:
     QRegularExpression* keyPattern;
     QString bin2text(const QByteArray& buff, int start, int length);
 
-    //QString _readblk(int blockId, KeyType keyType, const QString &key, int waitTime = 300);
-    //QStringList _readsec(int sectorId, KeyType keyType, const QString &key, int waitTime = 300);
+    QString _readblk(int blockId, KeyType keyType, const QString &key, int waitTime = 300);
+    QStringList _readsec(int sectorId, KeyType keyType, const QString &key, int waitTime = 300);
+    bool _writeblk(int blockId, KeyType keyType, const QString &key, const QString &data, int waitTime = 300);
 };
 
 #endif // MIFARE_H

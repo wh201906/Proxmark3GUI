@@ -7,10 +7,16 @@ A GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 
 ## Features
 
-+ Support raw commands of Proxmark3 client
++ Easy to find available Serial Port
++ Support raw commands of Proxmark3 client(Official/Iceman)
 + Have a friendly UI to test Mifare cards
-+ Easy to edit Mifare data files
-+ Support binary(.bin .dump) files and text(.eml) files
+    + Support different card size(MINI, 1K, 2K, 4K)
+    + Easy to edit Mifare data files
+    + Easy to read all blocks with well-designed read logic
+    + Support binary(.bin .dump) files and text(.eml) files
+    + Analyze Access Bits
+    + Support Chinese Magic Card
++ Customize UI
 + ...
 
 ***

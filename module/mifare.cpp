@@ -412,13 +412,27 @@ void Mifare::read()
     }
 }
 
-void Mifare::readAll()
+void Mifare::readSelected(const QList<int>& selectedBlocks)
 {
     QStringList data, dataA, dataB;
     QString trailerA, trailerB;
+    QList<bool> selectedSectors;
 
     for(int i = 0; i < cardType.sector_size; i++)
     {
+        selectedSectors.append(false);
+    }
+    for(int item : selectedBlocks)
+    {
+        selectedSectors[item / 4] = true;
+    }
+
+    for(int i = 0; i < cardType.sector_size; i++)
+    {
+        if(!selectedSectors[i])
+        {
+            continue;
+        }
         for(int j = 0; j < cardType.blk[i]; j++)
         {
             // dataA is always filled with "" because of the _readsec()
@@ -451,34 +465,61 @@ void Mifare::readAll()
 
         for(int j = 0; j < cardType.blk[i]; j++)
         {
-            dataList->replace(cardType.blks[i] + j, data[j]);
-            data_syncWithDataWidget(false, cardType.blks[i] + j);
+            if(selectedBlocks.contains(cardType.blks[i] + j))
+            {
+                dataList->replace(cardType.blks[i] + j, data[j]);
+                data_syncWithDataWidget(false, cardType.blks[i] + j);
+            }
         }
 
-        // data widget has been updated, so this is just a temporary varient.
-        if(data[cardType.blk[i] - 1] == "")
-            data[cardType.blk[i] - 1] = "????????????????????????????????";
+        if(selectedBlocks.contains(cardType.blks[i] + cardType.blk[i] - 1))
+        {
+            // data widget has been updated, so this is just a temporary varient.
+            if(data[cardType.blk[i] - 1] == "")
+                data[cardType.blk[i] - 1] = "????????????????????????????????";
 
-        // doesn't replace the existing key.
-        if(keyAList->at(i) == "" || keyAList->at(i) == "????????????")
-            keyAList->replace(i, data[cardType.blk[i] - 1].left(12));
-        if(keyBList->at(i) == "" || keyBList->at(i) == "????????????")
-            keyBList->replace(i, data[cardType.blk[i] - 1].right(12));
-        data_syncWithKeyWidget(false, i, KEY_A);
-        data_syncWithKeyWidget(false, i, KEY_B);
+            // doesn't replace the existing key.
+            if(!data_isKeyValid(keyAList->at(i)))
+                keyAList->replace(i, data[cardType.blk[i] - 1].left(12));
+            if(!data_isKeyValid(keyBList->at(i)))
+                keyBList->replace(i, data[cardType.blk[i] - 1].right(12));
+            data_syncWithKeyWidget(false, i, KEY_A);
+            data_syncWithKeyWidget(false, i, KEY_B);
+        }
+
+    }
+}
+
+bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const QString& data, int waitTime)
+{
+    QString input = data.toUpper();
+    input.remove(" ");
+
+    if(!data_isKeyValid(key) || data_isDataValid(input) != DATA_NOSPACE)
+        return false;
+
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        QString result = util->execCMDWithOutput(
+                             "hf mf wrbl "
+                             + QString::number(blockId)
+                             + " "
+                             + (char)keyType
+                             + " "
+                             + key
+                             + " "
+                             + input,
+                             waitTime);
+        return (result.indexOf("isOk:01") != -1);
     }
 }
 
 void Mifare::write()
 {
-    int waitTime = 300;
-    QString result = util->execCMDWithOutput(
-                         "hf mf wrbl " + ui->MF_RW_blockBox->currentText() + " " +
-                         ui->MF_RW_keyTypeBox->currentText() + " " +
-                         ui->MF_RW_keyEdit->text() + " " +
-                         ui->MF_RW_dataEdit->text().replace(" ", ""),
-                         waitTime);
-    if(result.indexOf("isOk:01") != -1)
+    int blockId = ui->MF_RW_blockBox->currentText().toInt();
+    Mifare::KeyType keyType = (Mifare::KeyType)(ui->MF_RW_keyTypeBox->currentData().toInt());
+    bool isSuccessful = _writeblk(blockId, keyType, ui->MF_RW_keyEdit->text().toUpper(), ui->MF_RW_dataEdit->text());
+    if(isSuccessful)
     {
         QMessageBox::information(parent, tr("Info"), tr("Success!"));
     }
@@ -490,46 +531,19 @@ void Mifare::write()
 
 void Mifare::writeAll()
 {
-    const int waitTime = 300;
-    QString result;
     for(int i = 0; i < cardType.sector_size; i++)
     {
         for(int j = 0; j < cardType.blk[i]; j++)
         {
-            result = ""; // if the KeyA is valid and the result is not empty, the KeyB will not be tested.
-            if(data_isDataValid(dataList->at(cardType.blks[i] + j)) != DATA_NOSPACE || dataList->at(cardType.blks[i] + j).contains('?'))
-                continue;
-            if(data_isKeyValid(keyAList->at(i)))
+            bool result = false;
+            result = _writeblk(cardType.blks[i] + j, KEY_A, keyAList->at(i), dataList->at(cardType.blks[i] + j));
+            if(!result)
             {
-                result = util->execCMDWithOutput(
-                             "hf mf wrbl " +
-                             QString::number(cardType.blks[i] + j)
-                             + " A "
-                             + keyAList->at(i)
-                             + " "
-                             + dataList->at(cardType.blks[i] + j),
-                             waitTime);
+                result = _writeblk(cardType.blks[i] + j, KEY_B, keyBList->at(i), dataList->at(cardType.blks[i] + j));
             }
-            qDebug() << i << j << result.indexOf("isOk:01") << data_isKeyValid(keyBList->at(i));
-            if(result.indexOf("isOk:01") == -1 && data_isKeyValid(keyBList->at(i)))
+            if(!result)
             {
-                result = util->execCMDWithOutput(
-                             "hf mf wrbl "
-                             + QString::number(cardType.blks[i] + j)
-                             + " B "
-                             + keyBList->at(i)
-                             + " "
-                             + dataList->at(cardType.blks[i] + j),
-                             waitTime);
-            }
-            if(result.indexOf("isOk:01") == -1 && keyAList->at(i) != "FFFFFFFFFFFF") // Try default key. It's useful when writing to a blank card
-            {
-                result = util->execCMDWithOutput(
-                             "hf mf wrbl "
-                             + QString::number(cardType.blks[i] + j)
-                             + " A FFFFFFFFFFFF "
-                             + dataList->at(cardType.blks[i] + j),
-                             waitTime);
+                result = _writeblk(cardType.blks[i] + j, KEY_A, "FFFFFFFFFFFF", dataList->at(cardType.blks[i] + j));
             }
         }
     }
@@ -765,6 +779,7 @@ void Mifare::saveSniff(const QString& file)
 
 void Mifare::data_syncWithDataWidget(bool syncAll, int block)
 {
+    ui->MF_dataWidget->blockSignals(true);
     QString tmp;
     if(syncAll)
     {
@@ -797,10 +812,12 @@ void Mifare::data_syncWithDataWidget(bool syncAll, int block)
         }
         ui->MF_dataWidget->item(block, 2)->setText(tmp);
     }
+    ui->MF_dataWidget->blockSignals(false);
 }
 
 void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, KeyType keyType)
 {
+    ui->MF_keyWidget->blockSignals(true);
     if(syncAll)
     {
         for(int i = 0; i < cardType.sector_size; i++)
@@ -816,6 +833,7 @@ void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, KeyType keyType)
         else
             ui->MF_keyWidget->item(sector, 2)->setText(keyBList->at(sector));
     }
+    ui->MF_keyWidget->blockSignals(false);
 }
 
 void Mifare::data_clearData()

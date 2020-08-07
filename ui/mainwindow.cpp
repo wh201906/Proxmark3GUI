@@ -486,10 +486,16 @@ void MainWindow::on_MF_Attack_hardnestedButton_clicked()
     mifare->hardnested();
 }
 
-void MainWindow::on_MF_RW_readAllButton_clicked()
+void MainWindow::on_MF_RW_readSelectedButton_clicked()
 {
     setState(false);
-    mifare->readAll();
+    QList<int> selectedBlocks;
+    for(int i = 0; i < mifare->cardType.block_size; i++)
+    {
+        if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
+            selectedBlocks.append(i);
+    }
+    mifare->readSelected(selectedBlocks);
     setState(true);
 }
 
@@ -919,5 +925,5 @@ void MainWindow::saveClientPath(const QString& path)
 
 void MainWindow::on_testButton_clicked()
 {
-    mifare->_readsec(0, Mifare::KEY_A, "FFFFFFFFFFFF");
+//    mifare->_readsec(0, Mifare::KEY_A, "FFFFFFFFFFFF");
 }
