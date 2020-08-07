@@ -135,13 +135,13 @@ void Mifare::chk()
                 data = reMatch.captured().toUpper();
                 offset += data.length();
                 QStringList cells = data.remove(" ").split("|");
-                if(!cells.at(2).contains("?"))
+                if(!cells[2].contains("?"))
                 {
-                    keyAList->replace(i, cells.at(2));
+                    keyAList->replace(i, cells[2]);
                 }
-                if(!cells.at(3).contains("?"))
+                if(!cells[3].contains("?"))
                 {
-                    keyBList->replace(i, cells.at(3));
+                    keyBList->replace(i, cells[3]);
                 }
             }
         }
@@ -157,13 +157,13 @@ void Mifare::chk()
                 data = reMatch.captured().toUpper();
                 offset += data.length();
                 QStringList cells = data.remove(" ").split("|");
-                if(cells.at(3) == "1")
+                if(cells[3] == "1")
                 {
-                    keyAList->replace(i, cells.at(2));
+                    keyAList->replace(i, cells[2]);
                 }
-                if(cells.at(5) == "1")
+                if(cells[5] == "1")
                 {
-                    keyBList->replace(i, cells.at(4));
+                    keyBList->replace(i, cells[4]);
                 }
             }
         }
@@ -229,13 +229,13 @@ void Mifare::nested()
             data = reMatch.captured().toUpper();
             offset += data.length();
             QStringList cells = data.remove(" ").split("|");
-            if(cells.at(3) == "1")
+            if(cells[3] == "1")
             {
-                keyAList->replace(i, cells.at(2));
+                keyAList->replace(i, cells[2]);
             }
-            if(cells.at(5) == "1")
+            if(cells[5] == "1")
             {
-                keyBList->replace(i, cells.at(4));
+                keyBList->replace(i, cells[4]);
             }
         }
     }
@@ -327,6 +327,10 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
     QRegularExpressionMatch reMatch;
     int offset = 0;
 
+    for(int i = 0; i < cardType.blk[sectorId]; i++)
+    {
+        data.append("");
+    }
     if(!data_isKeyValid(key))
     {
         return data;
@@ -334,6 +338,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
 
     if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
+        // try to read all blocks together
         result = util->execCMDWithOutput(
                      "hf mf rdsc "
                      + QString::number(sectorId)
@@ -354,9 +359,39 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
                     tmp = reMatch.captured().toUpper();
                     offset += tmp.length();
                     tmp.remove(" ");
-                    data.append(tmp);
+                    data[i] = tmp;
                 }
             }
+        }
+        // if failed, try to read them seperately.
+        // (when one of the block cannot be read, the rdsc will return nothing, so you need to read the rest of blocks manually)
+        else
+        {
+            for(int i = 0; i < cardType.blk[sectorId]; i++)
+            {
+                data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, waitTime);
+            }
+        }
+
+        //process trailer(like _readblk())
+        QString trailer = data[cardType.blk[sectorId] - 1];
+        if(trailer != "")
+        {
+            if(keyType == KEY_A) // in this case, the Access Bits is always accessible
+            {
+                trailer.replace(0, 12, key);
+                QList<quint8> ACBits = data_getACBits(trailer.mid(12, 8));
+                if(ACBits[3] == 2 || ACBits[3] == 3 || ACBits[3] == 5 || ACBits[3] == 6 || ACBits[3] == 7) // in these cases, the KeyB cannot be read by KeyA
+                {
+                    trailer.replace(20, 12, "????????????");
+                }
+            }
+            else if(keyType == KEY_B)
+            {
+                trailer.replace(20, 12, key);;
+                trailer.replace(0, 12, "????????????"); // fill the keyA part with ?
+            }
+            data[cardType.blk[sectorId] - 1] = trailer;
         }
     }
     return data;
@@ -377,93 +412,60 @@ void Mifare::read()
     }
 }
 
-void Mifare::readAll() // note:cannot handle some situations(special trailer block)
+void Mifare::readAll()
 {
-    QStringList data;
-    QString result;
-    bool isKeyAValid;
-    bool isKeyBValid;
+    QStringList data, dataA, dataB;
+    QString trailerA, trailerB;
 
-    QString tmp;
     for(int i = 0; i < cardType.sector_size; i++)
     {
-        result = "";
-        isKeyAValid = false;
-        isKeyBValid = false;
-
-        // check keys and read the first block of each sector
-        data = _readsec(i, Mifare::KEY_A, keyAList->at(i));
-        if(data.size() > 0)
+        for(int j = 0; j < cardType.blk[i]; j++)
         {
-            isKeyAValid = true;
-            for(int j = 0; j < cardType.blk[i]; j++)
-            {
-                dataList->replace(cardType.blks[i] + j, data[j]);
-                data_syncWithDataWidget(false, cardType.blks[i] + j);
-            }
+            // dataA is always filled with "" because of the _readsec()
+            data.append("");
+            dataB.append("");
         }
 
-        data.clear();
-        data = _readsec(i, Mifare::KEY_B, keyBList->at(i));
-        if(data.size() > 0)
+        dataA = _readsec(i, Mifare::KEY_A, keyAList->at(i));
+        if(dataA.contains("") || dataA[cardType.blk[i] - 1].right(12) == "????????????")
+            dataB = _readsec(i, Mifare::KEY_B, keyBList->at(i));
+
+        for(int j = 0; j < cardType.blk[i]; j++)
         {
-            isKeyBValid = true;
-            for(int j = 0; j < cardType.blk[i]; j++)
-            {
-                dataList->replace(cardType.blks[i] + j, data[j]);
-                data_syncWithDataWidget(false, cardType.blks[i] + j);
-            }
-        }
-
-        // check keys and read the first block of each sector
-
-        if(isKeyAValid || isKeyBValid)
-        {
-
-            // fill the MF_dataWidget with the known valid key
-            //
-            // check whether the MF_dataWidget contains the valid key,
-            // and fill MF_keyWidget(when you only have KeyA but the ReadBlock output
-            // contains the KeyB)
-            //
-            // the structure is not symmetric, since you cannot get KeyA from output
-            // this program will only process the provided KeyA(in MF_keyWidget)
-            result = dataList->at(cardType.blks[i] + cardType.blk[i] - 1);
-            if(isKeyAValid)
-            {
-                result.replace(0, 12, keyAList->at(i));
-            }
+            if(dataA[j] != "")
+                data[j] = dataA[j];
             else
-            {
-                result = result.replace(0, 12, "????????????");
-            }
-            dataList->replace(cardType.blks[i] + cardType.blk[i] - 1, result);
-
-            if(isKeyBValid)
-            {
-                result.replace(20, 12, keyBList->at(i));
-                dataList->replace(cardType.blks[i] + cardType.blk[i] - 1, result);
-                data_syncWithDataWidget(false, cardType.blks[i] + cardType.blk[i] - 1);
-            }
-            else   // now isKeyAValid == true, the output might contains the KeyB
-            {
-                QString tmpKey =
-                    dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12);
-                result = _readblk(cardType.blks[i] + cardType.blk[i] - 1, Mifare::KEY_B, tmpKey);
-                if(result != "")
-                {
-                    keyBList->replace(i, tmpKey);
-                    data_syncWithKeyWidget(false, i, KEY_B);
-                }
-                else
-                {
-                    result = dataList->at(cardType.blks[i] + cardType.blk[i] - 1);
-                    result = result.replace(20, 12, "????????????");
-                    dataList->replace(cardType.blks[i] + cardType.blk[i] - 1, result);
-                }
-            }
-            data_syncWithDataWidget(false, cardType.blks[i] + cardType.blk[i] - 1);
+                data[j] = dataB[j];
         }
+
+        // process trailer block seperately
+        trailerA = dataA[cardType.blk[i] - 1];
+        trailerB = dataB[cardType.blk[i] - 1];
+        if(trailerA != "" && trailerB != "")
+        {
+            QString ACbits = trailerA.mid(12, 8);
+            QString key_A = trailerA.left(12);
+            QString key_B = trailerA.at(31) != '?' ? trailerA.right(12) : trailerB.right(12);
+            data[cardType.blk[i] - 1] = key_A + ACbits + key_B;
+        }
+
+        for(int j = 0; j < cardType.blk[i]; j++)
+        {
+            dataList->replace(cardType.blks[i] + j, data[j]);
+            data_syncWithDataWidget(false, cardType.blks[i] + j);
+        }
+
+        // data widget has been updated, so this is just a temporary varient.
+        if(data[cardType.blk[i] - 1] == "")
+            data[cardType.blk[i] - 1] = "????????????????????????????????";
+
+        // doesn't replace the existing key.
+        if(keyAList->at(i) == "" || keyAList->at(i) == "????????????")
+            keyAList->replace(i, data[cardType.blk[i] - 1].left(12));
+        if(keyBList->at(i) == "" || keyBList->at(i) == "????????????")
+            keyBList->replace(i, data[cardType.blk[i] - 1].right(12));
+        data_syncWithKeyWidget(false, i, KEY_A);
+        data_syncWithKeyWidget(false, i, KEY_B);
     }
 }
 
