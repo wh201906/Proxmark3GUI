@@ -273,7 +273,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int w
 {
     QString data;
     QString result;
-    bool isKeyBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 8 == 0);
+    bool isKeyBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
 
     if(!data_isKeyValid(key))
     {
@@ -397,7 +397,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
     return data;
 }
 
-void Mifare::read()
+void Mifare::readOne()
 {
     int blockId = ui->MF_RW_blockBox->currentText().toInt();
     Mifare::KeyType keyType = (Mifare::KeyType)(ui->MF_RW_keyTypeBox->currentData().toInt());
@@ -424,7 +424,7 @@ void Mifare::readSelected(const QList<int>& selectedBlocks)
     }
     for(int item : selectedBlocks)
     {
-        selectedSectors[item / 4] = true;
+        selectedSectors[data_b2s(item)] = true;
     }
 
     for(int i = 0; i < cardType.sector_size; i++)
@@ -514,7 +514,7 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
     }
 }
 
-void Mifare::write()
+void Mifare::writeOne()
 {
     int blockId = ui->MF_RW_blockBox->currentText().toInt();
     Mifare::KeyType keyType = (Mifare::KeyType)(ui->MF_RW_keyTypeBox->currentData().toInt());
@@ -529,22 +529,19 @@ void Mifare::write()
     }
 }
 
-void Mifare::writeAll()
+void Mifare::writeSelected(const QList<int>& selectedBlocks)
 {
-    for(int i = 0; i < cardType.sector_size; i++)
+    for(int item : selectedBlocks)
     {
-        for(int j = 0; j < cardType.blk[i]; j++)
+        bool result = false;
+        result = _writeblk(item, KEY_A, keyAList->at(data_b2s(item)), dataList->at(item));
+        if(!result)
         {
-            bool result = false;
-            result = _writeblk(cardType.blks[i] + j, KEY_A, keyAList->at(i), dataList->at(cardType.blks[i] + j));
-            if(!result)
-            {
-                result = _writeblk(cardType.blks[i] + j, KEY_B, keyBList->at(i), dataList->at(cardType.blks[i] + j));
-            }
-            if(!result)
-            {
-                result = _writeblk(cardType.blks[i] + j, KEY_A, "FFFFFFFFFFFF", dataList->at(cardType.blks[i] + j));
-            }
+            result = _writeblk(item, KEY_B, keyBList->at(data_b2s(item)), dataList->at(item));
+        }
+        if(!result)
+        {
+            result = _writeblk(item, KEY_A, "FFFFFFFFFFFF", dataList->at(item));
         }
     }
 }
@@ -1188,6 +1185,16 @@ void Mifare::data_fillKeys()
         }
     }
     data_syncWithKeyWidget();
+}
+
+int Mifare::data_b2s(int block)
+{
+    if(block >= 0 && block < 128)
+        return block / 4;
+    else if(block < 256)
+        return (block - 128) / 16 + 32;
+    else
+        return -1;
 }
 
 QList<quint8> Mifare::data_getACBits(const QString& text) //return empty QList if the text is invalid

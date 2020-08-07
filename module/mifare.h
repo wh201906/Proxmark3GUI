@@ -24,10 +24,10 @@ public:
     void sniff();
     void snoop();
     void list();
-    void read();
+    void readOne();
     void readSelected(const QList<int>& selectedBlocks);
-    void write();
-    void writeAll();
+    void writeOne();
+    void writeSelected(const QList<int>& selectedBlocks);
     void dump();
     void restore();
 
@@ -106,6 +106,7 @@ public:
     void data_fillKeys();
 
     static QList<quint8> data_getACBits(const QString &text);
+    static int data_b2s(int block);
 public slots:
 signals:
 

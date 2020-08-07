@@ -263,7 +263,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
     if(item->column() == 0)
     {
         int selectedSectors = 0;
-        for(int i = 0; i < mifare->cardType.blk[item->row() / 4]; i++)
+        for(int i = 0; i < mifare->cardType.blk[Mifare::data_b2s(item->row())]; i++)
         {
             ui->MF_dataWidget->item(i + item->row(), 1)->setCheckState(item->checkState());
             qDebug() << i << mifare->cardType.blk[item->row()] << i + item->row() << ui->MF_dataWidget->item(i + item->row(), 1)->text();
@@ -300,9 +300,9 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
                 selectedBlocks++;
             }
         }
-        for(int i = 0; i < mifare->cardType.blk[item->row() / 4]; i++)
+        for(int i = 0; i < mifare->cardType.blk[Mifare::data_b2s(item->row())]; i++)
         {
-            if(ui->MF_dataWidget->item(i + mifare->cardType.blks[item->row() / 4], 1)->checkState() == Qt::Checked)
+            if(ui->MF_dataWidget->item(i + mifare->cardType.blks[Mifare::data_b2s(item->row())], 1)->checkState() == Qt::Checked)
             {
                 selectedSubBlocks++;
             }
@@ -321,15 +321,15 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         }
         if(selectedSubBlocks == 0)
         {
-            ui->MF_dataWidget->item(mifare->cardType.blks[item->row() / 4], 0)->setCheckState(Qt::Unchecked);
+            ui->MF_dataWidget->item(mifare->cardType.blks[Mifare::data_b2s(item->row())], 0)->setCheckState(Qt::Unchecked);
         }
-        else if(selectedSubBlocks == mifare->cardType.blk[item->row() / 4])
+        else if(selectedSubBlocks == mifare->cardType.blk[Mifare::data_b2s(item->row())])
         {
-            ui->MF_dataWidget->item(mifare->cardType.blks[item->row() / 4], 0)->setCheckState(Qt::Checked);
+            ui->MF_dataWidget->item(mifare->cardType.blks[Mifare::data_b2s(item->row())], 0)->setCheckState(Qt::Checked);
         }
         else
         {
-            ui->MF_dataWidget->item(mifare->cardType.blks[item->row() / 4], 0)->setCheckState(Qt::PartiallyChecked);
+            ui->MF_dataWidget->item(mifare->cardType.blks[Mifare::data_b2s(item->row())], 0)->setCheckState(Qt::PartiallyChecked);
         }
     }
     else if(item->column() == 2)
@@ -502,21 +502,27 @@ void MainWindow::on_MF_RW_readSelectedButton_clicked()
 void MainWindow::on_MF_RW_readBlockButton_clicked()
 {
     setState(false);
-    mifare->read();
+    mifare->readOne();
     setState(true);
 }
 
 void MainWindow::on_MF_RW_writeBlockButton_clicked()
 {
     setState(false);
-    mifare->write();
+    mifare->writeOne();
     setState(true);
 }
 
-void MainWindow::on_MF_RW_writeAllButton_clicked()
+void MainWindow::on_MF_RW_writeSelectedButton_clicked()
 {
     setState(false);
-    mifare->writeAll();
+    QList<int> selectedBlocks;
+    for(int i = 0; i < mifare->cardType.block_size; i++)
+    {
+        if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
+            selectedBlocks.append(i);
+    }
+    mifare->writeSelected(selectedBlocks);
     setState(true);
 }
 

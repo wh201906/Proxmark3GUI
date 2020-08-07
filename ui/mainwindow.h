@@ -85,7 +85,7 @@ private slots:
 
     void on_MF_Attack_infoButton_clicked();
 
-    void on_MF_RW_writeAllButton_clicked();
+    void on_MF_RW_writeSelectedButton_clicked();
 
 
     void on_MF_RW_dumpButton_clicked();
