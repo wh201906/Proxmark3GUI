@@ -297,7 +297,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int w
             data.remove(" ");
             // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
             // if the given key type is KeyB, it will never get the KeyA from the key block
-            if(isKeyBlock && keyType == KEY_A)
+            if(isKeyBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
             {
                 data.replace(0, 12, key);
                 QList<quint8> ACBits = data_getACBits(data.mid(12, 8));

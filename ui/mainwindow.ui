@@ -58,11 +58,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="PM3_pathEdit">
-        <property name="text">
-         <string notr="true">../pm3/iceman-64/win64/proxmark3</string>
-        </property>
-       </widget>
+       <widget class="QLineEdit" name="PM3_pathEdit"/>
       </item>
       <item>
        <widget class="QComboBox" name="PM3_portBox">

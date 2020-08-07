@@ -77,6 +77,7 @@ void MainWindow::on_PM3_connectButton_clicked()
         QMessageBox::information(NULL, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
     else
     {
+        saveClientPath(ui->PM3_pathEdit->text());
         emit connectPM3(ui->PM3_pathEdit->text(), port);
     }
 }
@@ -235,6 +236,12 @@ void MainWindow::on_MF_key2DataButton_clicked()
 void MainWindow::on_MF_fillKeysButton_clicked()
 {
     mifare->data_fillKeys();
+}
+
+void MainWindow::on_MF_trailerDecoderButton_clicked()
+{
+    decDialog = new MF_trailerDecoderDialog(this);
+    decDialog->show();
 }
 
 void MainWindow::on_MF_fontButton_clicked()
@@ -773,6 +780,10 @@ void MainWindow::uiInit()
     }
     settings->endGroup();
 
+    settings->beginGroup("Client_Path");
+    ui->PM3_pathEdit->setText(settings->value("path", "proxmark3").toString());
+    settings->endGroup();
+
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
     ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
 
@@ -896,6 +907,12 @@ void MainWindow::on_GroupBox_clicked(bool checked)
     settings->endGroup();
 }
 
+void MainWindow::saveClientPath(const QString& path)
+{
+    settings->beginGroup("Client_Path");
+    settings->setValue("path", path);
+    settings->endGroup();
+}
 // ***********************************************
 
 
@@ -903,10 +920,4 @@ void MainWindow::on_GroupBox_clicked(bool checked)
 void MainWindow::on_testButton_clicked()
 {
     mifare->_readsec(0, Mifare::KEY_A, "FFFFFFFFFFFF");
-}
-
-void MainWindow::on_MF_trailerDecoderButton_clicked()
-{
-    decDialog = new MF_trailerDecoderDialog(this);
-    decDialog->show();
 }
