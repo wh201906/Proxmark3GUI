@@ -144,8 +144,6 @@ private slots:
 
     void on_MF_Sniff_snoopButton_clicked();
 
-    void on_testButton_clicked();
-
     void on_MF_trailerDecoderButton_clicked();
 
 private:

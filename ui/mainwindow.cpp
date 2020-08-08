@@ -930,10 +930,3 @@ void MainWindow::saveClientPath(const QString& path)
     settings->endGroup();
 }
 // ***********************************************
-
-
-
-void MainWindow::on_testButton_clicked()
-{
-//    mifare->_readsec(0, Mifare::KEY_A, "FFFFFFFFFFFF");
-}
