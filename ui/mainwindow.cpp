@@ -17,8 +17,6 @@ MainWindow::MainWindow(QWidget *parent):
 
     pm3Thread = new QThread(this);
     pm3 = new PM3Process(pm3Thread);
-//    pm3->moveToThread(pm3Thread);
-//    pm3->init();
     pm3Thread->start();
     pm3state = false;
 
@@ -491,13 +489,7 @@ void MainWindow::on_MF_Attack_hardnestedButton_clicked()
 void MainWindow::on_MF_RW_readSelectedButton_clicked()
 {
     setState(false);
-    QList<int> selectedBlocks;
-    for(int i = 0; i < mifare->cardType.block_size; i++)
-    {
-        if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
-            selectedBlocks.append(i);
-    }
-    mifare->readSelected(selectedBlocks);
+    mifare->readSelected(Mifare::TARGET_MIFARE);
     setState(true);
 }
 
@@ -517,14 +509,9 @@ void MainWindow::on_MF_RW_writeBlockButton_clicked()
 
 void MainWindow::on_MF_RW_writeSelectedButton_clicked()
 {
+    QList<int> failedBlocks;
     setState(false);
-    QList<int> selectedBlocks;
-    for(int i = 0; i < mifare->cardType.block_size; i++)
-    {
-        if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
-            selectedBlocks.append(i);
-    }
-    mifare->writeSelected(selectedBlocks);
+    failedBlocks = mifare->writeSelected(Mifare::TARGET_MIFARE);
     setState(true);
 }
 
@@ -538,10 +525,10 @@ void MainWindow::on_MF_RW_restoreButton_clicked()
     mifare->restore();
 }
 
-void MainWindow::on_MF_UID_readAllButton_clicked()
+void MainWindow::on_MF_UID_readSelectedButton_clicked()
 {
     setState(false);
-    mifare->readAllC();
+    mifare->readSelected(Mifare::TARGET_UID);
     setState(true);
 }
 
@@ -552,10 +539,11 @@ void MainWindow::on_MF_UID_readBlockButton_clicked()
     setState(true);
 }
 
-void MainWindow::on_MF_UID_writeAllButton_clicked()
+void MainWindow::on_MF_UID_writeSelectedButton_clicked()
 {
+    QList<int> failedBlocks;
     setState(false);
-    mifare->writeAllC();
+    failedBlocks = mifare->writeSelected(Mifare::TARGET_UID);
     setState(true);
 }
 
@@ -604,17 +592,18 @@ void MainWindow::on_MF_UID_lockButton_clicked()
     mifare->lockC();
 }
 
-void MainWindow::on_MF_Sim_loadDataButton_clicked()
+void MainWindow::on_MF_Sim_readSelectedButton_clicked()
 {
     setState(false);
-    mifare->writeAllE();
+    mifare->readSelected(Mifare::TARGET_EMULATOR);
     setState(true);
 }
 
-void MainWindow::on_MF_Sim_writeAllButton_clicked()
+void MainWindow::on_MF_Sim_writeSelectedButton_clicked()
 {
+    QList<int> failedBlocks;
     setState(false);
-    mifare->readAllE();
+    failedBlocks = mifare->writeSelected(Mifare::TARGET_EMULATOR);
     setState(true);
 }
 

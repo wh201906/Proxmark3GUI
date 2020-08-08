@@ -92,11 +92,11 @@ private slots:
 
     void on_MF_RW_restoreButton_clicked();
 
-    void on_MF_UID_readAllButton_clicked();
+    void on_MF_UID_readSelectedButton_clicked();
 
     void on_MF_UID_readBlockButton_clicked();
 
-    void on_MF_UID_writeAllButton_clicked();
+    void on_MF_UID_writeSelectedButton_clicked();
 
     void on_MF_UID_writeBlockButton_clicked();
 
@@ -124,9 +124,9 @@ private slots:
 
     void on_MF_UID_lockButton_clicked();
 
-    void on_MF_Sim_loadDataButton_clicked();
+    void on_MF_Sim_readSelectedButton_clicked();
 
-    void on_MF_Sim_writeAllButton_clicked();
+    void on_MF_Sim_writeSelectedButton_clicked();
 
     void on_MF_Sim_clearButton_clicked();
 

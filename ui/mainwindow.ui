@@ -72,6 +72,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="PM3_refreshPortButton">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Refresh</string>
         </property>
@@ -79,6 +85,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="PM3_connectButton">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Connect</string>
         </property>
@@ -86,6 +98,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="PM3_disconnectButton">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Disconnect</string>
         </property>
@@ -189,7 +207,26 @@
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="MF_selectTrailerBox">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Select Trailer</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="MF_data2KeyButton">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>KeyBlocks-&gt;Key</string>
               </property>
@@ -197,6 +234,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="MF_key2DataButton">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>KeyBlocks&lt;-Key</string>
               </property>
@@ -204,6 +247,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="MF_fillKeysButton">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>Fill Keys</string>
               </property>
@@ -211,6 +260,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="MF_trailerDecoderButton">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>Trailer Decoder</string>
               </property>
@@ -218,6 +273,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="MF_fontButton">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>Set Fonts</string>
               </property>
@@ -290,6 +351,12 @@
              </property>
              <item>
               <widget class="QRadioButton" name="MF_Type_miniButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string extracomment="320">MINI</string>
                </property>
@@ -297,6 +364,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="MF_Type_1kButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string extracomment="1024">1K</string>
                </property>
@@ -307,6 +380,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="MF_Type_2kButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string extracomment="2048">2K</string>
                </property>
@@ -314,6 +393,12 @@
              </item>
              <item>
               <widget class="QRadioButton" name="MF_Type_4kButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string extracomment="4096">4K</string>
                </property>
@@ -426,6 +511,12 @@
              </item>
              <item>
               <widget class="QPushButton" name="MF_Attack_infoButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Card Info</string>
                </property>
@@ -439,6 +530,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Check Default</string>
                </property>
@@ -448,7 +545,7 @@
               <widget class="QPushButton" name="MF_Attack_nestedButton">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
+                 <width>40</width>
                  <height>0</height>
                 </size>
                </property>
@@ -459,6 +556,12 @@
              </item>
              <item>
               <widget class="QPushButton" name="MF_Attack_hardnestedButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Hardnested</string>
                </property>
@@ -611,6 +714,12 @@
                 </property>
                 <item row="2" column="0">
                  <widget class="QPushButton" name="MF_RW_readBlockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Read One</string>
                   </property>
@@ -618,6 +727,12 @@
                 </item>
                 <item row="2" column="1">
                  <widget class="QPushButton" name="MF_RW_writeBlockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Write One</string>
                   </property>
@@ -625,6 +740,12 @@
                 </item>
                 <item row="0" column="0">
                  <widget class="QPushButton" name="MF_RW_readSelectedButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Read Selected</string>
                   </property>
@@ -632,6 +753,12 @@
                 </item>
                 <item row="1" column="0">
                  <widget class="QPushButton" name="MF_RW_writeSelectedButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Write Selected</string>
                   </property>
@@ -664,6 +791,12 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Restore</string>
                   </property>
@@ -689,6 +822,12 @@
                 </property>
                 <item row="0" column="2">
                  <widget class="QPushButton" name="MF_UID_lockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Lock UFUID Card</string>
                   </property>
@@ -696,6 +835,12 @@
                 </item>
                 <item row="1" column="2">
                  <widget class="QPushButton" name="MF_UID_aboutUIDButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>About UID Card</string>
                   </property>
@@ -703,6 +848,12 @@
                 </item>
                 <item row="2" column="0">
                  <widget class="QPushButton" name="MF_UID_readBlockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Read One</string>
                   </property>
@@ -710,20 +861,38 @@
                 </item>
                 <item row="2" column="1">
                  <widget class="QPushButton" name="MF_UID_writeBlockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Write One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QPushButton" name="MF_UID_readAllButton">
+                 <widget class="QPushButton" name="MF_UID_readSelectedButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Read Selected</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QPushButton" name="MF_UID_writeAllButton">
+                 <widget class="QPushButton" name="MF_UID_writeSelectedButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Write Selected</string>
                   </property>
@@ -736,6 +905,12 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
                   </property>
                   <property name="text">
                    <string>Set Parameter</string>
@@ -812,22 +987,28 @@
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="MF_Sim_loadDataButton">
-               <property name="text">
-                <string>Load from data above</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="MF_Sim_writeAllButton">
+              <widget class="QPushButton" name="MF_Sim_writeSelectedButton">
                <property name="minimumSize">
                 <size>
-                 <width>40</width>
+                 <width>0</width>
                  <height>0</height>
                 </size>
                </property>
                <property name="text">
-                <string>Read All</string>
+                <string>Write Selected</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Sim_readSelectedButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Read Selected</string>
                </property>
               </widget>
              </item>

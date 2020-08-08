@@ -269,7 +269,7 @@ void Mifare::list()
     ui->funcTab->setCurrentIndex(1);
 }
 
-QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key,  TargetType targetType, int waitTime)
+QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, TargetType targetType, int waitTime)
 {
     QString data;
     QString result;
@@ -322,7 +322,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key,  Targ
                          "hf mf cgetblk "
                          + QString::number(blockId),
                          waitTime);
-            if(result.indexOf("No chinese") == -1)
+            if(result.indexOf("Chinese magic") != -1)
             {
                 data = dataPattern->match(result).captured().toUpper();
                 data.remove(" ");
@@ -335,7 +335,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key,  Targ
             result = util->execCMDWithOutput(
                          "hf mf eget "
                          + QString::number(blockId),
-                         waitTime);
+                         150);
             data = dataPattern->match(result).captured().toUpper();
             data.remove(" ");
         }
@@ -343,34 +343,45 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key,  Targ
     return data;
 }
 
-QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, int waitTime)
+QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, TargetType targetType, int waitTime)
 {
     QStringList data;
     QString result, tmp;
     QRegularExpressionMatch reMatch;
-    int offset = 0;
+    int offset = -1;
 
     for(int i = 0; i < cardType.blk[sectorId]; i++)
     {
         data.append("");
     }
-    if(!data_isKeyValid(key))
-    {
-        return data;
-    }
 
     if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         // try to read all blocks together
-        result = util->execCMDWithOutput(
-                     "hf mf rdsc "
-                     + QString::number(sectorId)
-                     + " "
-                     + (char)keyType
-                     + " "
-                     + key,
-                     waitTime);
-        offset = result.indexOf("isOk:01");
+        if(targetType == TARGET_MIFARE)
+        {
+            if(!data_isKeyValid(key))
+            {
+                return data;
+            }
+            result = util->execCMDWithOutput(
+                         "hf mf rdsc "
+                         + QString::number(sectorId)
+                         + " "
+                         + (char)keyType
+                         + " "
+                         + key,
+                         waitTime);
+            offset = result.indexOf("isOk:01");
+        }
+        else if(targetType == TARGET_UID)
+        {
+            result = util->execCMDWithOutput(
+                         "hf mf cgetsc "
+                         + QString::number(sectorId),
+                         waitTime);
+            offset = result.indexOf("Chinese magic");
+        }
         if(offset != -1)
         {
             for(int i = 0; i < cardType.blk[sectorId]; i++)
@@ -388,17 +399,15 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         }
         // if failed, try to read them seperately.
         // (when one of the block cannot be read, the rdsc will return nothing, so you need to read the rest of blocks manually)
-        else
+        else if(targetType != TARGET_UID) // if the targetType is Chinese Magic Card, then the result implies the backdoor command is invalid.
         {
             for(int i = 0; i < cardType.blk[sectorId]; i++)
-            {
-                data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, TARGET_MIFARE, waitTime);
-            }
+                data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, targetType, waitTime);
         }
 
         //process trailer(like _readblk())
         QString trailer = data[cardType.blk[sectorId] - 1];
-        if(trailer != "")
+        if(trailer != "" && targetType == TARGET_MIFARE)
         {
             if(keyType == KEY_A) // in this case, the Access Bits is always accessible
             {
@@ -435,11 +444,17 @@ void Mifare::readOne(TargetType targetType)
     }
 }
 
-void Mifare::readSelected(const QList<int>& selectedBlocks)
+void Mifare::readSelected(TargetType targetType)
 {
     QStringList data, dataA, dataB;
     QString trailerA, trailerB;
     QList<bool> selectedSectors;
+    QList<int> selectedBlocks;
+    for(int i = 0; i < cardType.block_size; i++)
+    {
+        if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
+            selectedBlocks.append(i);
+    }
 
     for(int i = 0; i < cardType.sector_size; i++)
     {
@@ -452,64 +467,68 @@ void Mifare::readSelected(const QList<int>& selectedBlocks)
 
     for(int i = 0; i < cardType.sector_size; i++)
     {
-        if(!selectedSectors[i])
         {
-            continue;
-        }
-        for(int j = 0; j < cardType.blk[i]; j++)
-        {
-            // dataA is always filled with "" because of the _readsec()
-            data.append("");
-            dataB.append("");
-        }
-
-        dataA = _readsec(i, Mifare::KEY_A, keyAList->at(i));
-        if(dataA.contains("") || dataA[cardType.blk[i] - 1].right(12) == "????????????")
-            dataB = _readsec(i, Mifare::KEY_B, keyBList->at(i));
-
-        for(int j = 0; j < cardType.blk[i]; j++)
-        {
-            if(dataA[j] != "")
-                data[j] = dataA[j];
-            else
-                data[j] = dataB[j];
-        }
-
-        // process trailer block seperately
-        trailerA = dataA[cardType.blk[i] - 1];
-        trailerB = dataB[cardType.blk[i] - 1];
-        if(trailerA != "" && trailerB != "")
-        {
-            QString ACbits = trailerA.mid(12, 8);
-            QString key_A = trailerA.left(12);
-            QString key_B = trailerA.at(31) != '?' ? trailerA.right(12) : trailerB.right(12);
-            data[cardType.blk[i] - 1] = key_A + ACbits + key_B;
-        }
-
-        for(int j = 0; j < cardType.blk[i]; j++)
-        {
-            if(selectedBlocks.contains(cardType.blks[i] + j))
+            if(!selectedSectors[i])
             {
-                dataList->replace(cardType.blks[i] + j, data[j]);
-                data_syncWithDataWidget(false, cardType.blks[i] + j);
+                continue;
             }
+            for(int j = 0; j < cardType.blk[i]; j++)
+            {
+                // dataA is always filled with "" because of the _readsec()
+                data.append("");
+                dataB.append("");
+            }
+
+            dataA = _readsec(i, Mifare::KEY_A, keyAList->at(i), targetType);
+
+            // in other situations, the key doesn't matters
+            if(targetType == TARGET_MIFARE && (dataA.contains("") || dataA[cardType.blk[i] - 1].right(12) == "????????????"))
+                dataB = _readsec(i, Mifare::KEY_B, keyBList->at(i), targetType);
+
+            for(int j = 0; j < cardType.blk[i]; j++)
+            {
+                if(dataA[j] != "")
+                    data[j] = dataA[j];
+                else
+                    data[j] = dataB[j];
+            }
+
+            // process trailer block seperately
+            trailerA = dataA[cardType.blk[i] - 1];
+            trailerB = dataB[cardType.blk[i] - 1];
+            if(trailerA != "" && trailerB != "")
+            {
+                QString ACbits = trailerA.mid(12, 8);
+                QString key_A = trailerA.left(12);
+                QString key_B = trailerA.at(31) != '?' ? trailerA.right(12) : trailerB.right(12);
+                data[cardType.blk[i] - 1] = key_A + ACbits + key_B;
+            }
+
+            for(int j = 0; j < cardType.blk[i]; j++)
+            {
+                if(selectedBlocks.contains(cardType.blks[i] + j))
+                {
+                    dataList->replace(cardType.blks[i] + j, data[j]);
+                    data_syncWithDataWidget(false, cardType.blks[i] + j);
+                }
+            }
+
+            if(selectedBlocks.contains(cardType.blks[i] + cardType.blk[i] - 1))
+            {
+                // data widget has been updated, so this is just a temporary varient.
+                if(data[cardType.blk[i] - 1] == "")
+                    data[cardType.blk[i] - 1] = "????????????????????????????????";
+
+                // doesn't replace the existing key.
+                if(!data_isKeyValid(keyAList->at(i)))
+                    keyAList->replace(i, data[cardType.blk[i] - 1].left(12));
+                if(!data_isKeyValid(keyBList->at(i)))
+                    keyBList->replace(i, data[cardType.blk[i] - 1].right(12));
+                data_syncWithKeyWidget(false, i, KEY_A);
+                data_syncWithKeyWidget(false, i, KEY_B);
+            }
+
         }
-
-        if(selectedBlocks.contains(cardType.blks[i] + cardType.blk[i] - 1))
-        {
-            // data widget has been updated, so this is just a temporary varient.
-            if(data[cardType.blk[i] - 1] == "")
-                data[cardType.blk[i] - 1] = "????????????????????????????????";
-
-            // doesn't replace the existing key.
-            if(!data_isKeyValid(keyAList->at(i)))
-                keyAList->replace(i, data[cardType.blk[i] - 1].left(12));
-            if(!data_isKeyValid(keyBList->at(i)))
-                keyBList->replace(i, data[cardType.blk[i] - 1].right(12));
-            data_syncWithKeyWidget(false, i, KEY_A);
-            data_syncWithKeyWidget(false, i, KEY_B);
-        }
-
     }
 }
 
@@ -548,16 +567,16 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
                          + " "
                          + input,
                          waitTime);
-            return (result.indexOf("No chinese") == -1);
+            return (result.indexOf("Chinese magic") != -1);
         }
         else if(targetType == TARGET_EMULATOR)
         {
-            result = util->execCMDWithOutput(
-                         "hf mf eset "
-                         + QString::number(blockId)
-                         + " "
-                         + input,
-                         waitTime);
+            util->execCMD(
+                "hf mf eset "
+                + QString::number(blockId)
+                + " "
+                + input);
+            util->delay(5);
             return true;
         }
     }
@@ -578,78 +597,40 @@ void Mifare::writeOne(TargetType targetType)
     }
 }
 
-void Mifare::writeSelected(const QList<int>& selectedBlocks)
+QList<int> Mifare::writeSelected(TargetType targetType)
 {
+    QList<int> failedBlocks;
+    QList<int> selectedBlocks;
+    for(int i = 0; i < cardType.block_size; i++)
+    {
+        if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
+            selectedBlocks.append(i);
+    }
     for(int item : selectedBlocks)
     {
         bool result = false;
-        result = _writeblk(item, KEY_A, keyAList->at(data_b2s(item)), dataList->at(item));
-        if(!result)
+        if(targetType == TARGET_MIFARE)
         {
-            result = _writeblk(item, KEY_B, keyBList->at(data_b2s(item)), dataList->at(item));
-        }
-        if(!result)
-        {
-            result = _writeblk(item, KEY_A, "FFFFFFFFFFFF", dataList->at(item));
-        }
-    }
-}
-
-void Mifare::readAllC()
-{
-    QString result;
-    const int waitTime = 150;
-
-    QString tmp;
-    int offset = 0;
-    for(int i = 0; i < cardType.sector_size; i++)
-    {
-        result = util->execCMDWithOutput(
-                     "hf mf cgetsc "
-                     + QString::number(i),
-                     waitTime);
-        qDebug() << result;
-        if(result.indexOf("No chinese") == -1)
-        {
-            offset = 0;
-            for(int j = 0; j < cardType.blk[i]; j++)
+            result = _writeblk(item, KEY_A, keyAList->at(data_b2s(item)), dataList->at(item), TARGET_MIFARE);
+            if(!result)
             {
-//                offset = dataPattern->indexIn(result, offset);
-//                offset = result.indexOf(*dataPattern, offset);
-                tmp = result.mid(offset, 47).toUpper();
-                offset += 47;
-                qDebug() << tmp;
-                tmp.replace(" ", "");
-                dataList->replace(cardType.blks[i] + j, tmp);
-                data_syncWithDataWidget(false, cardType.blks[i] + j);
+                result = _writeblk(item, KEY_B, keyBList->at(data_b2s(item)), dataList->at(item), TARGET_MIFARE);
             }
-            keyAList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).left(12));
-            keyBList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12));
-            data_syncWithKeyWidget(false, i, KEY_A);
-            data_syncWithKeyWidget(false, i, KEY_B);
+            if(!result)
+            {
+                result = _writeblk(item, KEY_A, "FFFFFFFFFFFF", dataList->at(item), TARGET_MIFARE);
+            }
         }
-    }
-}
-
-void Mifare::writeAllC()
-{
-    const int waitTime = 150;
-    QString result;
-    for(int i = 0; i < cardType.sector_size; i++)
-    {
-        for(int j = 0; j < cardType.blk[i]; j++)
+        else // key doesn't matter when writing to Chinese Magic Card and Emulator Memory
         {
-            result = "";
-            if(data_isDataValid(dataList->at(cardType.blks[i] + j)) != DATA_NOSPACE || dataList->at(cardType.blks[i] + j).contains('?'))
-                continue;
-            result = util->execCMDWithOutput(
-                         "hf mf csetblk "
-                         + QString::number(cardType.blks[i] + j)
-                         + " "
-                         + dataList->at(cardType.blks[i] + j),
-                         waitTime);
+            result = _writeblk(item, KEY_A, "FFFFFFFFFFFF", dataList->at(item), targetType);
+        }
+        if(!result)
+        {
+            failedBlocks.append(item);
         }
     }
+    return failedBlocks;
 }
 
 void Mifare::dump()
@@ -699,69 +680,6 @@ void Mifare::lockC()
     util->execCMD("hf 14a raw -pa E1 00 E1 EE");
     util->execCMD("hf 14a raw -pa 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
     util->execCMD("hf 14a raw 52");
-}
-
-void Mifare::writeAllE()
-{
-    const int waitTime = 200;
-    QString result;
-    for(int i = 0; i < cardType.sector_size; i++)
-    {
-        for(int j = 0; j < cardType.blk[i]; j++)
-        {
-            result = "";
-            if(data_isDataValid(dataList->at(cardType.blks[i] + j)) != DATA_NOSPACE || dataList->at(cardType.blks[i] + j).contains('?'))
-                continue;
-            result = util->execCMDWithOutput(
-                         "hf mf eset "
-                         + QString::number(cardType.blks[i] + j)
-                         + " "
-                         + dataList->at(cardType.blks[i] + j),
-                         waitTime);
-        }
-    }
-    util->execCMDWithOutput("hf mf eget", waitTime); // to refresh output buffer;
-}
-
-void Mifare::readAllE()
-{
-    QString result;
-    const int waitTime = 200;
-
-    QString tmp;
-    int offset = 0;
-    for(int i = 0; i < cardType.sector_size; i++)
-    {
-        offset = 0;
-        for(int j = 0; j < cardType.blk[i]; j++)
-        {
-
-            qDebug() << "**********" ;
-            result = util->execCMDWithOutput(
-                         "hf mf eget "
-                         + QString::number(cardType.blks[i] + j),
-                         waitTime);
-            qDebug() << result ;
-
-//            offset = dataPattern->indexIn(result);
-//          offset = result.indexOf(*dataPattern, offset); // When I find the data position in this way, the Regex might fail to match.
-
-            tmp = result.mid(offset, 47).toUpper();
-            qDebug() << tmp << offset;
-            qDebug() << "**********" ;
-
-            if(offset == -1)
-                continue;
-            tmp.replace(" ", "");
-            dataList->replace(cardType.blks[i] + j, tmp);
-            data_syncWithDataWidget(false, cardType.blks[i] + j);
-        }
-        keyAList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).left(12));
-        keyBList->replace(i, dataList->at(cardType.blks[i] + cardType.blk[i] - 1).right(12));
-        data_syncWithKeyWidget(false, i, KEY_A);
-        data_syncWithKeyWidget(false, i, KEY_B);
-
-    }
 }
 
 void Mifare::wipeE()

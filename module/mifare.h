@@ -71,9 +71,9 @@ public:
     void snoop();
     void list();
     void readOne(TargetType targetType = TARGET_MIFARE);
-    void readSelected(const QList<int>& selectedBlocks);
+    void readSelected(TargetType targetType = TARGET_MIFARE);
     void writeOne(TargetType targetType = TARGET_MIFARE);
-    void writeSelected(const QList<int>& selectedBlocks);
+    QList<int> writeSelected(TargetType targetType = TARGET_MIFARE);
     void dump();
     void restore();
 
@@ -87,8 +87,6 @@ public:
     CardType cardType;
     Mifare::CardType getCardType();
     void setCardType(int type);
-    void writeAllC();
-    void readAllC();
     void wipeC();
     void setParameterC();
 
@@ -102,8 +100,6 @@ public:
     void data_setData(int block, const QString& data);
     void data_setKey(int sector, KeyType keyType, const QString& key);
     void lockC();
-    void writeAllE();
-    void readAllE();
     void wipeE();
     void simulate();
     void loadSniff(const QString& file);
@@ -129,7 +125,7 @@ private:
     QString bin2text(const QByteArray& buff, int start, int length);
 
     QString _readblk(int blockId, KeyType keyType, const QString &key, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
-    QStringList _readsec(int sectorId, KeyType keyType, const QString &key, int waitTime = 300);
+    QStringList _readsec(int sectorId, KeyType keyType, const QString &key, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
     bool _writeblk(int blockId, KeyType keyType, const QString &key, const QString &data, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
 };
 
