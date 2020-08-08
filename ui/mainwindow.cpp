@@ -7,11 +7,17 @@ MainWindow::MainWindow(QWidget *parent):
 {
     ui->setupUi(this);
     myInfo = new QAction("wh201906", this);
+    checkUpdate = new QAction(tr("Check Update"), this);
     connect(myInfo, &QAction::triggered, [ = ]()
     {
         QDesktopServices::openUrl(QUrl("https://github.com/wh201906"));
     });
+    connect(checkUpdate, &QAction::triggered, [ = ]()
+    {
+        QDesktopServices::openUrl(QUrl("https://github.com/wh201906/Proxmark3GUI/releases"));
+    });
     this->addAction(myInfo);
+    this->addAction(checkUpdate);
 
     settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
 
@@ -206,6 +212,7 @@ void MainWindow::on_MF_selectAllBox_stateChanged(int arg1)
 {
     ui->MF_dataWidget->blockSignals(true);
     ui->MF_selectAllBox->blockSignals(true);
+    ui->MF_selectTrailerBox->blockSignals(true);
     if(arg1 == Qt::PartiallyChecked)
     {
         ui->MF_selectAllBox->setTristate(false);
@@ -219,9 +226,53 @@ void MainWindow::on_MF_selectAllBox_stateChanged(int arg1)
     {
         ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(ui->MF_selectAllBox->checkState());
     }
+    ui->MF_selectTrailerBox->setCheckState(ui->MF_selectAllBox->checkState());
     ui->MF_dataWidget->blockSignals(false);
     ui->MF_selectAllBox->blockSignals(false);
+    ui->MF_selectTrailerBox->blockSignals(false);
 }
+
+
+void MainWindow::on_MF_selectTrailerBox_stateChanged(int arg1)
+{
+    int selectedSubBlocks = 0;
+
+    ui->MF_dataWidget->blockSignals(true);
+    ui->MF_selectAllBox->blockSignals(true);
+    ui->MF_selectTrailerBox->blockSignals(true);
+    if(arg1 == Qt::PartiallyChecked)
+    {
+        ui->MF_selectTrailerBox->setTristate(false);
+        ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
+    }
+    for(int i = 0; i < mifare->cardType.sector_size; i++)
+    {
+        ui->MF_dataWidget->item(mifare->cardType.blks[i] + mifare->cardType.blk[i] - 1, 1)->setCheckState(ui->MF_selectTrailerBox->checkState());
+        selectedSubBlocks = 0;
+        for(int j = 0; j < mifare->cardType.blk[i]; j++)
+        {
+            if(ui->MF_dataWidget->item(j + mifare->cardType.blks[i], 1)->checkState() == Qt::Checked)
+                selectedSubBlocks++;
+        }
+        if(selectedSubBlocks == 0)
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::Unchecked);
+        }
+        else if(selectedSubBlocks == mifare->cardType.blk[i])
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::Checked);
+        }
+        else
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::PartiallyChecked);
+        }
+    }
+
+    ui->MF_dataWidget->blockSignals(false);
+    ui->MF_selectAllBox->blockSignals(false);
+    ui->MF_selectTrailerBox->blockSignals(false);
+}
+
 
 void MainWindow::on_MF_data2KeyButton_clicked()
 {
@@ -260,6 +311,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
 {
     ui->MF_dataWidget->blockSignals(true);
     ui->MF_selectAllBox->blockSignals(true);
+    ui->MF_selectTrailerBox->blockSignals(true);
     if(item->column() == 0)
     {
         int selectedSectors = 0;
@@ -278,34 +330,40 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         if(selectedSectors == 0)
         {
             ui->MF_selectAllBox->setCheckState(Qt::Unchecked);
+            ui->MF_selectTrailerBox->setCheckState(Qt::Unchecked);
         }
         else if(selectedSectors == mifare->cardType.sector_size)
         {
             ui->MF_selectAllBox->setCheckState(Qt::Checked);
+            ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
         }
         else
         {
             ui->MF_selectAllBox->setCheckState(Qt::PartiallyChecked);
+            ui->MF_selectTrailerBox->setCheckState(Qt::PartiallyChecked);
         }
     }
     else if(item->column() == 1)
     {
         int selectedSubBlocks = 0;
         int selectedBlocks = 0;
+        int selectedTrailers = 0;
 
         for(int i = 0; i < mifare->cardType.block_size; i++)
         {
             if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
-            {
                 selectedBlocks++;
-            }
         }
         for(int i = 0; i < mifare->cardType.blk[Mifare::data_b2s(item->row())]; i++)
         {
             if(ui->MF_dataWidget->item(i + mifare->cardType.blks[Mifare::data_b2s(item->row())], 1)->checkState() == Qt::Checked)
-            {
                 selectedSubBlocks++;
-            }
+        }
+        for(int i = 0; i < mifare->cardType.sector_size; i++)
+        {
+            int targetBlock = mifare->cardType.blks[i] + mifare->cardType.blk[i] - 1;
+            if(ui->MF_dataWidget->item(targetBlock, 1)->checkState() == Qt::Checked)
+                selectedTrailers++;
         }
         if(selectedBlocks == 0)
         {
@@ -331,6 +389,18 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         {
             ui->MF_dataWidget->item(mifare->cardType.blks[Mifare::data_b2s(item->row())], 0)->setCheckState(Qt::PartiallyChecked);
         }
+        if(selectedTrailers == 0)
+        {
+            ui->MF_selectTrailerBox->setCheckState(Qt::Unchecked);
+        }
+        else if(selectedTrailers == mifare->cardType.sector_size)
+        {
+            ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
+        }
+        else
+        {
+            ui->MF_selectTrailerBox->setCheckState(Qt::PartiallyChecked);
+        }
     }
     else if(item->column() == 2)
     {
@@ -347,6 +417,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
     }
     ui->MF_dataWidget->blockSignals(false);
     ui->MF_selectAllBox->blockSignals(false);
+    ui->MF_selectTrailerBox->blockSignals(false);
 }
 
 void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
@@ -691,6 +762,7 @@ void MainWindow::MF_widgetReset()
     ui->MF_dataWidget->blockSignals(true);
     ui->MF_keyWidget->blockSignals(true);
     ui->MF_selectAllBox->blockSignals(true);
+    ui->MF_selectTrailerBox->blockSignals(true);
 
     for(int i = 0; i < blks; i++)
     {
@@ -710,10 +782,12 @@ void MainWindow::MF_widgetReset()
         ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::Checked);
     }
     ui->MF_selectAllBox->setCheckState(Qt::Checked);
+    ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
 
     ui->MF_dataWidget->blockSignals(false);
     ui->MF_keyWidget->blockSignals(false);
     ui->MF_selectAllBox->blockSignals(false);
+    ui->MF_selectTrailerBox->blockSignals(false);
 }
 // ************************************************
 

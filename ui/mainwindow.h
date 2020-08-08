@@ -146,6 +146,8 @@ private slots:
 
     void on_MF_trailerDecoderButton_clicked();
 
+    void on_MF_selectTrailerBox_stateChanged(int arg1);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
@@ -153,6 +155,7 @@ private:
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
     QAction* myInfo;
+    QAction* checkUpdate;
     QSettings* settings;
 
     void uiInit();
