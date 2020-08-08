@@ -833,21 +833,51 @@ void Mifare::data_syncWithKeyWidget(bool syncAll, int sector, KeyType keyType)
     ui->MF_keyWidget->blockSignals(false);
 }
 
-void Mifare::data_clearData()
+void Mifare::data_clearData(bool clearAll)
 {
-    dataList->clear();
-    for(int i = 0; i < cardType.block_size; i++)
-        dataList->append("");
+    if(clearAll)
+    {
+        dataList->clear();
+    }
+
+    int delta = cardType.block_size - dataList->length()  ;
+    if(delta >= 0)
+    {
+        for(int i = 0; i < delta; i++)
+            dataList->append("");
+    }
+    else if(delta < 0)
+    {
+        for(int i = 0; i < -delta; i++)
+
+            dataList->removeLast();
+    }
 }
 
-void Mifare::data_clearKey()
+void Mifare::data_clearKey(bool clearAll)
 {
-    keyAList->clear();
-    keyBList->clear();
-    for(int i = 0; i < cardType.sector_size; i++)
+    if(clearAll)
     {
-        keyAList->append("");
-        keyBList->append("");
+        keyAList->clear();
+        keyBList->clear();
+    }
+
+    int delta = cardType.sector_size - keyAList->length()  ;
+    if(delta >= 0)
+    {
+        for(int i = 0; i < delta; i++)
+        {
+            keyAList->append("");
+            keyBList->append("");
+        }
+    }
+    else if(delta < 0)
+    {
+        for(int i = 0; i < -delta; i++)
+        {
+            keyAList->removeLast();
+            keyBList->removeLast();
+        }
     }
 }
 
@@ -912,8 +942,8 @@ void Mifare::setCardType(int type)
             cardType = card_2k;
         else if(type == 4)
             cardType = card_4k;
-        data_clearKey();
-        data_clearData();
+        data_clearKey(false);
+        data_clearData(false);
     }
 }
 

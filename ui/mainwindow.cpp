@@ -181,7 +181,7 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
         int result;
         if(id > typeBtnGroup->checkedId()) // id is specified in uiInit() with a proper order, so I can compare the size by id.
         {
-            result = QMessageBox::question(this, tr("Info"), tr("When Changeing card type, the data and keys in this app will be cleard.") + "\n" + tr("Continue?"), QMessageBox::Yes | QMessageBox::No);
+            result = QMessageBox::question(this, tr("Info"), tr("Some of the data and key will be cleared.") + "\n" + tr("Continue?"), QMessageBox::Yes | QMessageBox::No);
         }
         else
         {
@@ -192,6 +192,8 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
             qDebug() << "Yes";
             mifare->setCardType(typeBtnGroup->checkedId());
             MF_widgetReset();
+            mifare->data_syncWithDataWidget();
+            mifare->data_syncWithKeyWidget();
         }
         else
         {
@@ -698,6 +700,7 @@ void MainWindow::MF_widgetReset()
     ui->MF_dataWidget->setRowCount(blks);
 
     ui->MF_dataWidget->blockSignals(true);
+    ui->MF_keyWidget->blockSignals(true);
     ui->MF_selectAllBox->blockSignals(true);
 
     for(int i = 0; i < blks; i++)
@@ -720,6 +723,7 @@ void MainWindow::MF_widgetReset()
     ui->MF_selectAllBox->setCheckState(Qt::Checked);
 
     ui->MF_dataWidget->blockSignals(false);
+    ui->MF_keyWidget->blockSignals(false);
     ui->MF_selectAllBox->blockSignals(false);
 }
 // ************************************************
@@ -746,7 +750,7 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Blk")));
     ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Data")));
     ui->MF_dataWidget->verticalHeader()->setVisible(false);
-    ui->MF_dataWidget->setColumnWidth(0, 45);
+    ui->MF_dataWidget->setColumnWidth(0, 55);
     ui->MF_dataWidget->setColumnWidth(1, 55);
     ui->MF_dataWidget->setColumnWidth(2, 430);
 

@@ -12,7 +12,7 @@ A GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 + Have a friendly UI to test Mifare cards
     + Support different card size(MINI, 1K, 2K, 4K)
     + Easy to edit Mifare data files
-    + Easy to read all blocks with well-designed read logic
+    + Easy to read all/selected blocks with well-designed read logic
     + Support binary(.bin .dump) files and text(.eml) files
     + Analyze Access Bits
     + Support Chinese Magic Card

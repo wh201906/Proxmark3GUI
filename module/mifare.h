@@ -46,11 +46,11 @@ public:
 
     struct CardType
     {
-        int type;
-        int sector_size;
-        int block_size;
-        int blk[40];
-        int blks[40];
+        quint8 type;
+        quint8 sector_size;
+        quint16 block_size;
+        quint8 blk[40];
+        quint8 blks[40];
     };
 
     enum AccessType
@@ -70,8 +70,8 @@ public:
     static const AccessType trailerReadCondition[8][3];
     static const AccessType trailerWriteCondition[8][3];
 
-    void data_clearData();
-    void data_clearKey();
+    void data_clearData(bool clearAll = true);
+    void data_clearKey(bool clearAll = true);
     static bool data_isKeyValid(const QString& key);
     static Mifare::DataType data_isDataValid(const QString& data);
     void data_syncWithDataWidget(bool syncAll = true, int block = 0);
