@@ -504,7 +504,7 @@ void MainWindow::on_MF_RW_readSelectedButton_clicked()
 void MainWindow::on_MF_RW_readBlockButton_clicked()
 {
     setState(false);
-    mifare->readOne();
+    mifare->readOne(Mifare::TARGET_MIFARE);
     setState(true);
 }
 
@@ -548,7 +548,7 @@ void MainWindow::on_MF_UID_readAllButton_clicked()
 void MainWindow::on_MF_UID_readBlockButton_clicked()
 {
     setState(false);
-    mifare->readC();
+    mifare->readOne(Mifare::TARGET_UID);
     setState(true);
 }
 
@@ -562,7 +562,7 @@ void MainWindow::on_MF_UID_writeAllButton_clicked()
 void MainWindow::on_MF_UID_writeBlockButton_clicked()
 {
     setState(false);
-    mifare->writeC();
+    mifare->writeOne(Mifare::TARGET_UID);
     setState(true);
 }
 

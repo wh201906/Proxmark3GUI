@@ -269,52 +269,75 @@ void Mifare::list()
     ui->funcTab->setCurrentIndex(1);
 }
 
-QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, int waitTime)
+QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key,  TargetType targetType, int waitTime)
 {
     QString data;
     QString result;
     bool isKeyBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
 
-    if(!data_isKeyValid(key))
-    {
-        return "";
-    }
-
     if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
-        // use the given key type to read the target block
-        result = util->execCMDWithOutput(
-                     "hf mf rdbl "
-                     + QString::number(blockId)
-                     + " "
-                     + (char)keyType
-                     + " "
-                     + key,
-                     waitTime);
-        if(result.indexOf("isOk:01") != -1)
+        if(targetType == TARGET_MIFARE)
         {
-            data = dataPattern->match(result).captured().toUpper();
-            data.remove(" ");
-            // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
-            // if the given key type is KeyB, it will never get the KeyA from the key block
-            if(isKeyBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
+            if(!data_isKeyValid(key))
             {
-                data.replace(0, 12, key);
-                QList<quint8> ACBits = data_getACBits(data.mid(12, 8));
-                if(ACBits[3] == 2 || ACBits[3] == 3 || ACBits[3] == 5 || ACBits[3] == 6 || ACBits[3] == 7) // in these cases, the KeyB cannot be read by KeyA
+                return "";
+            }
+            // use the given key type to read the target block
+            result = util->execCMDWithOutput(
+                         "hf mf rdbl "
+                         + QString::number(blockId)
+                         + " "
+                         + (char)keyType
+                         + " "
+                         + key,
+                         waitTime);
+            if(result.indexOf("isOk:01") != -1)
+            {
+                data = dataPattern->match(result).captured().toUpper();
+                data.remove(" ");
+                // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
+                // if the given key type is KeyB, it will never get the KeyA from the key block
+                if(isKeyBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
                 {
-                    data.replace(20, 12, "????????????");
+                    data.replace(0, 12, key);
+                    QList<quint8> ACBits = data_getACBits(data.mid(12, 8));
+                    if(ACBits[3] == 2 || ACBits[3] == 3 || ACBits[3] == 5 || ACBits[3] == 6 || ACBits[3] == 7) // in these cases, the KeyB cannot be read by KeyA
+                    {
+                        data.replace(20, 12, "????????????");
+                    }
+                }
+                else if(isKeyBlock && keyType == KEY_B)
+                {
+                    data.replace(20, 12, key);;
+                    data.replace(0, 12, "????????????"); // fill the keyA part with ?
                 }
             }
-            else if(isKeyBlock && keyType == KEY_B)
-            {
-                data.replace(20, 12, key);;
-                data.replace(0, 12, "????????????"); // fill the keyA part with ?
-            }
+            else
+                data = "";
         }
-        else
+        else if(targetType == TARGET_UID)
         {
-            data = "";
+            result = util->execCMDWithOutput(
+                         "hf mf cgetblk "
+                         + QString::number(blockId),
+                         waitTime);
+            if(result.indexOf("No chinese") == -1)
+            {
+                data = dataPattern->match(result).captured().toUpper();
+                data.remove(" ");
+            }
+            else
+                data = "";
+        }
+        else if(targetType == TARGET_EMULATOR)
+        {
+            result = util->execCMDWithOutput(
+                         "hf mf eget "
+                         + QString::number(blockId),
+                         waitTime);
+            data = dataPattern->match(result).captured().toUpper();
+            data.remove(" ");
         }
     }
     return data;
@@ -369,7 +392,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         {
             for(int i = 0; i < cardType.blk[sectorId]; i++)
             {
-                data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, waitTime);
+                data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, TARGET_MIFARE, waitTime);
             }
         }
 
@@ -397,11 +420,11 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
     return data;
 }
 
-void Mifare::readOne()
+void Mifare::readOne(TargetType targetType)
 {
     int blockId = ui->MF_RW_blockBox->currentText().toInt();
     Mifare::KeyType keyType = (Mifare::KeyType)(ui->MF_RW_keyTypeBox->currentData().toInt());
-    QString result = _readblk(blockId, keyType, ui->MF_RW_keyEdit->text().toUpper());
+    QString result = _readblk(blockId, keyType, ui->MF_RW_keyEdit->text().toUpper(), targetType);
     if(result != "")
     {
         ui->MF_RW_dataEdit->setText(result);
@@ -490,35 +513,61 @@ void Mifare::readSelected(const QList<int>& selectedBlocks)
     }
 }
 
-bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const QString& data, int waitTime)
+bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const QString& data, TargetType targetType, int waitTime)
 {
+    QString result;
     QString input = data.toUpper();
     input.remove(" ");
 
-    if(!data_isKeyValid(key) || data_isDataValid(input) != DATA_NOSPACE)
+    if(data_isDataValid(input) != DATA_NOSPACE)
         return false;
 
     if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
-        QString result = util->execCMDWithOutput(
-                             "hf mf wrbl "
-                             + QString::number(blockId)
-                             + " "
-                             + (char)keyType
-                             + " "
-                             + key
-                             + " "
-                             + input,
-                             waitTime);
-        return (result.indexOf("isOk:01") != -1);
+        if(targetType == TARGET_MIFARE)
+        {
+            if(!data_isKeyValid(key))
+                return false;
+            result = util->execCMDWithOutput(
+                         "hf mf wrbl "
+                         + QString::number(blockId)
+                         + " "
+                         + (char)keyType
+                         + " "
+                         + key
+                         + " "
+                         + input,
+                         waitTime);
+            return (result.indexOf("isOk:01") != -1);
+        }
+        else if(targetType == TARGET_UID)
+        {
+            result = util->execCMDWithOutput(
+                         "hf mf csetblk "
+                         + QString::number(blockId)
+                         + " "
+                         + input,
+                         waitTime);
+            return (result.indexOf("No chinese") == -1);
+        }
+        else if(targetType == TARGET_EMULATOR)
+        {
+            result = util->execCMDWithOutput(
+                         "hf mf eset "
+                         + QString::number(blockId)
+                         + " "
+                         + input,
+                         waitTime);
+            return true;
+        }
     }
 }
 
-void Mifare::writeOne()
+void Mifare::writeOne(TargetType targetType)
 {
     int blockId = ui->MF_RW_blockBox->currentText().toInt();
     Mifare::KeyType keyType = (Mifare::KeyType)(ui->MF_RW_keyTypeBox->currentData().toInt());
-    bool isSuccessful = _writeblk(blockId, keyType, ui->MF_RW_keyEdit->text().toUpper(), ui->MF_RW_dataEdit->text());
+    bool isSuccessful = _writeblk(blockId, keyType, ui->MF_RW_keyEdit->text().toUpper(), ui->MF_RW_dataEdit->text(), targetType);
     if(isSuccessful)
     {
         QMessageBox::information(parent, tr("Info"), tr("Success!"));
@@ -543,21 +592,6 @@ void Mifare::writeSelected(const QList<int>& selectedBlocks)
         {
             result = _writeblk(item, KEY_A, "FFFFFFFFFFFF", dataList->at(item));
         }
-    }
-}
-
-void Mifare::readC()
-{
-    int waitTime = 300;
-    int currblk = ui->MF_RW_blockBox->currentText().toInt();
-    QString result = util->execCMDWithOutput(
-                         "hf mf cgetblk "
-                         + QString::number(currblk),
-                         waitTime);
-    if(result.indexOf("No chinese") == -1)
-    {
-//        result = result.mid(dataPattern->indexIn(result), 47).toUpper();
-        ui->MF_RW_dataEdit->setText(result);
     }
 }
 
@@ -594,25 +628,6 @@ void Mifare::readAllC()
             data_syncWithKeyWidget(false, i, KEY_A);
             data_syncWithKeyWidget(false, i, KEY_B);
         }
-    }
-}
-
-void Mifare::writeC()
-{
-    int waitTime = 150;
-    QString result = util->execCMDWithOutput(
-                         "hf mf csetblk "
-                         + ui->MF_RW_blockBox->currentText()
-                         + " "
-                         + ui->MF_RW_dataEdit->text().replace(" ", ""),
-                         waitTime);
-    if(result.indexOf("No chinese") == -1)
-    {
-        QMessageBox::information(parent, tr("Info"), tr("Success!"));
-    }
-    else
-    {
-        QMessageBox::information(parent, tr("Info"), tr("Failed!"));
     }
 }
 

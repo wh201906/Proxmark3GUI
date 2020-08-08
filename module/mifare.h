@@ -17,20 +17,6 @@ class Mifare : public QObject
 public:
     explicit Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent = nullptr);
 
-    QString info(bool isRequiringOutput = false);
-    void chk();
-    void nested();
-    void hardnested();
-    void sniff();
-    void snoop();
-    void list();
-    void readOne();
-    void readSelected(const QList<int>& selectedBlocks);
-    void writeOne();
-    void writeSelected(const QList<int>& selectedBlocks);
-    void dump();
-    void restore();
-
     enum KeyType
     {
         KEY_A = 'A',
@@ -61,6 +47,13 @@ public:
         ACC_KEY_AB = 3,
     };
 
+    enum TargetType
+    {
+        TARGET_MIFARE,
+        TARGET_UID,
+        TARGET_EMULATOR,
+    };
+
     static const CardType card_mini;
     static const CardType card_1k;
     static const CardType card_2k;
@@ -69,6 +62,20 @@ public:
     static const AccessType dataCondition[8][4];
     static const AccessType trailerReadCondition[8][3];
     static const AccessType trailerWriteCondition[8][3];
+
+    QString info(bool isRequiringOutput = false);
+    void chk();
+    void nested();
+    void hardnested();
+    void sniff();
+    void snoop();
+    void list();
+    void readOne(TargetType targetType = TARGET_MIFARE);
+    void readSelected(const QList<int>& selectedBlocks);
+    void writeOne(TargetType targetType = TARGET_MIFARE);
+    void writeSelected(const QList<int>& selectedBlocks);
+    void dump();
+    void restore();
 
     void data_clearData(bool clearAll = true);
     void data_clearKey(bool clearAll = true);
@@ -81,9 +88,7 @@ public:
     Mifare::CardType getCardType();
     void setCardType(int type);
     void writeAllC();
-    void writeC();
     void readAllC();
-    void readC();
     void wipeC();
     void setParameterC();
 
@@ -123,9 +128,9 @@ private:
     QRegularExpression* keyPattern;
     QString bin2text(const QByteArray& buff, int start, int length);
 
-    QString _readblk(int blockId, KeyType keyType, const QString &key, int waitTime = 300);
+    QString _readblk(int blockId, KeyType keyType, const QString &key, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
     QStringList _readsec(int sectorId, KeyType keyType, const QString &key, int waitTime = 300);
-    bool _writeblk(int blockId, KeyType keyType, const QString &key, const QString &data, int waitTime = 300);
+    bool _writeblk(int blockId, KeyType keyType, const QString &key, const QString &data, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
 };
 
 #endif // MIFARE_H
