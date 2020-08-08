@@ -6,19 +6,23 @@ MainWindow::MainWindow(QWidget *parent):
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//    ui->MF_simGroupBox->setVisible(false); // developing...
-//    ui->MF_sniffGroupBox->setVisible(false); // developing...
     myInfo = new QAction("wh201906", this);
+    checkUpdate = new QAction(tr("Check Update"), this);
     connect(myInfo, &QAction::triggered, [ = ]()
     {
         QDesktopServices::openUrl(QUrl("https://github.com/wh201906"));
     });
+    connect(checkUpdate, &QAction::triggered, [ = ]()
+    {
+        QDesktopServices::openUrl(QUrl("https://github.com/wh201906/Proxmark3GUI/releases"));
+    });
     this->addAction(myInfo);
+    this->addAction(checkUpdate);
+
+    settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
 
     pm3Thread = new QThread(this);
     pm3 = new PM3Process(pm3Thread);
-//    pm3->moveToThread(pm3Thread);
-//    pm3->init();
     pm3Thread->start();
     pm3state = false;
 
@@ -77,6 +81,7 @@ void MainWindow::on_PM3_connectButton_clicked()
         QMessageBox::information(NULL, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
     else
     {
+        saveClientPath(ui->PM3_pathEdit->text());
         emit connectPM3(ui->PM3_pathEdit->text(), port);
     }
 }
@@ -92,6 +97,7 @@ void MainWindow::onPM3StateChanged(bool st, QString info)
     }
     else
     {
+        setStatusBar(PM3VersionBar, "");
         setStatusBar(connectStatusBar, tr("Not Connected"));
     }
 }
@@ -176,12 +182,22 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
     qDebug() << id << typeBtnGroup->checkedId();
     if(!st)
     {
-        int result = QMessageBox::question(this, tr("Info"), tr("When Changeing card type, the data and keys in this app will be cleard.") + "\n" + tr("Continue?"), QMessageBox::Yes | QMessageBox::No);
+        int result;
+        if(id > typeBtnGroup->checkedId()) // id is specified in uiInit() with a proper order, so I can compare the size by id.
+        {
+            result = QMessageBox::question(this, tr("Info"), tr("Some of the data and key will be cleared.") + "\n" + tr("Continue?"), QMessageBox::Yes | QMessageBox::No);
+        }
+        else
+        {
+            result = QMessageBox::Yes;
+        }
         if(result == QMessageBox::Yes)
         {
             qDebug() << "Yes";
             mifare->setCardType(typeBtnGroup->checkedId());
             MF_widgetReset();
+            mifare->data_syncWithDataWidget();
+            mifare->data_syncWithKeyWidget();
         }
         else
         {
@@ -192,14 +208,91 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
     typeBtnGroup->blockSignals(false);
 }
 
-void MainWindow::on_MF_data2KeyBotton_clicked()
+void MainWindow::on_MF_selectAllBox_stateChanged(int arg1)
+{
+    ui->MF_dataWidget->blockSignals(true);
+    ui->MF_selectAllBox->blockSignals(true);
+    ui->MF_selectTrailerBox->blockSignals(true);
+    if(arg1 == Qt::PartiallyChecked)
+    {
+        ui->MF_selectAllBox->setTristate(false);
+        ui->MF_selectAllBox->setCheckState(Qt::Checked);
+    }
+    for(int i = 0; i < mifare->cardType.block_size; i++)
+    {
+        ui->MF_dataWidget->item(i, 1)->setCheckState(ui->MF_selectAllBox->checkState());
+    }
+    for(int i = 0; i < mifare->cardType.sector_size; i++)
+    {
+        ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(ui->MF_selectAllBox->checkState());
+    }
+    ui->MF_selectTrailerBox->setCheckState(ui->MF_selectAllBox->checkState());
+    ui->MF_dataWidget->blockSignals(false);
+    ui->MF_selectAllBox->blockSignals(false);
+    ui->MF_selectTrailerBox->blockSignals(false);
+}
+
+
+void MainWindow::on_MF_selectTrailerBox_stateChanged(int arg1)
+{
+    int selectedSubBlocks = 0;
+
+    ui->MF_dataWidget->blockSignals(true);
+    ui->MF_selectAllBox->blockSignals(true);
+    ui->MF_selectTrailerBox->blockSignals(true);
+    if(arg1 == Qt::PartiallyChecked)
+    {
+        ui->MF_selectTrailerBox->setTristate(false);
+        ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
+    }
+    for(int i = 0; i < mifare->cardType.sector_size; i++)
+    {
+        ui->MF_dataWidget->item(mifare->cardType.blks[i] + mifare->cardType.blk[i] - 1, 1)->setCheckState(ui->MF_selectTrailerBox->checkState());
+        selectedSubBlocks = 0;
+        for(int j = 0; j < mifare->cardType.blk[i]; j++)
+        {
+            if(ui->MF_dataWidget->item(j + mifare->cardType.blks[i], 1)->checkState() == Qt::Checked)
+                selectedSubBlocks++;
+        }
+        if(selectedSubBlocks == 0)
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::Unchecked);
+        }
+        else if(selectedSubBlocks == mifare->cardType.blk[i])
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::Checked);
+        }
+        else
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::PartiallyChecked);
+        }
+    }
+
+    ui->MF_dataWidget->blockSignals(false);
+    ui->MF_selectAllBox->blockSignals(false);
+    ui->MF_selectTrailerBox->blockSignals(false);
+}
+
+
+void MainWindow::on_MF_data2KeyButton_clicked()
 {
     mifare->data_data2Key();
 }
 
-void MainWindow::on_MF_key2DataBotton_clicked()
+void MainWindow::on_MF_key2DataButton_clicked()
 {
     mifare->data_key2Data();
+}
+
+void MainWindow::on_MF_fillKeysButton_clicked()
+{
+    mifare->data_fillKeys();
+}
+
+void MainWindow::on_MF_trailerDecoderButton_clicked()
+{
+    decDialog = new MF_trailerDecoderDialog(this);
+    decDialog->show();
 }
 
 void MainWindow::on_MF_fontButton_clicked()
@@ -216,8 +309,100 @@ void MainWindow::on_MF_fontButton_clicked()
 
 void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
 {
+    ui->MF_dataWidget->blockSignals(true);
+    ui->MF_selectAllBox->blockSignals(true);
+    ui->MF_selectTrailerBox->blockSignals(true);
+    if(item->column() == 0)
+    {
+        int selectedSectors = 0;
+        for(int i = 0; i < mifare->cardType.blk[Mifare::data_b2s(item->row())]; i++)
+        {
+            ui->MF_dataWidget->item(i + item->row(), 1)->setCheckState(item->checkState());
+            qDebug() << i << mifare->cardType.blk[item->row()] << i + item->row() << ui->MF_dataWidget->item(i + item->row(), 1)->text();
+        }
+        for(int i = 0; i < mifare->cardType.sector_size; i++)
+        {
+            if(ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->checkState() == Qt::Checked)
+            {
+                selectedSectors++;
+            }
+        }
+        if(selectedSectors == 0)
+        {
+            ui->MF_selectAllBox->setCheckState(Qt::Unchecked);
+            ui->MF_selectTrailerBox->setCheckState(Qt::Unchecked);
+        }
+        else if(selectedSectors == mifare->cardType.sector_size)
+        {
+            ui->MF_selectAllBox->setCheckState(Qt::Checked);
+            ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
+        }
+        else
+        {
+            ui->MF_selectAllBox->setCheckState(Qt::PartiallyChecked);
+            ui->MF_selectTrailerBox->setCheckState(Qt::PartiallyChecked);
+        }
+    }
+    else if(item->column() == 1)
+    {
+        int selectedSubBlocks = 0;
+        int selectedBlocks = 0;
+        int selectedTrailers = 0;
 
-    if(item->column() == 2)
+        for(int i = 0; i < mifare->cardType.block_size; i++)
+        {
+            if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
+                selectedBlocks++;
+        }
+        for(int i = 0; i < mifare->cardType.blk[Mifare::data_b2s(item->row())]; i++)
+        {
+            if(ui->MF_dataWidget->item(i + mifare->cardType.blks[Mifare::data_b2s(item->row())], 1)->checkState() == Qt::Checked)
+                selectedSubBlocks++;
+        }
+        for(int i = 0; i < mifare->cardType.sector_size; i++)
+        {
+            int targetBlock = mifare->cardType.blks[i] + mifare->cardType.blk[i] - 1;
+            if(ui->MF_dataWidget->item(targetBlock, 1)->checkState() == Qt::Checked)
+                selectedTrailers++;
+        }
+        if(selectedBlocks == 0)
+        {
+            ui->MF_selectAllBox->setCheckState(Qt::Unchecked);
+        }
+        else if(selectedBlocks == mifare->cardType.block_size)
+        {
+            ui->MF_selectAllBox->setCheckState(Qt::Checked);
+        }
+        else
+        {
+            ui->MF_selectAllBox->setCheckState(Qt::PartiallyChecked);
+        }
+        if(selectedSubBlocks == 0)
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[Mifare::data_b2s(item->row())], 0)->setCheckState(Qt::Unchecked);
+        }
+        else if(selectedSubBlocks == mifare->cardType.blk[Mifare::data_b2s(item->row())])
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[Mifare::data_b2s(item->row())], 0)->setCheckState(Qt::Checked);
+        }
+        else
+        {
+            ui->MF_dataWidget->item(mifare->cardType.blks[Mifare::data_b2s(item->row())], 0)->setCheckState(Qt::PartiallyChecked);
+        }
+        if(selectedTrailers == 0)
+        {
+            ui->MF_selectTrailerBox->setCheckState(Qt::Unchecked);
+        }
+        else if(selectedTrailers == mifare->cardType.sector_size)
+        {
+            ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
+        }
+        else
+        {
+            ui->MF_selectTrailerBox->setCheckState(Qt::PartiallyChecked);
+        }
+    }
+    else if(item->column() == 2)
     {
         QString data = item->text().replace(" ", "").toUpper();
         if(data == "" || mifare->data_isDataValid(data) == Mifare::DATA_NOSPACE)
@@ -230,6 +415,9 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
         }
         mifare->data_syncWithDataWidget(false, item->row());
     }
+    ui->MF_dataWidget->blockSignals(false);
+    ui->MF_selectAllBox->blockSignals(false);
+    ui->MF_selectTrailerBox->blockSignals(false);
 }
 
 void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
@@ -239,26 +427,26 @@ void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
         QString key = item->text().replace(" ", "").toUpper();
         if(key == "" || mifare->data_isKeyValid(key))
         {
-            mifare->data_setKey(item->row(), true, key);
+            mifare->data_setKey(item->row(), Mifare::KEY_A, key);
         }
         else
         {
             QMessageBox::information(this, tr("Info"), tr("Key must consists of 12 Hex symbols(Whitespace is allowed)"));
         }
-        mifare->data_syncWithKeyWidget(false, item->row(), true);
+        mifare->data_syncWithKeyWidget(false, item->row(), Mifare::KEY_A);
     }
     else if(item->column() == 2)
     {
-        QString key = item->text().replace(" ", "");
+        QString key = item->text().replace(" ", "").toUpper();
         if(key == "" || mifare->data_isKeyValid(key))
         {
-            mifare->data_setKey(item->row(), false, key);
+            mifare->data_setKey(item->row(), Mifare::KEY_B, key);
         }
         else
         {
             QMessageBox::information(this, tr("Info"), tr("Key must consists of 12 Hex symbols(Whitespace is allowed)"));
         }
-        mifare->data_syncWithKeyWidget(false, item->row(), false);
+        mifare->data_syncWithKeyWidget(false, item->row(), Mifare::KEY_B);
     }
 }
 
@@ -369,31 +557,32 @@ void MainWindow::on_MF_Attack_hardnestedButton_clicked()
     mifare->hardnested();
 }
 
-void MainWindow::on_MF_RW_readAllButton_clicked()
+void MainWindow::on_MF_RW_readSelectedButton_clicked()
 {
     setState(false);
-    mifare->readAll();
+    mifare->readSelected(Mifare::TARGET_MIFARE);
     setState(true);
 }
 
 void MainWindow::on_MF_RW_readBlockButton_clicked()
 {
     setState(false);
-    mifare->read();
+    mifare->readOne(Mifare::TARGET_MIFARE);
     setState(true);
 }
 
 void MainWindow::on_MF_RW_writeBlockButton_clicked()
 {
     setState(false);
-    mifare->write();
+    mifare->writeOne();
     setState(true);
 }
 
-void MainWindow::on_MF_RW_writeAllButton_clicked()
+void MainWindow::on_MF_RW_writeSelectedButton_clicked()
 {
+    QList<int> failedBlocks;
     setState(false);
-    mifare->writeAll();
+    failedBlocks = mifare->writeSelected(Mifare::TARGET_MIFARE);
     setState(true);
 }
 
@@ -407,31 +596,32 @@ void MainWindow::on_MF_RW_restoreButton_clicked()
     mifare->restore();
 }
 
-void MainWindow::on_MF_UID_readAllButton_clicked()
+void MainWindow::on_MF_UID_readSelectedButton_clicked()
 {
     setState(false);
-    mifare->readAllC();
+    mifare->readSelected(Mifare::TARGET_UID);
     setState(true);
 }
 
 void MainWindow::on_MF_UID_readBlockButton_clicked()
 {
     setState(false);
-    mifare->readC();
+    mifare->readOne(Mifare::TARGET_UID);
     setState(true);
 }
 
-void MainWindow::on_MF_UID_writeAllButton_clicked()
+void MainWindow::on_MF_UID_writeSelectedButton_clicked()
 {
+    QList<int> failedBlocks;
     setState(false);
-    mifare->writeAllC();
+    failedBlocks = mifare->writeSelected(Mifare::TARGET_UID);
     setState(true);
 }
 
 void MainWindow::on_MF_UID_writeBlockButton_clicked()
 {
     setState(false);
-    mifare->writeC();
+    mifare->writeOne(Mifare::TARGET_UID);
     setState(true);
 }
 
@@ -473,17 +663,18 @@ void MainWindow::on_MF_UID_lockButton_clicked()
     mifare->lockC();
 }
 
-void MainWindow::on_MF_Sim_loadDataButton_clicked()
+void MainWindow::on_MF_Sim_readSelectedButton_clicked()
 {
     setState(false);
-    mifare->writeAllE();
+    mifare->readSelected(Mifare::TARGET_EMULATOR);
     setState(true);
 }
 
-void MainWindow::on_MF_Sim_writeAllButton_clicked()
+void MainWindow::on_MF_Sim_writeSelectedButton_clicked()
 {
+    QList<int> failedBlocks;
     setState(false);
-    mifare->readAllE();
+    failedBlocks = mifare->writeSelected(Mifare::TARGET_EMULATOR);
     setState(true);
 }
 
@@ -548,6 +739,13 @@ void MainWindow::on_MF_Sniff_sniffButton_clicked()
     setState(true);
 }
 
+void MainWindow::on_MF_Sniff_snoopButton_clicked()
+{
+    setState(false);
+    mifare->snoop();
+    setState(true);
+}
+
 void MainWindow::on_MF_Sniff_listButton_clicked()
 {
     mifare->list();
@@ -555,16 +753,22 @@ void MainWindow::on_MF_Sniff_listButton_clicked()
 
 void MainWindow::MF_widgetReset()
 {
-    int secs = mifare->cardType.sectors;
-    int blks = mifare->cardType.blocks;
+    int secs = mifare->cardType.sector_size;
+    int blks = mifare->cardType.block_size;
     ui->MF_RW_blockBox->clear();
     ui->MF_keyWidget->setRowCount(secs);
     ui->MF_dataWidget->setRowCount(blks);
+
+    ui->MF_dataWidget->blockSignals(true);
+    ui->MF_keyWidget->blockSignals(true);
+    ui->MF_selectAllBox->blockSignals(true);
+    ui->MF_selectTrailerBox->blockSignals(true);
 
     for(int i = 0; i < blks; i++)
     {
         setTableItem(ui->MF_dataWidget, i, 0, "");
         setTableItem(ui->MF_dataWidget, i, 1, QString::number(i));
+        ui->MF_dataWidget->item(i, 1)->setCheckState(Qt::Checked);
         setTableItem(ui->MF_dataWidget, i, 2, "");
         ui->MF_RW_blockBox->addItem(QString::number(i));
     }
@@ -575,7 +779,15 @@ void MainWindow::MF_widgetReset()
         setTableItem(ui->MF_keyWidget, i, 1, "");
         setTableItem(ui->MF_keyWidget, i, 2, "");
         setTableItem(ui->MF_dataWidget, mifare->cardType.blks[i], 0, QString::number(i));
+        ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::Checked);
     }
+    ui->MF_selectAllBox->setCheckState(Qt::Checked);
+    ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
+
+    ui->MF_dataWidget->blockSignals(false);
+    ui->MF_keyWidget->blockSignals(false);
+    ui->MF_selectAllBox->blockSignals(false);
+    ui->MF_selectTrailerBox->blockSignals(false);
 }
 // ************************************************
 
@@ -601,8 +813,8 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Blk")));
     ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Data")));
     ui->MF_dataWidget->verticalHeader()->setVisible(false);
-    ui->MF_dataWidget->setColumnWidth(0, 35);
-    ui->MF_dataWidget->setColumnWidth(1, 35);
+    ui->MF_dataWidget->setColumnWidth(0, 55);
+    ui->MF_dataWidget->setColumnWidth(1, 55);
     ui->MF_dataWidget->setColumnWidth(2, 430);
 
     ui->MF_keyWidget->setColumnCount(3);
@@ -625,6 +837,35 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->installEventFilter(this);
     ui->MF_dataWidget->installEventFilter(this);
 
+    settings->beginGroup("UI_grpbox_preference");
+
+    QStringList boxNames = settings->allKeys();
+    QGroupBox* boxptr;
+    foreach(QString name, boxNames)
+    {
+        boxptr = this->findChild<QGroupBox*>(name);
+        if(boxptr == nullptr)
+            continue;
+        if(settings->value(name, true).toBool())
+        {
+            boxptr->setMaximumHeight(16777215);
+            boxptr->setChecked(true);
+        }
+        else
+        {
+            boxptr->setMaximumHeight(20);
+            boxptr->setChecked(false);
+        }
+    }
+    settings->endGroup();
+
+    settings->beginGroup("Client_Path");
+    ui->PM3_pathEdit->setText(settings->value("path", "proxmark3").toString());
+    settings->endGroup();
+
+    ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
+    ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
+
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
     on_PM3_refreshPortButton_clicked();
 }
@@ -632,6 +873,7 @@ void MainWindow::uiInit()
 void MainWindow::signalInit()
 {
     connect(pm3, &PM3Process::newOutput, util, &Util::processOutput);
+    connect(pm3, &PM3Process::changeClientType, util, &Util::setClientType);
     connect(util, &Util::refreshOutput, this, &MainWindow::refreshOutput);
 
     connect(this, &MainWindow::connectPM3, pm3, &PM3Process::connectPM3);
@@ -639,6 +881,14 @@ void MainWindow::signalInit()
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
 
     connect(util, &Util::write, pm3, &PM3Process::write);
+
+    connect(ui->MF_typeGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_fileGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_RWGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_normalGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_UIDGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_simGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+    connect(ui->MF_sniffGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
 }
 
 void MainWindow::setStatusBar(QLabel* target, const QString & text)
@@ -718,8 +968,28 @@ void MainWindow::setState(bool st)
     ui->Raw_sendCMDButton->setEnabled(st);
 }
 
+void MainWindow::on_GroupBox_clicked(bool checked)
+{
+    QGroupBox* box = dynamic_cast<QGroupBox*>(sender());
+
+    settings->beginGroup("UI_grpbox_preference");
+    if(checked)
+    {
+        box->setMaximumHeight(16777215);
+        settings->setValue(box->objectName(), true);
+    }
+    else
+    {
+        box->setMaximumHeight(20);
+        settings->setValue(box->objectName(), false);
+    }
+    settings->endGroup();
+}
+
+void MainWindow::saveClientPath(const QString& path)
+{
+    settings->beginGroup("Client_Path");
+    settings->setValue("path", path);
+    settings->endGroup();
+}
 // ***********************************************
-
-
-
-

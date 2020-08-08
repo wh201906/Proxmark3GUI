@@ -11,7 +11,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     QSettings* settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
-    QVariant lang = settings->value("lang", "null");
+    settings->beginGroup("lang");
+    QVariant lang = settings->value("language", "null");
     if(lang == "null")
     {
 #ifdef Q_OS_WIN
@@ -44,12 +45,13 @@ int main(int argc, char *argv[])
     if(translator->load(lang.toString()))
     {
         a.installTranslator(translator);
-        settings->setValue("lang", lang);
+        settings->setValue("language", lang);
     }
     else
     {
         QMessageBox::information(&w, "Error", "Can't load " + lang.toString() + " as translation file.");
     }
+    settings->endGroup();
     delete settings;
     w.initUI();
     w.show();

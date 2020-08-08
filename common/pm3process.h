@@ -9,6 +9,8 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
 
+#include "util.h"
+
 class PM3Process : public QProcess
 {
     Q_OBJECT
@@ -34,6 +36,7 @@ private:
 signals:
     void PM3StatedChanged(bool st, QString info = "");
     void newOutput(QString output);
+    void changeClientType(Util::ClientType);
 };
 
 #endif // PM3PROCESS_H

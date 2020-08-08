@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>870</width>
+    <width>970</width>
     <height>770</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>870</width>
+    <width>970</width>
     <height>770</height>
    </size>
   </property>
@@ -58,11 +58,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="PM3_pathEdit">
-        <property name="text">
-         <string notr="true">../pm3/win64/proxmark3</string>
-        </property>
-       </widget>
+       <widget class="QLineEdit" name="PM3_pathEdit"/>
       </item>
       <item>
        <widget class="QComboBox" name="PM3_portBox">
@@ -76,6 +72,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="PM3_refreshPortButton">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Refresh</string>
         </property>
@@ -83,6 +85,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="PM3_connectButton">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Connect</string>
         </property>
@@ -90,6 +98,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="PM3_disconnectButton">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>Disconnect</string>
         </property>
@@ -104,6 +118,9 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -180,84 +197,97 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="MF_data2KeyBotton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
+             <widget class="QCheckBox" name="MF_selectAllBox">
               <property name="text">
-               <string>&gt;&gt;</string>
+               <string>Select All</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="MF_key2DataBotton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <widget class="QCheckBox" name="MF_selectTrailerBox">
+              <property name="text">
+               <string>Select Trailer</string>
               </property>
-              <property name="minimumSize">
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
                 <height>20</height>
                </size>
               </property>
-              <property name="maximumSize">
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="MF_data2KeyButton">
+              <property name="minimumSize">
                <size>
-                <width>20</width>
-                <height>20</height>
+                <width>40</width>
+                <height>0</height>
                </size>
               </property>
               <property name="text">
-               <string>&lt;&lt;</string>
+               <string>KeyBlocks-&gt;Key</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="MF_key2DataButton">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>KeyBlocks&lt;-Key</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="MF_fillKeysButton">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Fill Keys</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="MF_trailerDecoderButton">
+              <property name="minimumSize">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Trailer Decoder</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="MF_fontButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>20</horstretch>
-                <verstretch>20</verstretch>
-               </sizepolicy>
-              </property>
               <property name="minimumSize">
                <size>
-                <width>20</width>
-                <height>20</height>
+                <width>40</width>
+                <height>0</height>
                </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Courier</family>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
               </property>
               <property name="text">
-               <string>F</string>
+               <string>Set Fonts</string>
               </property>
              </widget>
             </item>
@@ -317,7 +347,7 @@
              <string>Card Type</string>
             </property>
             <property name="checkable">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <property name="topMargin">
@@ -328,15 +358,27 @@
              </property>
              <item>
               <widget class="QRadioButton" name="MF_Type_miniButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
-                <string>MINI</string>
+                <string extracomment="320">MINI</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QRadioButton" name="MF_Type_1kButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
-                <string>1K</string>
+                <string extracomment="1024">1K</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
@@ -345,15 +387,27 @@
              </item>
              <item>
               <widget class="QRadioButton" name="MF_Type_2kButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
-                <string>2K</string>
+                <string extracomment="2048">2K</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QRadioButton" name="MF_Type_4kButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
-                <string>4K</string>
+                <string extracomment="4096">4K</string>
                </property>
               </widget>
              </item>
@@ -364,6 +418,9 @@
            <widget class="QGroupBox" name="MF_fileGroupBox">
             <property name="title">
              <string>File</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <property name="topMargin">
@@ -436,6 +493,9 @@
             <property name="title">
              <string>Attack</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <property name="topMargin">
               <number>5</number>
@@ -458,6 +518,12 @@
              </item>
              <item>
               <widget class="QPushButton" name="MF_Attack_infoButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Card Info</string>
                </property>
@@ -480,7 +546,7 @@
               <widget class="QPushButton" name="MF_Attack_nestedButton">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
+                 <width>40</width>
                  <height>0</height>
                 </size>
                </property>
@@ -491,6 +557,12 @@
              </item>
              <item>
               <widget class="QPushButton" name="MF_Attack_hardnestedButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Hardnested</string>
                </property>
@@ -518,6 +590,9 @@
          <widget class="QGroupBox" name="MF_RWGroupBox">
           <property name="title">
            <string>Read/Write</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
@@ -586,7 +661,7 @@
                 <widget class="QComboBox" name="MF_RW_keyTypeBox">
                  <property name="minimumSize">
                   <size>
-                   <width>35</width>
+                   <width>45</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -596,16 +671,6 @@
                    <height>16777215</height>
                   </size>
                  </property>
-                 <item>
-                  <property name="text">
-                   <string>A</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>B</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
                <item>
@@ -635,6 +700,9 @@
                <property name="title">
                 <string>Normal(Require Password)</string>
                </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
                <layout class="QGridLayout" name="gridLayout_2">
                 <property name="topMargin">
                  <number>5</number>
@@ -647,29 +715,53 @@
                 </property>
                 <item row="2" column="0">
                  <widget class="QPushButton" name="MF_RW_readBlockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
-                   <string>Read Block</string>
+                   <string>Read One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="1">
                  <widget class="QPushButton" name="MF_RW_writeBlockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
-                   <string>Write Block</string>
+                   <string>Write One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QPushButton" name="MF_RW_readAllButton">
+                 <widget class="QPushButton" name="MF_RW_readSelectedButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
-                   <string>Read All</string>
+                   <string>Read Selected</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QPushButton" name="MF_RW_writeAllButton">
+                 <widget class="QPushButton" name="MF_RW_writeSelectedButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
-                   <string>Write All</string>
+                   <string>Write Selected</string>
                   </property>
                  </widget>
                 </item>
@@ -700,6 +792,12 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Restore</string>
                   </property>
@@ -713,6 +811,9 @@
                <property name="title">
                 <string>Chinese Magic Card(Without Password)</string>
                </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
                <layout class="QGridLayout" name="gridLayout">
                 <property name="topMargin">
                  <number>5</number>
@@ -722,6 +823,12 @@
                 </property>
                 <item row="0" column="2">
                  <widget class="QPushButton" name="MF_UID_lockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>Lock UFUID Card</string>
                   </property>
@@ -729,6 +836,12 @@
                 </item>
                 <item row="1" column="2">
                  <widget class="QPushButton" name="MF_UID_aboutUIDButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
                    <string>About UID Card</string>
                   </property>
@@ -736,29 +849,53 @@
                 </item>
                 <item row="2" column="0">
                  <widget class="QPushButton" name="MF_UID_readBlockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
-                   <string>Read Block</string>
+                   <string>Read One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="1">
                  <widget class="QPushButton" name="MF_UID_writeBlockButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
-                   <string>Write Block</string>
+                   <string>Write One</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0">
-                 <widget class="QPushButton" name="MF_UID_readAllButton">
+                 <widget class="QPushButton" name="MF_UID_readSelectedButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
-                   <string>Read All</string>
+                   <string>Read Selected</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QPushButton" name="MF_UID_writeAllButton">
+                 <widget class="QPushButton" name="MF_UID_writeSelectedButton">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="text">
-                   <string>Write All</string>
+                   <string>Write Selected</string>
                   </property>
                  </widget>
                 </item>
@@ -769,6 +906,12 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
                   </property>
                   <property name="text">
                    <string>Set Parameter</string>
@@ -818,6 +961,9 @@
             <property name="title">
              <string>Simulate</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout_11">
              <property name="topMargin">
               <number>5</number>
@@ -842,16 +988,28 @@
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="MF_Sim_loadDataButton">
+              <widget class="QPushButton" name="MF_Sim_writeSelectedButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
-                <string>Load from data above</string>
+                <string>Write Selected</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="MF_Sim_writeAllButton">
+              <widget class="QPushButton" name="MF_Sim_readSelectedButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
-                <string>Read All</string>
+                <string>Read Selected</string>
                </property>
               </widget>
              </item>
@@ -870,6 +1028,12 @@
              </item>
              <item>
               <widget class="QPushButton" name="MF_Sim_simButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Simulate</string>
                </property>
@@ -895,6 +1059,9 @@
            <widget class="QGroupBox" name="MF_sniffGroupBox">
             <property name="title">
              <string>Sniff</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <property name="topMargin">
@@ -930,9 +1097,28 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="MF_Sniff_listButton">
+              <widget class="QPushButton" name="MF_Sniff_snoopButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
-                <string>List Sniff Data</string>
+                <string>Snoop</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Sniff_listButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>List Data</string>
                </property>
               </widget>
              </item>
