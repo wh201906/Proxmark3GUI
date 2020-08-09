@@ -580,9 +580,8 @@ void MainWindow::on_MF_RW_writeBlockButton_clicked()
 
 void MainWindow::on_MF_RW_writeSelectedButton_clicked()
 {
-    QList<int> failedBlocks;
     setState(false);
-    failedBlocks = mifare->writeSelected(Mifare::TARGET_MIFARE);
+    mifare->writeSelected(Mifare::TARGET_MIFARE);
     setState(true);
 }
 
@@ -612,9 +611,8 @@ void MainWindow::on_MF_UID_readBlockButton_clicked()
 
 void MainWindow::on_MF_UID_writeSelectedButton_clicked()
 {
-    QList<int> failedBlocks;
     setState(false);
-    failedBlocks = mifare->writeSelected(Mifare::TARGET_UID);
+    mifare->writeSelected(Mifare::TARGET_UID);
     setState(true);
 }
 
@@ -672,9 +670,8 @@ void MainWindow::on_MF_Sim_readSelectedButton_clicked()
 
 void MainWindow::on_MF_Sim_writeSelectedButton_clicked()
 {
-    QList<int> failedBlocks;
     setState(false);
-    failedBlocks = mifare->writeSelected(Mifare::TARGET_EMULATOR);
+    mifare->writeSelected(Mifare::TARGET_EMULATOR);
     setState(true);
 }
 
@@ -891,7 +888,7 @@ void MainWindow::signalInit()
     connect(ui->MF_sniffGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
 }
 
-void MainWindow::setStatusBar(QLabel* target, const QString & text)
+void MainWindow::setStatusBar(QLabel * target, const QString & text)
 {
     if(target == PM3VersionBar)
         target->setText(tr("HW Version:") + text);
@@ -901,14 +898,14 @@ void MainWindow::setStatusBar(QLabel* target, const QString & text)
         target->setText(tr("State:") + text);
 }
 
-void MainWindow::setTableItem(QTableWidget* widget, int row, int column, const QString& text)
+void MainWindow::setTableItem(QTableWidget * widget, int row, int column, const QString & text)
 {
     if(widget->item(row, column) == nullptr)
         widget->setItem(row, column, new QTableWidgetItem());
     widget->item(row, column)->setText(text);
 }
 
-bool MainWindow::eventFilter(QObject *watched, QEvent *event) // drag support
+bool MainWindow::eventFilter(QObject * watched, QEvent * event) // drag support
 {
     if(event->type() == QEvent::DragEnter)
     {
@@ -986,7 +983,7 @@ void MainWindow::on_GroupBox_clicked(bool checked)
     settings->endGroup();
 }
 
-void MainWindow::saveClientPath(const QString& path)
+void MainWindow::saveClientPath(const QString & path)
 {
     settings->beginGroup("Client_Path");
     settings->setValue("path", path);
