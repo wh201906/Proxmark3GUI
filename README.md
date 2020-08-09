@@ -51,11 +51,15 @@ Great thanks to him.
 
 ## Update Log:
 
+### V0.1.3
++ Fix Trailer Decoder
++ Add feedback when writing selected blocks
+
 ### V0.1.2
 + Optimize read logic
 + Make UI Customizable
 + Save client path automatically
-+ Add Trailer Decoder
++ Add Trailer Decoder(Deprecated, plz use V0.1.3 or higher version)
 + Support read/write selected blocks
 + Support a few Iceman functions
 + Fix some bugs
