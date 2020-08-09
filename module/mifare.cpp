@@ -36,19 +36,19 @@ const Mifare::CardType Mifare::card_4k =
 const Mifare::AccessType Mifare::dataCondition[8][4] =
 {
     {ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB},
-    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_NEVER},
     {ACC_KEY_AB, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_NEVER},
     {ACC_KEY_AB, ACC_KEY_B, ACC_KEY_B, ACC_KEY_AB},
     {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_KEY_AB},
-    {ACC_KEY_B, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
     {ACC_KEY_B, ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_KEY_B, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
     {ACC_NEVER, ACC_NEVER, ACC_NEVER, ACC_NEVER},
 };
 const Mifare::AccessType Mifare::trailerReadCondition[8][3] =
 {
     {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
     {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
     {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
     {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
     {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
@@ -58,12 +58,12 @@ const Mifare::AccessType Mifare::trailerReadCondition[8][3] =
 const Mifare::AccessType Mifare::trailerWriteCondition[8][3] =
 {
     {ACC_KEY_A, ACC_NEVER, ACC_KEY_A},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
     {ACC_KEY_B, ACC_NEVER, ACC_KEY_B},
     {ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
     {ACC_KEY_A, ACC_KEY_A, ACC_KEY_A},
-    {ACC_KEY_B, ACC_KEY_B, ACC_KEY_B},
     {ACC_NEVER, ACC_KEY_B, ACC_NEVER},
+    {ACC_KEY_B, ACC_KEY_B, ACC_KEY_B},
     {ACC_NEVER, ACC_NEVER, ACC_NEVER},
 };
 
@@ -597,7 +597,7 @@ void Mifare::writeOne(TargetType targetType)
     }
 }
 
-QList<int> Mifare::writeSelected(TargetType targetType)
+void Mifare::writeSelected(TargetType targetType)
 {
     QList<int> failedBlocks;
     QList<int> selectedBlocks;
@@ -630,7 +630,39 @@ QList<int> Mifare::writeSelected(TargetType targetType)
             failedBlocks.append(item);
         }
     }
-    return failedBlocks;
+    if(failedBlocks.size() == 0)
+        QMessageBox::information(parent, tr("Info"), tr("Successful!"));
+    else
+    {
+        QString suffix = "";
+        int counter = 0;
+        for(int failedBlk : failedBlocks)
+        {
+            suffix += QString::number(failedBlk) + " ";
+            counter++;
+            counter %= 20;
+            if(counter == 0)
+                suffix += "\n";
+        }
+        QMessageBox::StandardButton res = QMessageBox::information(parent, tr("Info"), tr("Failed to write to these blocks:")
+                                          + "\n"
+                                          + suffix
+                                          + "\n"
+                                          + tr("Select them?"),
+                                          QMessageBox::Yes | QMessageBox::No);
+        if(res == QMessageBox::Yes)
+        {
+            for(int item : selectedBlocks)
+            {
+                ui->MF_dataWidget->item(item, 1)->setCheckState(Qt::Unchecked);
+            }
+            for(int failedBlk : failedBlocks)
+            {
+                ui->MF_dataWidget->item(failedBlk, 1)->setCheckState(Qt::Checked);
+            }
+        }
+
+    }
 }
 
 void Mifare::dump()

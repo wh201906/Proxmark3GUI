@@ -73,7 +73,7 @@ public:
     void readOne(TargetType targetType = TARGET_MIFARE);
     void readSelected(TargetType targetType = TARGET_MIFARE);
     void writeOne(TargetType targetType = TARGET_MIFARE);
-    QList<int> writeSelected(TargetType targetType = TARGET_MIFARE);
+    void writeSelected(TargetType targetType = TARGET_MIFARE);
     void dump();
     void restore();
 
