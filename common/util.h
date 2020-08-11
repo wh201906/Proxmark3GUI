@@ -31,9 +31,11 @@ public:
 public slots:
     void processOutput(QString output);
     void setClientType(Util::ClientType clientType);
+    void setRunningState(bool st);
 
 private:
     bool isRequiringOutput;
+    bool isRunning;
     QString* requiredOutput;
     QTime timeStamp;
     ClientType clientType;

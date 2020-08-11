@@ -875,6 +875,7 @@ void MainWindow::signalInit()
 
     connect(this, &MainWindow::connectPM3, pm3, &PM3Process::connectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
+    connect(pm3, &PM3Process::PM3StatedChanged, util, &Util::setRunningState);
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
 
     connect(util, &Util::write, pm3, &PM3Process::write);
