@@ -273,7 +273,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
 {
     QString data;
     QString result;
-    bool isKeyBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
+    bool isTrailerBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
 
     if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
@@ -298,7 +298,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
                 data.remove(" ");
                 // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
                 // if the given key type is KeyB, it will never get the KeyA from the key block
-                if(isKeyBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
+                if(isTrailerBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
                 {
                     data.replace(0, 12, key);
                     QList<quint8> ACBits = data_getACBits(data.mid(12, 8));
@@ -307,7 +307,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
                         data.replace(20, 12, "????????????");
                     }
                 }
-                else if(isKeyBlock && keyType == KEY_B)
+                else if(isTrailerBlock && keyType == KEY_B)
                 {
                     data.replace(20, 12, key);;
                     data.replace(0, 12, "????????????"); // fill the keyA part with ?
@@ -536,8 +536,8 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
 {
     QString result;
     QString input = data.toUpper();
-    input.remove(" ");
 
+    input.remove(" ");
     if(data_isDataValid(input) != DATA_NOSPACE)
         return false;
 
@@ -601,6 +601,8 @@ void Mifare::writeSelected(TargetType targetType)
 {
     QList<int> failedBlocks;
     QList<int> selectedBlocks;
+    bool yes2All = false, no2All = false;
+
     for(int i = 0; i < cardType.block_size; i++)
     {
         if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
@@ -609,6 +611,29 @@ void Mifare::writeSelected(TargetType targetType)
     for(int item : selectedBlocks)
     {
         bool result = false;
+        bool isTrailerBlock = (item < 128 && ((item + 1) % 4 == 0)) || ((item + 1) % 16 == 0);
+
+        if(isTrailerBlock && !data_isACBitsValid(dataList->at(item).mid(12, 8))) // trailer block is invalid
+        {
+            if(!yes2All && !no2All)
+            {
+                QMessageBox::StandardButton choice = QMessageBox::information(parent, tr("Info"),
+                                                     tr("The Access Bits is invalid!\nIt could make the whole sector blocked irreversibly!\nContinue to write?"),
+                                                     QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll);
+                if(choice == QMessageBox::No)
+                    continue;
+                else if(choice == QMessageBox::YesToAll)
+                    yes2All = true;
+                else if(QMessageBox::NoToAll)
+                {
+                    no2All = true;
+                    continue;
+                }
+            }
+            else if(no2All)
+                continue;
+        }
+
         if(targetType == TARGET_MIFARE)
         {
             result = _writeblk(item, KEY_A, keyAList->at(data_b2s(item)), dataList->at(item), TARGET_MIFARE);
@@ -1192,24 +1217,36 @@ int Mifare::data_b2s(int block)
         return -1;
 }
 
-QList<quint8> Mifare::data_getACBits(const QString& text) //return empty QList if the text is invalid
+bool Mifare::data_isACBitsValid(const QString& text, QList<quint8>* returnHalfBytes)
 {
     QString input = text;
-    QList<quint8> result;
     input.remove(" ");
     if(input.length() < 6)
     {
-        return result;
+        return false;
     }
     input = input.left(6);
     quint32 val = input.toUInt(nullptr, 16);
-    quint8 halfBytes[6];
+    QList<quint8> halfBytes;
     for(int i = 0; i < 6; i++)
     {
-        halfBytes[i] = (val >> ((5 - i) * 4)) & 0xf;
+        halfBytes.append((val >> ((5 - i) * 4)) & 0xf);
     }
     qDebug() << val;
     if((~halfBytes[0] & 0xf) == halfBytes[5] && (~halfBytes[1] & 0xf) == halfBytes[2] && (~halfBytes[3] & 0xf) == halfBytes[4])
+    {
+        if(returnHalfBytes != nullptr)
+            *returnHalfBytes = halfBytes;
+        return true;
+    }
+    else
+        return false;
+}
+
+QList<quint8> Mifare::data_getACBits(const QString& text) //return empty QList if the text is invalid
+{
+    QList<quint8> halfBytes, result;
+    if(data_isACBitsValid(text, &halfBytes))
     {
         for(int i = 0; i < 4; i++)
         {

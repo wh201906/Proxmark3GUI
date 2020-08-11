@@ -25,7 +25,7 @@ A GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 ## Preview
 ![preview](README/img/preview.png)  
 
-more previews [here](README/doc/previews.md)  
+[more previews](README/doc/previews.md)  
 
 ***
 
