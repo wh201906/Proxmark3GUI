@@ -125,6 +125,10 @@ void MainWindow::refreshCMD(const QString& cmd)
         ui->Raw_CMDHistoryWidget->addItem(cmd);
 }
 
+void MainWindow::on_stopButton_clicked()
+{
+
+}
 // *********************************************************
 
 // ******************** raw command ********************
@@ -798,12 +802,15 @@ void MainWindow::uiInit()
     connectStatusBar = new QLabel(this);
     programStatusBar = new QLabel(this);
     PM3VersionBar = new QLabel(this);
+    stopButton = new QPushButton(this);
     setStatusBar(connectStatusBar, tr("Not Connected"));
     setStatusBar(programStatusBar, tr("Idle"));
     setStatusBar(PM3VersionBar, "");
+    stopButton->setText(tr("Stop"));
     ui->statusbar->addPermanentWidget(PM3VersionBar, 1);
     ui->statusbar->addPermanentWidget(connectStatusBar, 1);
     ui->statusbar->addPermanentWidget(programStatusBar, 1);
+    ui->statusbar->addPermanentWidget(stopButton);
 
     ui->MF_dataWidget->setColumnCount(3);
     ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
@@ -812,7 +819,7 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->verticalHeader()->setVisible(false);
     ui->MF_dataWidget->setColumnWidth(0, 55);
     ui->MF_dataWidget->setColumnWidth(1, 55);
-    ui->MF_dataWidget->setColumnWidth(2, 430);
+    ui->MF_dataWidget->setColumnWidth(2, 450);
 
     ui->MF_keyWidget->setColumnCount(3);
     ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
@@ -820,8 +827,8 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("KeyB")));
     ui->MF_keyWidget->verticalHeader()->setVisible(false);
     ui->MF_keyWidget->setColumnWidth(0, 35);
-    ui->MF_keyWidget->setColumnWidth(1, 115);
-    ui->MF_keyWidget->setColumnWidth(2, 115);
+    ui->MF_keyWidget->setColumnWidth(1, 125);
+    ui->MF_keyWidget->setColumnWidth(2, 125);
 
     MF_widgetReset();
     typeBtnGroup = new QButtonGroup(this);
@@ -887,6 +894,8 @@ void MainWindow::signalInit()
     connect(ui->MF_UIDGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
     connect(ui->MF_simGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
     connect(ui->MF_sniffGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+
+    connect(stopButton, &QPushButton::clicked, this, &MainWindow::on_stopButton_clicked);
 }
 
 void MainWindow::setStatusBar(QLabel * target, const QString & text)

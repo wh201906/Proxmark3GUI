@@ -19,6 +19,7 @@
 #include <QGroupBox>
 #include <QSizePolicy>
 #include <QSettings>
+#include <QPushButton>
 
 #include "common/pm3process.h"
 #include "module/mifare.h"
@@ -148,12 +149,14 @@ private slots:
 
     void on_MF_selectTrailerBox_stateChanged(int arg1);
 
+    void on_stopButton_clicked();
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
     QLabel* connectStatusBar;
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
+    QPushButton* stopButton;
     QAction* myInfo;
     QAction* checkUpdate;
     QSettings* settings;

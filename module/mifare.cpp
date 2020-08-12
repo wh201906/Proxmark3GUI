@@ -119,7 +119,7 @@ void Mifare::chk()
                          "hf mf chk *"
                          + QString::number(cardType.type)
                          + " ?",
-                         1000 + cardType.type * 1000);
+                         Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", "\\|---\\|----------------\\|----------------\\|"}));
     qDebug() << result;
 
     int offset = 0;
@@ -183,7 +183,8 @@ void Mifare::nested()
         result = util->execCMDWithOutput(
                      "hf mf nested "
                      + QString::number(cardType.type)
-                     + " *", 10000);
+                     + " *",
+                     Util::ReturnTrigger(10000, {"Can't found", "\\|000\\|"}));
     }
     else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
@@ -624,7 +625,7 @@ void Mifare::writeSelected(TargetType targetType)
                     continue;
                 else if(choice == QMessageBox::YesToAll)
                     yes2All = true;
-                else if(QMessageBox::NoToAll)
+                else if(choice == QMessageBox::NoToAll)
                 {
                     no2All = true;
                     continue;

@@ -9,6 +9,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QMetaType>
+#include <QRegularExpression>
 
 class Util : public QObject
 {
@@ -20,12 +21,33 @@ public:
         CLIENTTYPE_ICEMAN,
     };
 
+    struct ReturnTrigger
+    {
+        unsigned long waitTime;
+        QStringList expectedOutputs;
+        ReturnTrigger(unsigned long time)
+        {
+            waitTime = time;
+            expectedOutputs = QStringList();
+        }
+        ReturnTrigger(QStringList outputs)
+        {
+            waitTime = 10000;
+            expectedOutputs = outputs;
+        }
+        ReturnTrigger(unsigned long time, QStringList outputs)
+        {
+            waitTime = time;
+            expectedOutputs = outputs;
+        }
+    };
+
     Q_ENUM(Util::ClientType)
 
     explicit Util(QObject *parent = nullptr);
 
     void execCMD(QString cmd);
-    QString execCMDWithOutput(QString cmd, unsigned long waitTime = 2000);
+    QString execCMDWithOutput(QString cmd, ReturnTrigger trigger = 10000);
     void delay(unsigned int msec);
     ClientType getClientType();
 public slots:
