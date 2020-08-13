@@ -120,7 +120,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -1197,6 +1197,9 @@
               <horstretch>2</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="verticalScrollBarPolicy">
              <enum>Qt::ScrollBarAlwaysOn</enum>

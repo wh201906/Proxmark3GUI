@@ -21,6 +21,7 @@
 #include <QSettings>
 #include <QPushButton>
 
+#include "common/myeventfilter.h"
 #include "common/pm3process.h"
 #include "module/mifare.h"
 #include "common/util.h"
@@ -49,6 +50,7 @@ public slots:
     void setStatusBar(QLabel* target, const QString& text);
     void onPM3StateChanged(bool st, const QString& info);
     void MF_onTypeChanged(int id, bool st);
+    void on_Raw_CMDEdit_keyPressed(QObject *obj_addr, QEvent &event);
 private slots:
 
     void on_PM3_connectButton_clicked();
@@ -150,6 +152,8 @@ private slots:
     void on_MF_selectTrailerBox_stateChanged(int arg1);
 
     void on_stopButton_clicked();
+    void on_Raw_CMDEdit_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
@@ -160,6 +164,10 @@ private:
     QAction* myInfo;
     QAction* checkUpdate;
     QSettings* settings;
+    MyEventFilter* keyEventFilter;
+
+    QString stashedCMDEditText;
+    int stashedIndex = -1;
 
     void uiInit();
 

@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent):
     util = new Util(this);
     mifare = new Mifare(ui, util, this);
 
+    keyEventFilter = new MyEventFilter(QEvent::KeyRelease);
 }
 
 MainWindow::~MainWindow()
@@ -177,6 +178,36 @@ void MainWindow::sendMSG() // send command when pressing Enter
         on_Raw_sendCMDButton_clicked();
 }
 
+void MainWindow::on_Raw_CMDEdit_keyPressed(QObject* obj_addr, QEvent& event)
+{
+    if(obj_addr == ui->Raw_CMDEdit && event.type() == QEvent::KeyRelease)
+    {
+        QKeyEvent& keyEvent = static_cast<QKeyEvent&>(event);
+        if(keyEvent.key() == Qt::Key_Up)
+        {
+            if(stashedIndex > 0)
+                stashedIndex--;
+            else if(stashedIndex == -1)
+                stashedIndex = ui->Raw_CMDHistoryWidget->count() - 1;
+        }
+        else if(keyEvent.key() == Qt::Key_Down)
+        {
+            if(stashedIndex < ui->Raw_CMDHistoryWidget->count() - 1 && stashedIndex != -1)
+                stashedIndex++;
+            else if(stashedIndex == ui->Raw_CMDHistoryWidget->count() - 1)
+                stashedIndex = -1;
+        }
+        if(keyEvent.key() == Qt::Key_Up || keyEvent.key() == Qt::Key_Down)
+        {
+            ui->Raw_CMDEdit->blockSignals(true);
+            if(stashedIndex == -1)
+                ui->Raw_CMDEdit->setText(stashedCMDEditText);
+            else
+                ui->Raw_CMDEdit->setText(ui->Raw_CMDHistoryWidget->item(stashedIndex)->text());
+            ui->Raw_CMDEdit->blockSignals(false);
+        }
+    }
+}
 // *****************************************************
 
 // ******************** mifare ********************
@@ -798,6 +829,8 @@ void MainWindow::MF_widgetReset()
 void MainWindow::uiInit()
 {
     connect(ui->Raw_CMDEdit, &QLineEdit::editingFinished, this, &MainWindow::sendMSG);
+    ui->Raw_CMDEdit->installEventFilter(keyEventFilter);
+    connect(keyEventFilter, &MyEventFilter::eventHappened, this, &MainWindow::on_Raw_CMDEdit_keyPressed);
 
     connectStatusBar = new QLabel(this);
     programStatusBar = new QLabel(this);
@@ -1000,3 +1033,8 @@ void MainWindow::saveClientPath(const QString& path)
     settings->endGroup();
 }
 // ***********************************************
+
+void MainWindow::on_Raw_CMDEdit_textChanged(const QString &arg1)
+{
+    stashedCMDEditText = arg1;
+}
