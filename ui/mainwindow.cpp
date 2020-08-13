@@ -119,13 +119,6 @@ void MainWindow::refreshOutput(const QString& output)
     ui->Raw_outputEdit->moveCursor(QTextCursor::End);
 }
 
-void MainWindow::refreshCMD(const QString& cmd)
-{
-    ui->Raw_CMDEdit->setText(cmd);
-    if(cmd != "" && (ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd))
-        ui->Raw_CMDHistoryWidget->addItem(cmd);
-}
-
 void MainWindow::on_stopButton_clicked()
 {
 
@@ -176,6 +169,18 @@ void MainWindow::sendMSG() // send command when pressing Enter
 {
     if(ui->Raw_CMDEdit->hasFocus())
         on_Raw_sendCMDButton_clicked();
+}
+
+
+void MainWindow::refreshCMD(const QString& cmd)
+{
+    ui->Raw_CMDEdit->blockSignals(true);
+    ui->Raw_CMDEdit->setText(cmd);
+    if(cmd != "" && (ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd))
+        ui->Raw_CMDHistoryWidget->addItem(cmd);
+    stashedCMDEditText = cmd;
+    stashedIndex = -1;
+    ui->Raw_CMDEdit->blockSignals(false);
 }
 
 void MainWindow::on_Raw_CMDEdit_keyPressed(QObject* obj_addr, QEvent& event)
