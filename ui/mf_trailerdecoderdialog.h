@@ -23,11 +23,11 @@ public:
 
 private slots:
 
-    void on_accessBitsEdit_textChanged(const QString &arg1);
+    void on_accessBitsEdit_textChanged(const QString& arg1);
 
     void on_blockSizeChanged(int id, bool st);
 
-    void on_boxChanged(const QString &arg1);
+    void on_boxChanged(const QString& arg1);
 private:
     Ui::MF_trailerDecoderDialog *ui;
     QRegularExpressionValidator* validator;

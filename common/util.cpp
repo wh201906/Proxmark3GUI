@@ -9,7 +9,7 @@ Util::Util(QObject *parent) : QObject(parent)
     qRegisterMetaType<Util::ClientType>("Util::ClientType");
 }
 
-void Util::processOutput(QString output)
+void Util::processOutput(const QString& output)
 {
 //    qDebug() << "Util::processOutput:" << output;
     if(isRequiringOutput)
@@ -20,14 +20,14 @@ void Util::processOutput(QString output)
     emit refreshOutput(output);
 }
 
-void Util::execCMD(QString cmd)
+void Util::execCMD(const QString& cmd)
 {
     qDebug() << cmd;
     if(isRunning)
         emit write(cmd + "\r\n");
 }
 
-QString Util::execCMDWithOutput(QString cmd, ReturnTrigger trigger)
+QString Util::execCMDWithOutput(const QString& cmd, ReturnTrigger trigger)
 {
     bool isResultFound = false;
     QRegularExpression re;

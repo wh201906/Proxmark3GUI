@@ -14,7 +14,7 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
     connect(this, &PM3Process::readyRead, this, &PM3Process::onReadyRead);
 }
 
-void PM3Process::connectPM3(const QString path, const QString port)
+void PM3Process::connectPM3(const QString& path, const QString& port)
 {
     QString result;
     Util::ClientType clientType = Util::CLIENTTYPE_OFFICIAL;
@@ -92,7 +92,6 @@ void PM3Process::testThread()
 {
     qDebug() << "PM3:" << QThread::currentThread();
 }
-
 
 qint64 PM3Process::write(QString data)
 {

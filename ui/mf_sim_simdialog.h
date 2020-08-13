@@ -26,7 +26,7 @@ private:
     Ui::MF_Sim_simDialog *ui;
     int cardType;
 signals:
-    void sendCMD(QString cmd);
+    void sendCMD(const QString& cmd);
 private slots:
     void on_buttonBox_accepted();
 };

@@ -86,7 +86,7 @@ void MainWindow::on_PM3_connectButton_clicked()
     }
 }
 
-void MainWindow::onPM3StateChanged(bool st, QString info)
+void MainWindow::onPM3StateChanged(bool st, const QString& info)
 {
     pm3state = st;
     setState(st);
@@ -898,7 +898,7 @@ void MainWindow::signalInit()
     connect(stopButton, &QPushButton::clicked, this, &MainWindow::on_stopButton_clicked);
 }
 
-void MainWindow::setStatusBar(QLabel * target, const QString & text)
+void MainWindow::setStatusBar(QLabel * target, const QString& text)
 {
     if(target == PM3VersionBar)
         target->setText(tr("HW Version:") + text);
@@ -908,7 +908,7 @@ void MainWindow::setStatusBar(QLabel * target, const QString & text)
         target->setText(tr("State:") + text);
 }
 
-void MainWindow::setTableItem(QTableWidget * widget, int row, int column, const QString & text)
+void MainWindow::setTableItem(QTableWidget * widget, int row, int column, const QString& text)
 {
     if(widget->item(row, column) == nullptr)
         widget->setItem(row, column, new QTableWidgetItem());
@@ -993,7 +993,7 @@ void MainWindow::on_GroupBox_clicked(bool checked)
     settings->endGroup();
 }
 
-void MainWindow::saveClientPath(const QString & path)
+void MainWindow::saveClientPath(const QString& path)
 {
     settings->beginGroup("Client_Path");
     settings->setValue("path", path);

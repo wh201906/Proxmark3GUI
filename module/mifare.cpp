@@ -872,7 +872,7 @@ void Mifare::data_clearKey(bool clearAll)
     }
 }
 
-bool Mifare::data_isKeyValid(const QString &key)
+bool Mifare::data_isKeyValid(const QString& key)
 {
     if(key.length() != 12)
         return false;
@@ -938,7 +938,7 @@ void Mifare::setCardType(int type)
     }
 }
 
-bool Mifare::data_loadDataFile(const QString &filename)
+bool Mifare::data_loadDataFile(const QString& filename)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::ReadOnly))
@@ -985,7 +985,7 @@ bool Mifare::data_loadDataFile(const QString &filename)
     }
 }
 
-bool Mifare::data_loadKeyFile(const QString &filename)
+bool Mifare::data_loadKeyFile(const QString& filename)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::ReadOnly))
@@ -1022,7 +1022,7 @@ bool Mifare::data_loadKeyFile(const QString &filename)
     }
 }
 
-QString Mifare::bin2text(const QByteArray &buff, int i, int length)
+QString Mifare::bin2text(const QByteArray& buff, int i, int length)
 {
     QString ret = "";
     char LByte, RByte;
@@ -1040,7 +1040,7 @@ QString Mifare::bin2text(const QByteArray &buff, int i, int length)
     return ret;
 }
 
-bool Mifare::data_saveDataFile(const QString &filename, bool isBin)
+bool Mifare::data_saveDataFile(const QString& filename, bool isBin)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::WriteOnly))
@@ -1084,7 +1084,7 @@ bool Mifare::data_saveDataFile(const QString &filename, bool isBin)
     }
 }
 
-bool Mifare::data_saveKeyFile(const QString &filename, bool isBin)
+bool Mifare::data_saveKeyFile(const QString& filename, bool isBin)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::WriteOnly))
@@ -1179,12 +1179,12 @@ void Mifare::data_data2Key()
     }
 }
 
-void Mifare::data_setData(int block, const QString &data)
+void Mifare::data_setData(int block, const QString& data)
 {
     dataList->replace(block, data);
 }
 
-void Mifare::data_setKey(int sector, KeyType keyType, const QString &key)
+void Mifare::data_setKey(int sector, KeyType keyType, const QString& key)
 {
     if(keyType == KEY_A)
         keyAList->replace(sector, key);
