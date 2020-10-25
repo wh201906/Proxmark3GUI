@@ -125,7 +125,7 @@
     <message>
         <location filename="../ui/mf_uid_parameterdialog.ui" line="22"/>
         <source>UID:</source>
-        <translation></translation>
+        <translation>卡号：</translation>
     </message>
     <message>
         <location filename="../ui/mf_uid_parameterdialog.ui" line="32"/>
@@ -164,7 +164,7 @@
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="67"/>
         <source>Trailer Data:
 (like &quot;FF0780&quot; or &quot;FF 07 80&quot;)</source>
-        <translation>输入Access Bits
+        <translation>输入控制位数据
 （形如“FF0780”或“FF 07 80”）</translation>
     </message>
     <message>
@@ -195,22 +195,22 @@
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="235"/>
         <source>Data Block Permission:</source>
-        <translation>数据Block访问权限：</translation>
+        <translation>块数据访问权限：</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="252"/>
         <source>Block0</source>
-        <translation></translation>
+        <translation>0块</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="257"/>
         <source>Block1</source>
-        <translation></translation>
+        <translation>1块</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="262"/>
         <source>Block2</source>
-        <translation></translation>
+        <translation>2块</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="267"/>
@@ -242,17 +242,17 @@
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="317"/>
         <source>KeyA</source>
-        <translation></translation>
+        <translation>A密钥</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="322"/>
         <source>Access Bits</source>
-        <translation>Access Bits</translation>
+        <translation>控制位</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="327"/>
         <source>KeyB</source>
-        <translation></translation>
+        <translation>B密钥</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="337"/>
@@ -368,12 +368,12 @@ It could make the whole sector blocked irreversibly!</source>
         <location filename="../ui/mainwindow.ui" line="474"/>
         <location filename="../ui/mainwindow.cpp" line="814"/>
         <source>Data</source>
-        <translation></translation>
+        <translation>数据</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="484"/>
         <source>Key</source>
-        <translation></translation>
+        <translation>密钥</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="494"/>
@@ -383,7 +383,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="528"/>
         <source>Card Info</source>
-        <translation>读卡片信息</translation>
+        <translation>读卡信息</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="541"/>
@@ -408,17 +408,17 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="605"/>
         <source>Block:</source>
-        <translation></translation>
+        <translation>块：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="637"/>
         <source>Key:</source>
-        <translation></translation>
+        <translation>密钥：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="656"/>
         <source>Key Type:</source>
-        <translation>Key类型：</translation>
+        <translation>密钥类型：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1108"/>
@@ -433,7 +433,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="679"/>
         <source>Data:</source>
-        <translation></translation>
+        <translation>数据：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="701"/>
@@ -756,7 +756,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="646"/>
         <source>    you can only write to Block 0 once. After that, it seems like a typical Mifare card(Block 0 cannot be written to).</source>
-        <translation>    Block0只能写入一次</translation>
+        <translation>    0块只能写入一次</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="647"/>
@@ -808,22 +808,22 @@ It could make the whole sector blocked irreversibly!</source>
         <location filename="../ui/mainwindow.cpp" line="812"/>
         <location filename="../ui/mainwindow.cpp" line="821"/>
         <source>Sec</source>
-        <translation></translation>
+        <translation>区</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="813"/>
         <source>Blk</source>
-        <translation></translation>
+        <translation>块</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="822"/>
         <source>KeyA</source>
-        <translation></translation>
+        <translation>A密钥</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="823"/>
         <source>KeyB</source>
-        <translation></translation>
+        <translation>B密钥</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="897"/>
