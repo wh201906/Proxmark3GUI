@@ -448,7 +448,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="802"/>
         <source>Restore</source>
-        <translation>初始化卡</translation>
+        <translation>一键写卡</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="812"/>
