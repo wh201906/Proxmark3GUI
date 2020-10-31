@@ -195,7 +195,7 @@
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="235"/>
         <source>Data Block Permission:</source>
-        <translation>块数据访问权限：</translation>
+        <translation>数据块访问权限：</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="252"/>
@@ -242,7 +242,7 @@
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="317"/>
         <source>KeyA</source>
-        <translation>A密钥</translation>
+        <translation>密钥A</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="322"/>
@@ -252,7 +252,7 @@
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="327"/>
         <source>KeyB</source>
-        <translation>B密钥</translation>
+        <translation>密钥B</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="337"/>
@@ -443,12 +443,12 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="783"/>
         <source>Dump</source>
-        <translation>导出Dump</translation>
+        <translation>Dump命令</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="802"/>
         <source>Restore</source>
-        <translation>一键写卡</translation>
+        <translation>Restore命令</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="812"/>
@@ -474,7 +474,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="936"/>
         <source>Wipe</source>
-        <translation>清除</translation>
+        <translation>擦除</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="962"/>
@@ -701,12 +701,12 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="637"/>
         <source>    Chinese Magic Cards(aka UID Cards) are some special cards whose Block 0 are writeable. And you can change UID by writing to it.</source>
-        <translation>    UID卡（在国外叫中国魔术卡）的块0可写，卡号可变</translation>
+        <translation>    UID卡（在国外叫Chinese Magic Card）的块0可写，卡号可变。</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="639"/>
         <source>There are two versions of Chinese Magic Cards, the Gen1 and the Gen2.</source>
-        <translation>国外把UID卡分为中国魔术卡 Gen1和Gen2</translation>
+        <translation>国外把UID卡分为Chinese Magic Card Gen1和Gen2</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="640"/>
@@ -818,12 +818,12 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="822"/>
         <source>KeyA</source>
-        <translation>A密钥</translation>
+        <translation>密钥A</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="823"/>
         <source>KeyB</source>
-        <translation>B密钥</translation>
+        <translation>密钥B</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="897"/>
