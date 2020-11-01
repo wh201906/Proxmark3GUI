@@ -125,7 +125,7 @@
     <message>
         <location filename="../ui/mf_uid_parameterdialog.ui" line="22"/>
         <source>UID:</source>
-        <translation></translation>
+        <translation>卡号：</translation>
     </message>
     <message>
         <location filename="../ui/mf_uid_parameterdialog.ui" line="32"/>
@@ -164,7 +164,7 @@
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="67"/>
         <source>Trailer Data:
 (like &quot;FF0780&quot; or &quot;FF 07 80&quot;)</source>
-        <translation>输入Access Bits
+        <translation>输入控制位数据
 （形如“FF0780”或“FF 07 80”）</translation>
     </message>
     <message>
@@ -195,22 +195,22 @@
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="235"/>
         <source>Data Block Permission:</source>
-        <translation>数据Block访问权限：</translation>
+        <translation>数据块访问权限：</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="252"/>
         <source>Block0</source>
-        <translation></translation>
+        <translation>块0</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="257"/>
         <source>Block1</source>
-        <translation></translation>
+        <translation>块1</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="262"/>
         <source>Block2</source>
-        <translation></translation>
+        <translation>块2</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="267"/>
@@ -242,17 +242,17 @@
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="317"/>
         <source>KeyA</source>
-        <translation></translation>
+        <translation>密钥A</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="322"/>
         <source>Access Bits</source>
-        <translation>Access Bits</translation>
+        <translation>控制位</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="327"/>
         <source>KeyB</source>
-        <translation></translation>
+        <translation>密钥B</translation>
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="337"/>
@@ -321,7 +321,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="347"/>
         <source>Card Type</source>
-        <translation>卡类型</translation>
+        <translation>卡片类型</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="368"/>
@@ -368,12 +368,12 @@ It could make the whole sector blocked irreversibly!</source>
         <location filename="../ui/mainwindow.ui" line="474"/>
         <location filename="../ui/mainwindow.cpp" line="814"/>
         <source>Data</source>
-        <translation></translation>
+        <translation>数据</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="484"/>
         <source>Key</source>
-        <translation></translation>
+        <translation>密钥</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="494"/>
@@ -383,7 +383,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="528"/>
         <source>Card Info</source>
-        <translation>读卡片信息</translation>
+        <translation>读卡信息</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="541"/>
@@ -408,17 +408,17 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="605"/>
         <source>Block:</source>
-        <translation></translation>
+        <translation>块：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="637"/>
         <source>Key:</source>
-        <translation></translation>
+        <translation>密钥：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="656"/>
         <source>Key Type:</source>
-        <translation>Key类型：</translation>
+        <translation>密钥类型：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1108"/>
@@ -433,7 +433,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="679"/>
         <source>Data:</source>
-        <translation></translation>
+        <translation>数据：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="701"/>
@@ -611,7 +611,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="460"/>
         <source>Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml);;All Files(*.*)</source>
-        <translation>二进制Data文件(*.bin *.dump);;文本Data文件(*.txt *.eml);;所有文件(*.*)</translation>
+        <translation>二进制数据文件(*.bin *.dump);;文本数据文件(*.txt *.eml);;所有文件(*.*)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="466"/>
@@ -638,43 +638,43 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="301"/>
         <source>Plz select the font of data widget and key widget</source>
-        <translation>请选择Data窗口和Key窗口的字体</translation>
+        <translation>请选择数据窗口和密钥窗口的字体</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="414"/>
         <source>Data must consists of 32 Hex symbols(Whitespace is allowed)</source>
-        <translation>Data必须由32个十六进制字符组成（中间可含有空格）</translation>
+        <translation>数据必须由32个十六进制字符组成（中间可含有空格）</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="434"/>
         <location filename="../ui/mainwindow.cpp" line="447"/>
         <source>Key must consists of 12 Hex symbols(Whitespace is allowed)</source>
-        <translation>Key必须由12个十六进制字符组成（中间可含有空格）</translation>
+        <translation>密钥必须由12个十六进制字符组成（中间可含有空格）</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="459"/>
         <source>Plz select the data file:</source>
-        <translation>请选择data文件：</translation>
+        <translation>请选择数据文件：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="472"/>
         <source>Plz select the key file:</source>
-        <translation>请选择key文件：</translation>
+        <translation>请选择密钥文件：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="473"/>
         <source>Binary Key Files(*.bin *.dump);;Binary Data Files(*.bin *.dump);;All Files(*.*)</source>
-        <translation>二进制Key文件(*.bin *.dump)二进制Data文件(*.bin *.dump);;所有文件(*.*)</translation>
+        <translation>二进制密钥文件(*.bin *.dump)二进制密钥文件(*.bin *.dump);所有文件(*.*)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="495"/>
         <source>Plz select the location to save data file:</source>
-        <translation>请选择文件保存的位置：</translation>
+        <translation>请选择数据文件保存的位置：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="496"/>
         <source>Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml)</source>
-        <translation>二进制Data文件(*.bin *.dump);;文本Data文件(*.txt *.eml)</translation>
+        <translation>二进制数据文件(*.bin *.dump);文本数据文件(*.txt *.eml)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="502"/>
@@ -686,22 +686,22 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="508"/>
         <source>Plz select the location to save key file:</source>
-        <translation>请选择key文件保存的位置：</translation>
+        <translation>请选择密钥文件保存的位置：</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="509"/>
         <source>Binary Key Files(*.bin *.dump)</source>
-        <translation>二进制Key文件(*.bin *.dump)</translation>
+        <translation>二进制密码文件(*.bin *.dump)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="636"/>
         <source>    Normally, the Block 0 of a typical Mifare card, which contains the UID, is locked during the manufacture. Users cannot write anything to Block 0 or set a new UID to a normal Mifare card.</source>
-        <translation>    普通Mifare卡的Block0无法写入，UID也不能更改</translation>
+        <translation>    普通Mifare卡的块0无法写入，卡号也不能更改</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="637"/>
         <source>    Chinese Magic Cards(aka UID Cards) are some special cards whose Block 0 are writeable. And you can change UID by writing to it.</source>
-        <translation>    UID卡（在国外叫Chinese Magic Card）的Block0可写，UID可变</translation>
+        <translation>    UID卡（在国外叫Chinese Magic Card）的块0可写，卡号可变。</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="639"/>
@@ -741,7 +741,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="644"/>
         <source>    the Block 0 is writeable, you can write to this block repeatedly by normal wrbl command.</source>
-        <translation>    可通过普通的写块命令来写Block0，可重复擦写</translation>
+        <translation>    可通过普通的写块命令来写块0，可重复擦写</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="645"/>
@@ -756,7 +756,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="646"/>
         <source>    you can only write to Block 0 once. After that, it seems like a typical Mifare card(Block 0 cannot be written to).</source>
-        <translation>    Block0只能写入一次</translation>
+        <translation>    块0只能写入一次</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="647"/>
@@ -771,7 +771,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="648"/>
         <source>    It behaves like a CUID card(or UID card? I&apos;m not sure) before you send some special command to lock it. Once it is locked, you cannot change its Block 0(just like a typical Mifare card).</source>
-        <translation>    锁卡前和普通UID/CUID卡一样可以反复读写Block0，用特殊命令锁卡后就和FUID卡一样了</translation>
+        <translation>    锁卡前和普通UID/CUID卡一样可以反复读写块0，用特殊命令锁卡后就和FUID卡一样了</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="650"/>
@@ -808,22 +808,22 @@ It could make the whole sector blocked irreversibly!</source>
         <location filename="../ui/mainwindow.cpp" line="812"/>
         <location filename="../ui/mainwindow.cpp" line="821"/>
         <source>Sec</source>
-        <translation></translation>
+        <translation>扇区</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="813"/>
         <source>Blk</source>
-        <translation></translation>
+        <translation>块</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="822"/>
         <source>KeyA</source>
-        <translation></translation>
+        <translation>密钥A</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="823"/>
         <source>KeyB</source>
-        <translation></translation>
+        <translation>密钥B</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="897"/>
@@ -843,7 +843,7 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.cpp" line="956"/>
         <source>Running</source>
-        <translation>运行中</translation>
+        <translation>正在运行</translation>
     </message>
 </context>
 <context>
