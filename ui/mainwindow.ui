@@ -1175,8 +1175,8 @@
        <widget class="QGroupBox" name="LF_configGroupBox">
         <property name="geometry">
          <rect>
-          <x>30</x>
-          <y>30</y>
+          <x>10</x>
+          <y>10</y>
           <width>121</width>
           <height>211</height>
          </rect>
