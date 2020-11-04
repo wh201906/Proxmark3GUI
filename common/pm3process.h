@@ -21,8 +21,8 @@ public:
     void testThread();
 
 public slots:
-    void connectPM3(const QString path, const QString port);
-    void setSerialListener(const QString &name, bool state);
+    void connectPM3(const QString& path, const QString& port);
+    void setSerialListener(const QString& name, bool state);
     qint64 write(QString data);
 private slots:
     void onTimeout();
@@ -34,8 +34,8 @@ private:
     QTimer* serialListener;
     QSerialPortInfo* portInfo;
 signals:
-    void PM3StatedChanged(bool st, QString info = "");
-    void newOutput(QString output);
+    void PM3StatedChanged(bool st, const QString& info = "");
+    void newOutput(const QString& output);
     void changeClientType(Util::ClientType);
 };
 

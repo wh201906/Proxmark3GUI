@@ -19,7 +19,9 @@
 #include <QGroupBox>
 #include <QSizePolicy>
 #include <QSettings>
+#include <QPushButton>
 
+#include "common/myeventfilter.h"
 #include "common/pm3process.h"
 #include "module/mifare.h"
 #include "common/util.h"
@@ -43,11 +45,12 @@ public:
     void initUI();
     bool eventFilter(QObject *watched, QEvent *event);
 public slots:
-    void refreshOutput(const QString &output);
-    void refreshCMD(const QString &cmd);
-    void setStatusBar(QLabel* target, const QString & text);
-    void onPM3StateChanged(bool st, QString info);
+    void refreshOutput(const QString& output);
+    void refreshCMD(const QString& cmd);
+    void setStatusBar(QLabel* target, const QString& text);
+    void onPM3StateChanged(bool st, const QString& info);
     void MF_onTypeChanged(int id, bool st);
+    void on_Raw_CMDEdit_keyPressed(QObject *obj_addr, QEvent &event);
 private slots:
 
     void on_PM3_connectButton_clicked();
@@ -148,15 +151,23 @@ private slots:
 
     void on_MF_selectTrailerBox_stateChanged(int arg1);
 
+    void on_stopButton_clicked();
+    void on_Raw_CMDEdit_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
     QLabel* connectStatusBar;
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
+    QPushButton* stopButton;
     QAction* myInfo;
     QAction* checkUpdate;
     QSettings* settings;
+    MyEventFilter* keyEventFilter;
+
+    QString stashedCMDEditText;
+    int stashedIndex = -1;
 
     void uiInit();
 
@@ -172,12 +183,12 @@ private:
 
     void signalInit();
     void MF_widgetReset();
-    void setTableItem(QTableWidget *widget, int row, int column, const QString &text);
+    void setTableItem(QTableWidget *widget, int row, int column, const QString& text);
     void setState(bool st);
-    void saveClientPath(const QString &path);
+    void saveClientPath(const QString& path);
 signals:
-    void connectPM3(const QString path, const QString port);
+    void connectPM3(const QString& path, const QString& port);
     void killPM3();
-    void setSerialListener(const QString &name, bool state);
+    void setSerialListener(const QString& name, bool state);
 };
 #endif // MAINWINDOW_H

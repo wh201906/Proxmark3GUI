@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent):
     util = new Util(this);
     mifare = new Mifare(ui, util, this);
 
+    keyEventFilter = new MyEventFilter(QEvent::KeyRelease);
 }
 
 MainWindow::~MainWindow()
@@ -86,7 +87,7 @@ void MainWindow::on_PM3_connectButton_clicked()
     }
 }
 
-void MainWindow::onPM3StateChanged(bool st, QString info)
+void MainWindow::onPM3StateChanged(bool st, const QString& info)
 {
     pm3state = st;
     setState(st);
@@ -118,13 +119,10 @@ void MainWindow::refreshOutput(const QString& output)
     ui->Raw_outputEdit->moveCursor(QTextCursor::End);
 }
 
-void MainWindow::refreshCMD(const QString& cmd)
+void MainWindow::on_stopButton_clicked()
 {
-    ui->Raw_CMDEdit->setText(cmd);
-    if(cmd != "" && (ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd))
-        ui->Raw_CMDHistoryWidget->addItem(cmd);
-}
 
+}
 // *********************************************************
 
 // ******************** raw command ********************
@@ -173,6 +171,48 @@ void MainWindow::sendMSG() // send command when pressing Enter
         on_Raw_sendCMDButton_clicked();
 }
 
+
+void MainWindow::refreshCMD(const QString& cmd)
+{
+    ui->Raw_CMDEdit->blockSignals(true);
+    ui->Raw_CMDEdit->setText(cmd);
+    if(cmd != "" && (ui->Raw_CMDHistoryWidget->count() == 0 || ui->Raw_CMDHistoryWidget->item(ui->Raw_CMDHistoryWidget->count() - 1)->text() != cmd))
+        ui->Raw_CMDHistoryWidget->addItem(cmd);
+    stashedCMDEditText = cmd;
+    stashedIndex = -1;
+    ui->Raw_CMDEdit->blockSignals(false);
+}
+
+void MainWindow::on_Raw_CMDEdit_keyPressed(QObject* obj_addr, QEvent& event)
+{
+    if(obj_addr == ui->Raw_CMDEdit && event.type() == QEvent::KeyRelease)
+    {
+        QKeyEvent& keyEvent = static_cast<QKeyEvent&>(event);
+        if(keyEvent.key() == Qt::Key_Up)
+        {
+            if(stashedIndex > 0)
+                stashedIndex--;
+            else if(stashedIndex == -1)
+                stashedIndex = ui->Raw_CMDHistoryWidget->count() - 1;
+        }
+        else if(keyEvent.key() == Qt::Key_Down)
+        {
+            if(stashedIndex < ui->Raw_CMDHistoryWidget->count() - 1 && stashedIndex != -1)
+                stashedIndex++;
+            else if(stashedIndex == ui->Raw_CMDHistoryWidget->count() - 1)
+                stashedIndex = -1;
+        }
+        if(keyEvent.key() == Qt::Key_Up || keyEvent.key() == Qt::Key_Down)
+        {
+            ui->Raw_CMDEdit->blockSignals(true);
+            if(stashedIndex == -1)
+                ui->Raw_CMDEdit->setText(stashedCMDEditText);
+            else
+                ui->Raw_CMDEdit->setText(ui->Raw_CMDHistoryWidget->item(stashedIndex)->text());
+            ui->Raw_CMDEdit->blockSignals(false);
+        }
+    }
+}
 // *****************************************************
 
 // ******************** mifare ********************
@@ -794,16 +834,21 @@ void MainWindow::MF_widgetReset()
 void MainWindow::uiInit()
 {
     connect(ui->Raw_CMDEdit, &QLineEdit::editingFinished, this, &MainWindow::sendMSG);
+    ui->Raw_CMDEdit->installEventFilter(keyEventFilter);
+    connect(keyEventFilter, &MyEventFilter::eventHappened, this, &MainWindow::on_Raw_CMDEdit_keyPressed);
 
     connectStatusBar = new QLabel(this);
     programStatusBar = new QLabel(this);
     PM3VersionBar = new QLabel(this);
+    stopButton = new QPushButton(this);
     setStatusBar(connectStatusBar, tr("Not Connected"));
     setStatusBar(programStatusBar, tr("Idle"));
     setStatusBar(PM3VersionBar, "");
+    stopButton->setText(tr("Stop"));
     ui->statusbar->addPermanentWidget(PM3VersionBar, 1);
     ui->statusbar->addPermanentWidget(connectStatusBar, 1);
     ui->statusbar->addPermanentWidget(programStatusBar, 1);
+    ui->statusbar->addPermanentWidget(stopButton);
 
     ui->MF_dataWidget->setColumnCount(3);
     ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
@@ -812,7 +857,7 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->verticalHeader()->setVisible(false);
     ui->MF_dataWidget->setColumnWidth(0, 55);
     ui->MF_dataWidget->setColumnWidth(1, 55);
-    ui->MF_dataWidget->setColumnWidth(2, 430);
+    ui->MF_dataWidget->setColumnWidth(2, 450);
 
     ui->MF_keyWidget->setColumnCount(3);
     ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
@@ -820,8 +865,8 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("KeyB")));
     ui->MF_keyWidget->verticalHeader()->setVisible(false);
     ui->MF_keyWidget->setColumnWidth(0, 35);
-    ui->MF_keyWidget->setColumnWidth(1, 115);
-    ui->MF_keyWidget->setColumnWidth(2, 115);
+    ui->MF_keyWidget->setColumnWidth(1, 125);
+    ui->MF_keyWidget->setColumnWidth(2, 125);
 
     MF_widgetReset();
     typeBtnGroup = new QButtonGroup(this);
@@ -875,6 +920,7 @@ void MainWindow::signalInit()
 
     connect(this, &MainWindow::connectPM3, pm3, &PM3Process::connectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
+    connect(pm3, &PM3Process::PM3StatedChanged, util, &Util::setRunningState);
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
 
     connect(util, &Util::write, pm3, &PM3Process::write);
@@ -886,9 +932,11 @@ void MainWindow::signalInit()
     connect(ui->MF_UIDGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
     connect(ui->MF_simGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
     connect(ui->MF_sniffGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
+
+    connect(stopButton, &QPushButton::clicked, this, &MainWindow::on_stopButton_clicked);
 }
 
-void MainWindow::setStatusBar(QLabel * target, const QString & text)
+void MainWindow::setStatusBar(QLabel * target, const QString& text)
 {
     if(target == PM3VersionBar)
         target->setText(tr("HW Version:") + text);
@@ -898,7 +946,7 @@ void MainWindow::setStatusBar(QLabel * target, const QString & text)
         target->setText(tr("State:") + text);
 }
 
-void MainWindow::setTableItem(QTableWidget * widget, int row, int column, const QString & text)
+void MainWindow::setTableItem(QTableWidget * widget, int row, int column, const QString& text)
 {
     if(widget->item(row, column) == nullptr)
         widget->setItem(row, column, new QTableWidgetItem());
@@ -983,10 +1031,15 @@ void MainWindow::on_GroupBox_clicked(bool checked)
     settings->endGroup();
 }
 
-void MainWindow::saveClientPath(const QString & path)
+void MainWindow::saveClientPath(const QString& path)
 {
     settings->beginGroup("Client_Path");
     settings->setValue("path", path);
     settings->endGroup();
 }
 // ***********************************************
+
+void MainWindow::on_Raw_CMDEdit_textChanged(const QString &arg1)
+{
+    stashedCMDEditText = arg1;
+}

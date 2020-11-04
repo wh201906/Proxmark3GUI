@@ -3,7 +3,8 @@
 
 #include <QDialog>
 
-namespace Ui {
+namespace Ui
+{
 class MF_Attack_hardnestedDialog;
 }
 
@@ -19,7 +20,7 @@ public:
 private:
     Ui::MF_Attack_hardnestedDialog *ui;
 signals:
-    void sendCMD(QString cmd);
+    void sendCMD(const QString& cmd);
 private slots:
     void on_buttonBox_accepted();
 };

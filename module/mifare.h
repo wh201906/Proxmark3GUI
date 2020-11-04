@@ -106,8 +106,9 @@ public:
     void saveSniff(const QString& file);
     void data_fillKeys();
 
-    static QList<quint8> data_getACBits(const QString &text);
+    static QList<quint8> data_getACBits(const QString& text);
     static int data_b2s(int block);
+    static bool data_isACBitsValid(const QString& text, QList<quint8> *returnHalfBytes = nullptr);
 public slots:
 signals:
 
@@ -124,9 +125,9 @@ private:
     QRegularExpression* keyPattern;
     QString bin2text(const QByteArray& buff, int start, int length);
 
-    QString _readblk(int blockId, KeyType keyType, const QString &key, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
-    QStringList _readsec(int sectorId, KeyType keyType, const QString &key, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
-    bool _writeblk(int blockId, KeyType keyType, const QString &key, const QString &data, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
+    QString _readblk(int blockId, KeyType keyType, const QString& key, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
+    QStringList _readsec(int sectorId, KeyType keyType, const QString& key, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
+    bool _writeblk(int blockId, KeyType keyType, const QString& key, const QString& data, TargetType targetType = TARGET_MIFARE, int waitTime = 300);
 };
 
 #endif // MIFARE_H

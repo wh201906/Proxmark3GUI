@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    common/myeventfilter.cpp \
     main.cpp \
     common/pm3process.cpp \
     common/util.cpp \
@@ -27,6 +28,7 @@ SOURCES += \
     ui/mf_attack_hardnesteddialog.cpp \
 
 HEADERS += \
+    common/myeventfilter.h \
     common/pm3process.h \
     common/util.h \
     module/mifare.h \

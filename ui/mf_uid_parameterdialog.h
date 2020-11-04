@@ -3,7 +3,8 @@
 
 #include <QDialog>
 
-namespace Ui {
+namespace Ui
+{
 class MF_UID_parameterDialog;
 }
 
@@ -18,7 +19,7 @@ public:
 private:
     Ui::MF_UID_parameterDialog *ui;
 signals:
-    void sendCMD(QString cmd);
+    void sendCMD(const QString& cmd);
 private slots:
     void on_buttonBox_accepted();
 };
