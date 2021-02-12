@@ -154,6 +154,8 @@ private slots:
     void on_stopButton_clicked();
     void on_Raw_CMDEdit_textChanged(const QString &arg1);
 
+    void on_MF_Attack_darksideButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
@@ -162,6 +164,7 @@ private:
     QLabel* PM3VersionBar;
     QPushButton* stopButton;
     QAction* myInfo;
+    QAction* currVersion;
     QAction* checkUpdate;
     QSettings* settings;
     MyEventFilter* keyEventFilter;

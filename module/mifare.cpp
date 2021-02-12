@@ -252,6 +252,21 @@ void Mifare::hardnested()
         ui->funcTab->setCurrentIndex(1);
 }
 
+void Mifare::darkside()
+{
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        util->execCMD("hf mf mifare");
+        ui->funcTab->setCurrentIndex(1);
+    }
+    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        util->execCMD("hf mf darkside");
+        ui->funcTab->setCurrentIndex(1);
+    }
+
+}
+
 void Mifare::sniff()
 {
     util->execCMD("hf mf sniff");

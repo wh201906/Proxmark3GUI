@@ -66,6 +66,7 @@ public:
     QString info(bool isRequiringOutput = false);
     void chk();
     void nested();
+    void darkside();
     void hardnested();
     void sniff();
     void snoop();

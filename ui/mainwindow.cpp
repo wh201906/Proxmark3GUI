@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent):
 {
     ui->setupUi(this);
     myInfo = new QAction("wh201906", this);
+    currVersion = new QAction("Ver: " + QApplication::applicationVersion().section('.', 0, -2), this); // ignore the 4th version number
     checkUpdate = new QAction(tr("Check Update"), this);
     connect(myInfo, &QAction::triggered, [ = ]()
     {
@@ -17,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent):
         QDesktopServices::openUrl(QUrl("https://github.com/wh201906/Proxmark3GUI/releases"));
     });
     this->addAction(myInfo);
+    this->addAction(currVersion);
     this->addAction(checkUpdate);
 
     settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
@@ -30,6 +32,11 @@ MainWindow::MainWindow(QWidget *parent):
     mifare = new Mifare(ui, util, this);
 
     keyEventFilter = new MyEventFilter(QEvent::KeyRelease);
+
+
+    // hide unused tabs
+    ui->funcTab->removeTab(1);
+    ui->funcTab->removeTab(1);
 }
 
 MainWindow::~MainWindow()
@@ -126,6 +133,11 @@ void MainWindow::on_stopButton_clicked()
 // *********************************************************
 
 // ******************** raw command ********************
+
+void MainWindow::on_Raw_CMDEdit_textChanged(const QString &arg1)
+{
+    stashedCMDEditText = arg1;
+}
 
 void MainWindow::on_Raw_sendCMDButton_clicked()
 {
@@ -1039,7 +1051,11 @@ void MainWindow::saveClientPath(const QString& path)
 }
 // ***********************************************
 
-void MainWindow::on_Raw_CMDEdit_textChanged(const QString &arg1)
+
+
+void MainWindow::on_MF_Attack_darksideButton_clicked()
 {
-    stashedCMDEditText = arg1;
+    setState(false);
+    mifare->darkside();
+    setState(true);
 }

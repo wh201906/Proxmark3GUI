@@ -120,7 +120,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -565,6 +565,19 @@
                </property>
                <property name="text">
                 <string>Hardnested</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="MF_Attack_darksideButton">
+               <property name="minimumSize">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Darkside</string>
                </property>
               </widget>
              </item>
@@ -1169,6 +1182,9 @@
        </layout>
       </widget>
       <widget class="QWidget" name="lfTab">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <attribute name="title">
         <string>LF/Data</string>
        </attribute>
