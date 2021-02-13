@@ -106,7 +106,7 @@ QString Mifare::info(bool isRequiringOutput)
         else
         {
             util->execCMD("hf 14a info");
-            ui->funcTab->setCurrentIndex(1);
+            ui->funcTab->setCurrentIndex(Util::rawTabIndex);
             return "";
         }
     }
@@ -115,17 +115,16 @@ QString Mifare::info(bool isRequiringOutput)
 void Mifare::chk()
 {
     QRegularExpressionMatch reMatch;
-    QString result = util->execCMDWithOutput(
-                         "hf mf chk *"
-                         + QString::number(cardType.type)
-                         + " ?",
-                         Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", "\\|---\\|----------------\\|----------------\\|"}));
-    qDebug() << result;
-
+    QString result;
     int offset = 0;
     QString data;
     if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
+        result = util->execCMDWithOutput(
+                     "hf mf chk *"
+                     + QString::number(cardType.type)
+                     + " ?",
+                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", "\\|---\\|----------------\\|----------------\\|"}));
         for(int i = 0; i < cardType.sector_size; i++)
         {
             reMatch = keyPattern->match(result, offset);
@@ -148,6 +147,11 @@ void Mifare::chk()
     }
     else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
+        result = util->execCMDWithOutput(
+                     "hf mf chk *"
+                     + QString::number(cardType.type)
+                     + " ?",
+                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", "\\|---\\|----------------\\|---\\|----------------\\|"}));
         for(int i = 0; i < cardType.sector_size; i++)
         {
             reMatch = keyPattern_res->match(result, offset);
@@ -213,7 +217,8 @@ void Mifare::nested()
             result = util->execCMDWithOutput(
                          "hf mf nested "
                          + QString::number(cardType.type)
-                         + knownKeyInfo, 10000);
+                         + knownKeyInfo,
+                         Util::ReturnTrigger(10000, {"key is wrong", "\\|000\\|"}));
         }
         else
         {
@@ -249,7 +254,7 @@ void Mifare::hardnested()
     MF_Attack_hardnestedDialog dialog(cardType.block_size);
     connect(&dialog, &MF_Attack_hardnestedDialog::sendCMD, util, &Util::execCMD);
     if(dialog.exec() == QDialog::Accepted)
-        ui->funcTab->setCurrentIndex(1);
+        ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::darkside()
@@ -257,12 +262,12 @@ void Mifare::darkside()
     if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         util->execCMD("hf mf mifare");
-        ui->funcTab->setCurrentIndex(1);
+        ui->funcTab->setCurrentIndex(Util::rawTabIndex);
     }
     else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         util->execCMD("hf mf darkside");
-        ui->funcTab->setCurrentIndex(1);
+        ui->funcTab->setCurrentIndex(Util::rawTabIndex);
     }
 
 }
@@ -270,19 +275,19 @@ void Mifare::darkside()
 void Mifare::sniff()
 {
     util->execCMD("hf mf sniff");
-    ui->funcTab->setCurrentIndex(1);
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::snoop()
 {
     util->execCMD("hf 14a snoop");
-    ui->funcTab->setCurrentIndex(1);
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::list()
 {
     util->execCMD("hf list mf");
-    ui->funcTab->setCurrentIndex(1);
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, TargetType targetType, int waitTime)
@@ -709,13 +714,13 @@ void Mifare::writeSelected(TargetType targetType)
 void Mifare::dump()
 {
     util->execCMD("hf mf dump");
-    ui->funcTab->setCurrentIndex(1);
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::restore()
 {
     util->execCMD("hf mf restore");
-    ui->funcTab->setCurrentIndex(1);
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::wipeC()
@@ -724,7 +729,7 @@ void Mifare::wipeC()
         "hf mf cwipe "
         + QString::number(cardType.type)
         + " f");
-    ui->funcTab->setCurrentIndex(1);
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::setParameterC()
@@ -741,7 +746,7 @@ void Mifare::setParameterC()
         MF_UID_parameterDialog dialog(lis[0].toUpper(), lis[1].toUpper(), lis[2].mid(0, 2).toUpper());
         connect(&dialog, &MF_UID_parameterDialog::sendCMD, util, &Util::execCMD);
         if(dialog.exec() == QDialog::Accepted)
-            ui->funcTab->setCurrentIndex(1);
+            ui->funcTab->setCurrentIndex(Util::rawTabIndex);
     }
 }
 
@@ -765,19 +770,19 @@ void Mifare::simulate()
     MF_Sim_simDialog dialog(cardType.type);
     connect(&dialog, &MF_Sim_simDialog::sendCMD, util, &Util::execCMD);
     if(dialog.exec() == QDialog::Accepted)
-        ui->funcTab->setCurrentIndex(1);
+        ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::loadSniff(const QString& file)
 {
     util->execCMD("hf list mf -l " + file);
-    ui->funcTab->setCurrentIndex(1);
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::saveSniff(const QString& file)
 {
     util->execCMD("hf list mf -s " + file);
-    ui->funcTab->setCurrentIndex(1);
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::data_syncWithDataWidget(bool syncAll, int block)

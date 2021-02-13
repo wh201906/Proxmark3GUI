@@ -92,6 +92,9 @@ void MainWindow::on_PM3_connectButton_clicked()
         saveClientPath(ui->PM3_pathEdit->text());
         emit connectPM3(ui->PM3_pathEdit->text(), port);
     }
+    QProcess proc;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    //env.insert();
 }
 
 void MainWindow::onPM3StateChanged(bool st, const QString& info)
@@ -112,11 +115,8 @@ void MainWindow::onPM3StateChanged(bool st, const QString& info)
 
 void MainWindow::on_PM3_disconnectButton_clicked()
 {
-    pm3state = false;
-    setState(false);
     emit killPM3();
     emit setSerialListener("", false);
-    setStatusBar(connectStatusBar, tr("Not Connected"));
 }
 
 void MainWindow::refreshOutput(const QString& output)
@@ -128,7 +128,19 @@ void MainWindow::refreshOutput(const QString& output)
 
 void MainWindow::on_stopButton_clicked()
 {
-
+    if(!pm3state)
+        on_PM3_disconnectButton_clicked();
+    else
+    {
+        on_PM3_disconnectButton_clicked();
+        for(int i = 0; i < 10; i++)
+        {
+            util->delay(200);
+            if(!pm3state)
+                break;
+        }
+        on_PM3_connectButton_clicked();
+    }
 }
 // *********************************************************
 
@@ -866,7 +878,6 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
     ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Blk")));
     ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Data")));
-    ui->MF_dataWidget->verticalHeader()->setVisible(false);
     ui->MF_dataWidget->setColumnWidth(0, 55);
     ui->MF_dataWidget->setColumnWidth(1, 55);
     ui->MF_dataWidget->setColumnWidth(2, 450);
@@ -875,7 +886,6 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
     ui->MF_keyWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("KeyA")));
     ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("KeyB")));
-    ui->MF_keyWidget->verticalHeader()->setVisible(false);
     ui->MF_keyWidget->setColumnWidth(0, 35);
     ui->MF_keyWidget->setColumnWidth(1, 125);
     ui->MF_keyWidget->setColumnWidth(2, 125);
@@ -917,11 +927,21 @@ void MainWindow::uiInit()
     ui->PM3_pathEdit->setText(settings->value("path", "proxmark3").toString());
     settings->endGroup();
 
+    settings->beginGroup("Client_Args");
+    ui->Set_Client_startArgsEdit->setText(settings->value("args", "<port> -f").toString());
+    settings->endGroup();
+
+    settings->beginGroup("Client_forceButtonsEnabled");
+    ui->Set_Client_forceEnabledBox->setChecked(settings->value("state", false).toBool());
+    settings->endGroup();
+
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
     ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
 
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
     on_PM3_refreshPortButton_clicked();
+
+    loadClientPreloadEnv();
 }
 
 void MainWindow::signalInit()
@@ -1059,3 +1079,65 @@ void MainWindow::on_MF_Attack_darksideButton_clicked()
     mifare->darkside();
     setState(true);
 }
+
+void MainWindow::on_Set_Client_envDeleteButton_clicked()
+{
+    ui->Set_Client_envTable->removeRow(ui->Set_Client_envTable->currentRow());
+}
+
+void MainWindow::on_Set_Client_envAddButton_clicked()
+{
+    ui->Set_Client_envTable->insertRow(ui->Set_Client_envTable->rowCount());
+}
+
+void MainWindow::on_Set_Client_envClearButton_clicked()
+{
+    ui->Set_Client_envTable->clearContents();
+    ui->Set_Client_envTable->setRowCount(0);
+}
+
+void MainWindow::on_Set_Client_envSaveButton_clicked()
+{
+    settings->beginGroup("Client_Env");
+    for(int i = 0; i < ui->Set_Client_envTable->rowCount(); i++)
+    {
+        QTableWidgetItem* key = ui->Set_Client_envTable->item(i, 0);
+        QTableWidgetItem* val = ui->Set_Client_envTable->item(i, 1);
+        if(key == nullptr || val == nullptr || key->text().isEmpty() || val->text().isEmpty())
+            continue;
+        settings->setValue(key->text(), val->text());
+        qDebug() << "Env saved: " << i << key->text() << val->text();
+    }
+    settings->endGroup();
+}
+
+void MainWindow::loadClientPreloadEnv()
+{
+    ui->Set_Client_envTable->clearContents();
+    settings->beginGroup("Client_Env");
+    QStringList keyList = settings->allKeys();
+    ui->Set_Client_envTable->setRowCount(keyList.size());
+    for(int i = 0; i < keyList.size(); i++)
+    {
+        ui->Set_Client_envTable->setItem(i, 0, new QTableWidgetItem(keyList[i]));
+        ui->Set_Client_envTable->setItem(i, 1, new QTableWidgetItem(settings->value(keyList[i]).toString()));
+    }
+    settings->endGroup();
+}
+
+
+void MainWindow::on_Set_Client_startArgsEdit_editingFinished()
+{
+    settings->beginGroup("Client_Args");
+    settings->setValue("args", ui->Set_Client_startArgsEdit->text());
+    settings->endGroup();
+}
+
+void MainWindow::on_Set_Client_forceEnabledBox_stateChanged(int arg1)
+{
+    settings->beginGroup("Client_forceButtonsEnabled");
+    settings->setValue("state", arg1 == Qt::Checked);
+    settings->endGroup();
+}
+
+

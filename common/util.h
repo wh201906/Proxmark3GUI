@@ -50,6 +50,7 @@ public:
     QString execCMDWithOutput(const QString& cmd, ReturnTrigger trigger = 10000);
     void delay(unsigned int msec);
     ClientType getClientType();
+    static const int rawTabIndex = 1;
 public slots:
     void processOutput(const QString& output);
     void setClientType(Util::ClientType clientType);

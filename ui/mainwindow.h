@@ -20,6 +20,7 @@
 #include <QSizePolicy>
 #include <QSettings>
 #include <QPushButton>
+#include <QProcessEnvironment>
 
 #include "common/myeventfilter.h"
 #include "common/pm3process.h"
@@ -90,7 +91,6 @@ private slots:
 
     void on_MF_RW_writeSelectedButton_clicked();
 
-
     void on_MF_RW_dumpButton_clicked();
 
     void on_MF_RW_restoreButton_clicked();
@@ -155,6 +155,20 @@ private slots:
     void on_Raw_CMDEdit_textChanged(const QString &arg1);
 
     void on_MF_Attack_darksideButton_clicked();
+
+    void on_Set_Client_envDeleteButton_clicked();
+
+    void on_Set_Client_envAddButton_clicked();
+
+    void on_Set_Client_envSaveButton_clicked();
+
+    void loadClientPreloadEnv();
+
+    void on_Set_Client_startArgsEdit_editingFinished();
+
+    void on_Set_Client_forceEnabledBox_stateChanged(int arg1);
+
+    void on_Set_Client_envClearButton_clicked();
 
 private:
     Ui::MainWindow* ui;
