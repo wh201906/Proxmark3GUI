@@ -21,6 +21,7 @@
 #include <QSettings>
 #include <QPushButton>
 #include <QProcessEnvironment>
+#include <QScrollBar>
 
 #include "common/myeventfilter.h"
 #include "common/pm3process.h"
@@ -52,6 +53,7 @@ public slots:
     void onPM3StateChanged(bool st, const QString& info);
     void MF_onTypeChanged(int id, bool st);
     void on_Raw_CMDEdit_keyPressed(QObject *obj_addr, QEvent &event);
+    void on_MF_keyWidget_resized(QObject *obj_addr, QEvent &event);
 private slots:
 
     void on_PM3_connectButton_clicked();
@@ -170,6 +172,8 @@ private slots:
 
     void on_Set_Client_envClearButton_clicked();
 
+    void on_Set_GUI_setLanguageButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* typeBtnGroup;
@@ -182,6 +186,7 @@ private:
     QAction* checkUpdate;
     QSettings* settings;
     MyEventFilter* keyEventFilter;
+    MyEventFilter* resizeEventFilter;
 
     QString stashedCMDEditText;
     int stashedIndex = -1;
@@ -190,6 +195,7 @@ private:
 
     PM3Process* pm3;
     bool pm3state;
+    bool keepButtonsEnabled;
     QThread* pm3Thread;
 
     Mifare* mifare;
@@ -204,7 +210,7 @@ private:
     void setState(bool st);
     void saveClientPath(const QString& path);
 signals:
-    void connectPM3(const QString& path, const QString& port);
+    void connectPM3(const QString& path, const QString& port, const QStringList args);
     void killPM3();
     void setSerialListener(const QString& name, bool state);
 };

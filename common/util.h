@@ -10,6 +10,9 @@
 #include <QTimer>
 #include <QMetaType>
 #include <QRegularExpression>
+#include <QSettings>
+#include <QMainWindow>
+#include <QInputDialog>
 
 class Util : public QObject
 {
@@ -51,6 +54,7 @@ public:
     void delay(unsigned int msec);
     ClientType getClientType();
     static const int rawTabIndex = 1;
+    static bool chooseLanguage(QSettings *guiSettings, QMainWindow *window);
 public slots:
     void processOutput(const QString& output);
     void setClientType(Util::ClientType clientType);

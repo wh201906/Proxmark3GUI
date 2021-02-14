@@ -4,57 +4,50 @@
 #include <QSettings>
 #include <QTranslator>
 #include <QMessageBox>
-#include <QInputDialog>
+#include <QTextCodec>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     QApplication a(argc, argv);
     MainWindow w;
+
     QSettings* settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
+    settings->setIniCodec("UTF-8");
     settings->beginGroup("lang");
-    QVariant lang = settings->value("language", "null");
-    if(lang == "null")
+    QString currLang = settings->value("language", "").toString();
+    settings->endGroup();
+    if(currLang == "")
     {
-#ifdef Q_OS_WIN
-        lang = "lang/en_US.qm";
-#else
-        lang = "lang/en_US.ts";
-#endif
-        QStringList langList;
-        langList.append("English");
-        langList.append("简体中文");
-        QString seletedText = QInputDialog::getItem(&w, "", "Choose a language:", langList, 0, false);
-        if(seletedText == "English")
+        if(Util::chooseLanguage(settings, &w))
         {
-#ifdef Q_OS_WIN
-            lang = "lang/en_US.qm";
-#else
-            lang = "lang/en_US.ts";
-#endif
+            settings->beginGroup("lang");
+            currLang = settings->value("language", "").toString();
+            settings->endGroup();
         }
-        else if(seletedText == "简体中文")
-        {
-#ifdef Q_OS_WIN
-            lang = "lang/zh_CN.qm";
-#else
-            lang = "lang/zh_CN.ts";
-#endif
-        }
+        else
+            currLang = "en_US";
     }
+    currLang = "lang/" + currLang;
+#ifdef Q_OS_WIN
+    currLang += ".qm";
+#else
+    currLang += ".ts";;
+#endif
     QTranslator* translator = new QTranslator(&w);
-    if(translator->load(lang.toString()))
+    if(translator->load(currLang))
     {
         a.installTranslator(translator);
-        settings->setValue("language", lang);
     }
     else
     {
-        QMessageBox::information(&w, "Error", "Can't load " + lang.toString() + " as translation file.");
+        QMessageBox::information(&w, "Error", "Can't load " + currLang + " as translation file.");
     }
-    settings->endGroup();
     delete settings;
     w.initUI();
     w.show();
     return a.exec();
 }
+
+

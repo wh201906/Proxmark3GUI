@@ -14,14 +14,14 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
     connect(this, &PM3Process::readyRead, this, &PM3Process::onReadyRead);
 }
 
-void PM3Process::connectPM3(const QString& path, const QString& port)
+void PM3Process::connectPM3(const QString& path, const QString& port, const QStringList args)
 {
     QString result;
     Util::ClientType clientType = Util::CLIENTTYPE_OFFICIAL;
     setRequiringOutput(true);
 
     // using "-f" option to make the client output flushed after every print.
-    start(path, QStringList() << port << "-f", QProcess::Unbuffered | QProcess::ReadWrite);
+    start(path, args, QProcess::Unbuffered | QProcess::ReadWrite);
     if(waitForStarted(10000))
     {
         waitForReadyRead(1000);

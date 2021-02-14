@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent):
     this->addAction(checkUpdate);
 
     settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
+    settings->setIniCodec("UTF-8");
 
     pm3Thread = new QThread(this);
     pm3 = new PM3Process(pm3Thread);
@@ -32,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent):
     mifare = new Mifare(ui, util, this);
 
     keyEventFilter = new MyEventFilter(QEvent::KeyRelease);
-
+    resizeEventFilter = new MyEventFilter(QEvent::Resize);
 
     // hide unused tabs
     ui->funcTab->removeTab(1);
@@ -66,7 +67,7 @@ void MainWindow::on_PM3_refreshPortButton_clicked()
     QStringList serialList;
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
-        qDebug() << info.isBusy() << info.isNull() << info.portName();
+        qDebug() << info.isBusy() << info.isNull() << info.portName() << info.description();
         serial.setPort(info);
 
         if(serial.open(QIODevice::ReadWrite))
@@ -89,8 +90,9 @@ void MainWindow::on_PM3_connectButton_clicked()
         QMessageBox::information(NULL, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
     else
     {
+        QStringList args = ui->Set_Client_startArgsEdit->text().replace("<port>", port).split(' ');
         saveClientPath(ui->PM3_pathEdit->text());
-        emit connectPM3(ui->PM3_pathEdit->text(), port);
+        emit connectPM3(ui->PM3_pathEdit->text(), port, args);
     }
     QProcess proc;
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
@@ -240,6 +242,20 @@ void MainWindow::on_Raw_CMDEdit_keyPressed(QObject* obj_addr, QEvent& event)
 // *****************************************************
 
 // ******************** mifare ********************
+void MainWindow::on_MF_keyWidget_resized(QObject* obj_addr, QEvent& event)
+{
+    if(obj_addr == ui->MF_keyWidget && event.type() == QEvent::Resize)
+    {
+        QTableWidget* widget = (QTableWidget*)obj_addr;
+        int keyItemWidth = widget->width();
+        keyItemWidth -= widget->verticalScrollBar()->width();
+        keyItemWidth -= 2 * widget->frameWidth();
+        keyItemWidth -= widget->horizontalHeader()->sectionSize(0);
+        widget->horizontalHeader()->resizeSection(1, keyItemWidth / 2);
+        widget->horizontalHeader()->resizeSection(2, keyItemWidth / 2);
+    }
+}
+
 void MainWindow::MF_onTypeChanged(int id, bool st)
 {
     typeBtnGroup->blockSignals(true);
@@ -860,6 +876,8 @@ void MainWindow::uiInit()
     connect(ui->Raw_CMDEdit, &QLineEdit::editingFinished, this, &MainWindow::sendMSG);
     ui->Raw_CMDEdit->installEventFilter(keyEventFilter);
     connect(keyEventFilter, &MyEventFilter::eventHappened, this, &MainWindow::on_Raw_CMDEdit_keyPressed);
+    ui->MF_keyWidget->installEventFilter(resizeEventFilter);
+    connect(resizeEventFilter, &MyEventFilter::eventHappened, this, &MainWindow::on_MF_keyWidget_resized);
 
     connectStatusBar = new QLabel(this);
     programStatusBar = new QLabel(this);
@@ -904,7 +922,7 @@ void MainWindow::uiInit()
     settings->beginGroup("UI_grpbox_preference");
 
     QStringList boxNames = settings->allKeys();
-    QGroupBox* boxptr;
+    QGroupBox * boxptr;
     foreach(QString name, boxNames)
     {
         boxptr = this->findChild<QGroupBox*>(name);
@@ -932,7 +950,8 @@ void MainWindow::uiInit()
     settings->endGroup();
 
     settings->beginGroup("Client_forceButtonsEnabled");
-    ui->Set_Client_forceEnabledBox->setChecked(settings->value("state", false).toBool());
+    keepButtonsEnabled = settings->value("state", false).toBool();
+    ui->Set_Client_forceEnabledBox->setChecked(keepButtonsEnabled);
     settings->endGroup();
 
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
@@ -1036,13 +1055,13 @@ void MainWindow::setState(bool st)
     {
         setStatusBar(programStatusBar, tr("Idle"));
     }
-    ui->MF_attackGroupBox->setEnabled(st);
-    ui->MF_normalGroupBox->setEnabled(st);
-    ui->MF_UIDGroupBox->setEnabled(st);
-    ui->MF_simGroupBox->setEnabled(st);
-    ui->MF_sniffGroupBox->setEnabled(st);
-    ui->Raw_CMDEdit->setEnabled(st);
-    ui->Raw_sendCMDButton->setEnabled(st);
+    ui->MF_attackGroupBox->setEnabled(st || keepButtonsEnabled);
+    ui->MF_normalGroupBox->setEnabled(st || keepButtonsEnabled);
+    ui->MF_UIDGroupBox->setEnabled(st || keepButtonsEnabled);
+    ui->MF_simGroupBox->setEnabled(st || keepButtonsEnabled);
+    ui->MF_sniffGroupBox->setEnabled(st || keepButtonsEnabled);
+    ui->Raw_CMDEdit->setEnabled(st || keepButtonsEnabled);
+    ui->Raw_sendCMDButton->setEnabled(st || keepButtonsEnabled);
 }
 
 void MainWindow::on_GroupBox_clicked(bool checked)
@@ -1136,8 +1155,14 @@ void MainWindow::on_Set_Client_startArgsEdit_editingFinished()
 void MainWindow::on_Set_Client_forceEnabledBox_stateChanged(int arg1)
 {
     settings->beginGroup("Client_forceButtonsEnabled");
-    settings->setValue("state", arg1 == Qt::Checked);
+    keepButtonsEnabled = (arg1 == Qt::Checked);
+    settings->setValue("state", keepButtonsEnabled);
     settings->endGroup();
 }
 
 
+
+void MainWindow::on_Set_GUI_setLanguageButton_clicked()
+{
+    Util::chooseLanguage(settings, this);
+}

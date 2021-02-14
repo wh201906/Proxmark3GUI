@@ -93,3 +93,27 @@ void Util::setRunningState(bool st)
 {
     this->isRunning = st;
 }
+
+bool Util::chooseLanguage(QSettings* guiSettings, QMainWindow* window)
+{
+    // make sure the GUISettings is not in any group
+    QSettings* langSettings = new QSettings("lang/languages.ini", QSettings::IniFormat);
+    QMap<QString, QString> langMap;
+    langSettings->setIniCodec("UTF-8");
+    langSettings->beginGroup("Languages");
+    QStringList langList = langSettings->allKeys();
+    for(int i = 0; i < langList.size(); i++)
+        langMap.insert(langSettings->value(langList[i]).toString(), langList[i]);
+    langSettings->endGroup();
+    delete langSettings;
+    bool isOk = false;
+    QString selectedText = QInputDialog::getItem(window, "", "Choose a language:", langMap.keys(), 0, false, &isOk);
+    if(isOk)
+    {
+        guiSettings->beginGroup("lang");
+        guiSettings->setValue("language", langMap[selectedText]);
+        guiSettings->endGroup();
+        guiSettings->sync();
+    }
+    return isOk;
+}

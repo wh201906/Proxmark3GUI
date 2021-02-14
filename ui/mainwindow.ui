@@ -120,7 +120,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -1559,7 +1559,7 @@
                  </attribute>
                  <column>
                   <property name="text">
-                   <string>Key</string>
+                   <string>Variable</string>
                   </property>
                  </column>
                  <column>
@@ -1715,16 +1715,27 @@ or &quot;-p &lt;port&gt; -f&quot;</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_11">
                 <item>
-                 <widget class="QLabel" name="label_16">
-                  <property name="text">
-                   <string>Language</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_17">
                   <item>
-                   <widget class="QComboBox" name="Set_GUI_languageBox"/>
+                   <widget class="QLabel" name="label_16">
+                    <property name="text">
+                     <string>Language: </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="Set_GUI_setLanguageButton">
+                    <property name="text">
+                     <string>Choose Language</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_17">
+                    <property name="text">
+                     <string>(Restart this app to use new language)</string>
+                    </property>
+                   </widget>
                   </item>
                   <item>
                    <spacer name="horizontalSpacer_9">

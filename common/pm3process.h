@@ -21,7 +21,7 @@ public:
     void testThread();
 
 public slots:
-    void connectPM3(const QString& path, const QString& port);
+    void connectPM3(const QString& path, const QString& port, const QStringList args);
     void setSerialListener(const QString& name, bool state);
     qint64 write(QString data);
 private slots:
