@@ -6,7 +6,8 @@ const Mifare::CardType Mifare::card_mini =
     5,
     20,
     {4, 4, 4, 4, 4},
-    {0, 4, 8, 12, 16}
+    {0, 4, 8, 12, 16},
+    "mini"
 };
 const Mifare::CardType Mifare::card_1k =
 {
@@ -14,7 +15,8 @@ const Mifare::CardType Mifare::card_1k =
     16,
     64,
     {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60}
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60},
+    "1k"
 };
 const Mifare::CardType Mifare::card_2k =
 {
@@ -22,7 +24,8 @@ const Mifare::CardType Mifare::card_2k =
     32,
     128,
     {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124}
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124},
+    "2k"
 };
 const Mifare::CardType Mifare::card_4k =
 {
@@ -30,7 +33,8 @@ const Mifare::CardType Mifare::card_4k =
     40,
     256,
     {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 16, 16, 16, 16, 16, 16, 16, 16},
-    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 144, 160, 176, 192, 208, 224, 240}
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 144, 160, 176, 192, 208, 224, 240},
+    "4k"
 };
 
 const Mifare::AccessType Mifare::dataCondition[8][4] =
@@ -79,8 +83,8 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
     data_clearKey();  // fill with blank QString
     data_clearData(); // fill with blank QString
     dataPattern = new QRegularExpression("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
-    keyPattern_res = new QRegularExpression("\\|\\d{3}\\|.+?\\|.+?\\|.+?\\|.+?\\|");
-    keyPattern = new QRegularExpression("\\|\\d{3}\\|.+?\\|.+?\\|");
+    keyPattern_res = new QRegularExpression("\\|\\s+\\d{3}\\s+\\|\\s+.+?\\s+\\|\\s+.+?\\s+\\|\\s+.+?\\s+\\|\\s+.+?\\s+\\|");
+    keyPattern = new QRegularExpression("\\|\\s+\\d{3}\\s+\\|\\s+.+?\\s+\\|\\s+.+?\\s+\\|");
 }
 
 QString Mifare::info(bool isRequiringOutput)
@@ -148,10 +152,10 @@ void Mifare::chk()
     else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         result = util->execCMDWithOutput(
-                     "hf mf chk *"
-                     + QString::number(cardType.type)
-                     + " ?",
-                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", "\\|---\\|----------------\\|---\\|----------------\\|"}));
+                     "hf mf chk --"
+                     + cardType.typeText,
+                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern_res->pattern()}));
+        qDebug() << "mf_chk_iceman_result" << result;
         for(int i = 0; i < cardType.sector_size; i++)
         {
             reMatch = keyPattern_res->match(result, offset);
@@ -188,7 +192,7 @@ void Mifare::nested()
                      "hf mf nested "
                      + QString::number(cardType.type)
                      + " *",
-                     Util::ReturnTrigger(10000, {"Can't found", "\\|000\\|"}));
+                     Util::ReturnTrigger(15000, {"Can't found", "\\|000\\|"}));
     }
     else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
@@ -197,7 +201,7 @@ void Mifare::nested()
         {
             if(data_isKeyValid(keyAList->at(i)))
             {
-                knownKeyInfo = " " + QString::number(i * 4) + " A " + keyAList->at(i);
+                knownKeyInfo = " --blk " + QString::number(i * 4) + " -a -k " + keyAList->at(i);
                 break;
             }
         }
@@ -207,7 +211,7 @@ void Mifare::nested()
             {
                 if(data_isKeyValid(keyBList->at(i)))
                 {
-                    knownKeyInfo = " " + QString::number(i * 4) + " B " + keyBList->at(i);
+                    knownKeyInfo = " --blk " + QString::number(i * 4) + " -b -k " + keyBList->at(i);
                     break;
                 }
             }
@@ -215,10 +219,10 @@ void Mifare::nested()
         if(knownKeyInfo != "")
         {
             result = util->execCMDWithOutput(
-                         "hf mf nested "
-                         + QString::number(cardType.type)
+                         "hf mf nested --"
+                         + cardType.typeText
                          + knownKeyInfo,
-                         Util::ReturnTrigger(10000, {"key is wrong", "\\|000\\|"}));
+                         Util::ReturnTrigger(15000, {"Can't authenticate", keyPattern_res->pattern()}));
         }
         else
         {

@@ -37,8 +37,11 @@ void PM3Process::connectPM3(const QString& path, const QString& port, const QStr
             clientType = Util::CLIENTTYPE_ICEMAN;
             setRequiringOutput(true);
             write("hw version\r\n");
-            waitForReadyRead(1000);
-            result = *requiredOutput;
+            for(int i = 0; i < 10; i++)
+            {
+                waitForReadyRead(200);
+                result += *requiredOutput;
+            }
             setRequiringOutput(false);
         }
         else

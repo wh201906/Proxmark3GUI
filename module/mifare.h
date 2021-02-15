@@ -37,6 +37,7 @@ public:
         quint16 block_size;
         quint8 blk[40];
         quint8 blks[40];
+        QString typeText;
     };
 
     enum AccessType
