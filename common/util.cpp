@@ -49,6 +49,7 @@ QString Util::execCMDWithOutput(const QString& cmd, ReturnTrigger trigger)
         if(!isRunning)
             break;
         QApplication::processEvents();
+//        qDebug() << "currOutput:" << *requiredOutput;
         for(QString otpt : trigger.expectedOutputs)
         {
             re.setPattern(otpt);

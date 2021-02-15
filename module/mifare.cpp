@@ -83,8 +83,8 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
     data_clearKey();  // fill with blank QString
     data_clearData(); // fill with blank QString
     dataPattern = new QRegularExpression("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
-    keyPattern_res = new QRegularExpression("\\|\\s+\\d{3}\\s+\\|\\s+.+?\\s+\\|\\s+.+?\\s+\\|\\s+.+?\\s+\\|\\s+.+?\\s+\\|");
-    keyPattern = new QRegularExpression("\\|\\s+\\d{3}\\s+\\|\\s+.+?\\s+\\|\\s+.+?\\s+\\|");
+    keyPattern_res = new QRegularExpression("\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|");
+    keyPattern = new QRegularExpression("\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|");
 }
 
 QString Mifare::info(bool isRequiringOutput)
@@ -94,15 +94,13 @@ QString Mifare::info(bool isRequiringOutput)
         if(isRequiringOutput)
         {
             QString result = util->execCMDWithOutput("hf 14a info", 500);
-            result.replace("UID :", "|||");
-            result.replace("ATQA :", "|||");
-            result.replace("SAK :", "|||");
-            result.replace("TYPE :", "|||");
-            QStringList lis = result.split("|||");
-            if(lis.length() > 4)
+            int begin, end;
+            begin = result.indexOf("UID");
+            if(begin != -1)
             {
-                qDebug() << lis[1] + lis[2] + lis[3];
-                return lis[1] + lis[2] + lis[3];
+                end = result.indexOf("SAK", begin);
+                end = result.indexOf("\n", end);
+                return result.mid(begin, end - begin + 1);
             }
             else
                 return "";
@@ -128,7 +126,8 @@ void Mifare::chk()
                      "hf mf chk *"
                      + QString::number(cardType.type)
                      + " ?",
-                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", "\\|---\\|----------------\\|----------------\\|"}));
+                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern->pattern()}));
+        qDebug() << result;
         for(int i = 0; i < cardType.sector_size; i++)
         {
             reMatch = keyPattern->match(result, offset);
@@ -610,7 +609,7 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
                          + " "
                          + input,
                          waitTime);
-            return (result.indexOf("Chinese magic") != -1);
+            return (result.indexOf("error") == -1); // failed flag
         }
         else if(targetType == TARGET_EMULATOR)
         {
@@ -747,10 +746,17 @@ void Mifare::restore()
 
 void Mifare::wipeC()
 {
-    util->execCMD(
-        "hf mf cwipe "
-        + QString::number(cardType.type)
-        + " f");
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        util->execCMD(
+            "hf mf cwipe "
+            + QString::number(cardType.type)
+            + " f");
+    }
+    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        util->execCMD("hf mf cwipe");
+    }
     ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
@@ -761,11 +767,15 @@ void Mifare::setParameterC()
         QMessageBox::information(parent, tr("Info"), tr("Failed to read card."));
     else
     {
-        QStringList lis = result.split("\r\n");
-        lis[0].replace(" ", "");
-        lis[1].replace(" ", "");
-        lis[2].replace(" ", "");
-        MF_UID_parameterDialog dialog(lis[0].toUpper(), lis[1].toUpper(), lis[2].mid(0, 2).toUpper());
+        result.replace("\r\n", "");
+        result.replace(QRegularExpression("\\[.\\]"), "");
+        result.replace("UID", "");
+        result.replace("ATQA", "");
+        result.replace("SAK", "");
+        result.replace(" ", "");
+        QStringList lis = result.split(':');
+        qDebug() << lis;
+        MF_UID_parameterDialog dialog(lis[1].toUpper(), lis[2].toUpper(), lis[3].toUpper());
         connect(&dialog, &MF_UID_parameterDialog::sendCMD, util, &Util::execCMD);
         if(dialog.exec() == QDialog::Accepted)
             ui->funcTab->setCurrentIndex(Util::rawTabIndex);
@@ -774,12 +784,24 @@ void Mifare::setParameterC()
 
 void Mifare::lockC()
 {
-    util->execCMD("hf 14a raw -pa -b7 40");
-    util->execCMD("hf 14a raw -pa 43");
-    util->execCMD("hf 14a raw -pa E0 00 39 F7");
-    util->execCMD("hf 14a raw -pa E1 00 E1 EE");
-    util->execCMD("hf 14a raw -pa 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
-    util->execCMD("hf 14a raw 52");
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        util->execCMD("hf 14a raw -pa -b7 40");
+        util->execCMD("hf 14a raw -pa 43");
+        util->execCMD("hf 14a raw -pa E0 00 39 F7");
+        util->execCMD("hf 14a raw -pa E1 00 E1 EE");
+        util->execCMD("hf 14a raw -pa 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
+        util->execCMD("hf 14a raw -a 52");
+    }
+    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        util->execCMD("hf 14a raw -ak -b 7 40");
+        util->execCMD("hf 14a raw -ak 43");
+        util->execCMD("hf 14a raw -ak E0 00 39 F7");
+        util->execCMD("hf 14a raw -ak E1 00 E1 EE");
+        util->execCMD("hf 14a raw -ak 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
+        util->execCMD("hf 14a raw -a 52");
+    }
 }
 
 void Mifare::wipeE()

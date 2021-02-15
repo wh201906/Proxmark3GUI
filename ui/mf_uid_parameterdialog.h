@@ -2,6 +2,7 @@
 #define MF_UID_PARAMETERDIALOG_H
 
 #include <QDialog>
+#include "common/util.h"
 
 namespace Ui
 {
