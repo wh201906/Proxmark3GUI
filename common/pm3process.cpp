@@ -17,14 +17,19 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
 void PM3Process::connectPM3(const QString& path, const QString& port, const QStringList args)
 {
     QString result;
-    Util::ClientType clientType = Util::CLIENTTYPE_OFFICIAL;
+    Util::ClientType clientType;
     setRequiringOutput(true);
+
+    // stash for reconnect
+    currPath = path;
+    currPort = port;
+    currArgs = args;
 
     // using "-f" option to make the client output flushed after every print.
     start(path, args, QProcess::Unbuffered | QProcess::ReadWrite);
     if(waitForStarted(10000))
     {
-        waitForReadyRead(1000);
+        waitForReadyRead(10000);
         setRequiringOutput(false);
         result = *requiredOutput;
         if(result.indexOf("[=]") != -1)
@@ -35,6 +40,10 @@ void PM3Process::connectPM3(const QString& path, const QString& port, const QStr
             waitForReadyRead(1000);
             result = *requiredOutput;
             setRequiringOutput(false);
+        }
+        else
+        {
+            clientType = Util::CLIENTTYPE_OFFICIAL;
         }
         if(result.indexOf("os: ") != -1) // make sure the PM3 is connected
         {
@@ -48,6 +57,11 @@ void PM3Process::connectPM3(const QString& path, const QString& port, const QStr
         else
             kill();
     }
+}
+
+void PM3Process::reconnectPM3()
+{
+    connectPM3(currPath, currPort, currArgs);
 }
 
 void PM3Process::setRequiringOutput(bool st)
@@ -109,4 +123,11 @@ void PM3Process::onReadyRead()
         emit newOutput(out);
 
     }
+}
+
+void PM3Process::setProcEnv(const QStringList* env)
+{
+//    qDebug() << "passed Env List" << *env;
+    this->setEnvironment(*env);
+//    qDebug() << "final Env List" << processEnvironment().toStringList();
 }

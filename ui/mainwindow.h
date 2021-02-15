@@ -22,6 +22,7 @@
 #include <QPushButton>
 #include <QProcessEnvironment>
 #include <QScrollBar>
+#include <QTimer>
 
 #include "common/myeventfilter.h"
 #include "common/pm3process.h"
@@ -51,7 +52,7 @@ public slots:
     void refreshCMD(const QString& cmd);
     void setStatusBar(QLabel* target, const QString& text);
     void onPM3StateChanged(bool st, const QString& info);
-    void MF_onTypeChanged(int id, bool st);
+    void MF_onMFCardTypeChanged(int id, bool st);
     void on_Raw_CMDEdit_keyPressed(QObject *obj_addr, QEvent &event);
     void on_MF_keyWidget_resized(QObject *obj_addr, QEvent &event);
 private slots:
@@ -65,7 +66,8 @@ private slots:
     void on_Raw_clearOutputButton_clicked();
 
     void sendMSG();
-    void on_PM3_refreshPortButton_clicked();
+
+    void on_portSearchTimer_timeout();
 
     void on_Raw_CMDHistoryBox_stateChanged(int arg1);
 
@@ -154,29 +156,26 @@ private slots:
     void on_MF_selectTrailerBox_stateChanged(int arg1);
 
     void on_stopButton_clicked();
+
     void on_Raw_CMDEdit_textChanged(const QString &arg1);
 
     void on_MF_Attack_darksideButton_clicked();
-
-    void on_Set_Client_envDeleteButton_clicked();
-
-    void on_Set_Client_envAddButton_clicked();
-
-    void on_Set_Client_envSaveButton_clicked();
-
-    void loadClientPreloadEnv();
 
     void on_Set_Client_startArgsEdit_editingFinished();
 
     void on_Set_Client_forceEnabledBox_stateChanged(int arg1);
 
-    void on_Set_Client_envClearButton_clicked();
-
     void on_Set_GUI_setLanguageButton_clicked();
+
+    void setButtonsEnabled(bool st);
+
+    void on_PM3_refreshPortButton_clicked();
+
+    void on_Set_Client_envScriptEdit_editingFinished();
 
 private:
     Ui::MainWindow* ui;
-    QButtonGroup* typeBtnGroup;
+    QButtonGroup* MFCardTypeBtnGroup;
     QLabel* connectStatusBar;
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
@@ -197,6 +196,9 @@ private:
     bool pm3state;
     bool keepButtonsEnabled;
     QThread* pm3Thread;
+    QTimer* portSearchTimer;
+    QStringList portList;
+    QStringList clientEnv;
 
     Mifare* mifare;
     Util* util;
@@ -211,7 +213,9 @@ private:
     void saveClientPath(const QString& path);
 signals:
     void connectPM3(const QString& path, const QString& port, const QStringList args);
+    void reconnectPM3();
     void killPM3();
     void setSerialListener(const QString& name, bool state);
+    void setProcEnv(const QStringList *env);
 };
 #endif // MAINWINDOW_H

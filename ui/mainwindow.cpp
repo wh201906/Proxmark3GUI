@@ -38,6 +38,12 @@ MainWindow::MainWindow(QWidget *parent):
     // hide unused tabs
     ui->funcTab->removeTab(1);
     ui->funcTab->removeTab(1);
+
+    portSearchTimer = new QTimer(this);
+    portSearchTimer->setInterval(2000);
+    connect(portSearchTimer, &QTimer::timeout, this, &MainWindow::on_portSearchTimer_timeout);
+    portSearchTimer->start();
+
 }
 
 MainWindow::~MainWindow()
@@ -60,31 +66,27 @@ void MainWindow::initUI() // will be called by main.app
 
 // ******************** basic functions ********************
 
-void MainWindow::on_PM3_refreshPortButton_clicked()
+void MainWindow::on_portSearchTimer_timeout()
 {
-    ui->PM3_portBox->clear();
-    QSerialPort serial;
-    QStringList serialList;
+    QStringList newPortList;
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
-        qDebug() << info.isBusy() << info.isNull() << info.portName() << info.description();
-        serial.setPort(info);
-
-        if(serial.open(QIODevice::ReadWrite))
-        {
-            serialList << info.portName();
-            serial.close();
-        }
+//        qDebug() << info.isBusy() << info.isNull() << info.portName() << info.description();
+        if(!info.isNull())
+            newPortList << info.portName();
     }
-    foreach(QString port, serialList)
+    if(newPortList != portList) // update PM3_portBox when available ports changed
     {
-        ui->PM3_portBox->addItem(port);
+        portList = newPortList;
+        ui->PM3_portBox->clear();
+        ui->PM3_portBox->addItems(portList);
     }
 }
 
 void MainWindow::on_PM3_connectButton_clicked()
 {
     qDebug() << "Main:" << QThread::currentThread();
+
     QString port = ui->PM3_portBox->currentText();
     if(port == "")
         QMessageBox::information(NULL, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
@@ -92,11 +94,27 @@ void MainWindow::on_PM3_connectButton_clicked()
     {
         QStringList args = ui->Set_Client_startArgsEdit->text().replace("<port>", port).split(' ');
         saveClientPath(ui->PM3_pathEdit->text());
+        QProcess envSetProcess;
+        QFileInfo envScriptPath(ui->Set_Client_envScriptEdit->text());
+        if(envScriptPath.exists())
+        {
+            qDebug() << envScriptPath.absoluteFilePath();
+#ifdef Q_OS_WIN
+            // cmd /c "<path>">>nul && set
+            envSetProcess.start("cmd /c \"" + envScriptPath.absoluteFilePath() + "\">>nul && set");
+#else
+            // sh -c '. "<path>">>/dev/null && env'
+            envSetProcess.start("sh -c \' . \"" + envScriptPath.absoluteFilePath() + "\">>/dev/null && env");
+#endif
+            envSetProcess.waitForReadyRead(10000);
+            clientEnv = QString(envSetProcess.readAll()).split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+//            qDebug() << "Get Env List" << clientEnv;
+        }
+        else
+            clientEnv.clear();
+        emit setProcEnv(&clientEnv);
         emit connectPM3(ui->PM3_pathEdit->text(), port, args);
     }
-    QProcess proc;
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    //env.insert();
 }
 
 void MainWindow::onPM3StateChanged(bool st, const QString& info)
@@ -105,11 +123,13 @@ void MainWindow::onPM3StateChanged(bool st, const QString& info)
     setState(st);
     if(st == true)
     {
+        portSearchTimer->stop();
         setStatusBar(PM3VersionBar, info);
         setStatusBar(connectStatusBar, tr("Connected"));
     }
     else
     {
+        portSearchTimer->start();
         setStatusBar(PM3VersionBar, "");
         setStatusBar(connectStatusBar, tr("Not Connected"));
     }
@@ -141,7 +161,7 @@ void MainWindow::on_stopButton_clicked()
             if(!pm3state)
                 break;
         }
-        on_PM3_connectButton_clicked();
+        emit reconnectPM3();
     }
 }
 // *********************************************************
@@ -256,14 +276,14 @@ void MainWindow::on_MF_keyWidget_resized(QObject* obj_addr, QEvent& event)
     }
 }
 
-void MainWindow::MF_onTypeChanged(int id, bool st)
+void MainWindow::MF_onMFCardTypeChanged(int id, bool st)
 {
-    typeBtnGroup->blockSignals(true);
-    qDebug() << id << typeBtnGroup->checkedId();
+    MFCardTypeBtnGroup->blockSignals(true);
+    qDebug() << id << MFCardTypeBtnGroup->checkedId();
     if(!st)
     {
         int result;
-        if(id > typeBtnGroup->checkedId()) // id is specified in uiInit() with a proper order, so I can compare the size by id.
+        if(id > MFCardTypeBtnGroup->checkedId()) // id is specified in uiInit() with a proper order, so I can compare the size by id.
         {
             result = QMessageBox::question(this, tr("Info"), tr("Some of the data and key will be cleared.") + "\n" + tr("Continue?"), QMessageBox::Yes | QMessageBox::No);
         }
@@ -274,7 +294,7 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
         if(result == QMessageBox::Yes)
         {
             qDebug() << "Yes";
-            mifare->setCardType(typeBtnGroup->checkedId());
+            mifare->setCardType(MFCardTypeBtnGroup->checkedId());
             MF_widgetReset();
             mifare->data_syncWithDataWidget();
             mifare->data_syncWithKeyWidget();
@@ -282,10 +302,10 @@ void MainWindow::MF_onTypeChanged(int id, bool st)
         else
         {
             qDebug() << "No";
-            typeBtnGroup->button(id)->setChecked(true);
+            MFCardTypeBtnGroup->button(id)->setChecked(true);
         }
     }
-    typeBtnGroup->blockSignals(false);
+    MFCardTypeBtnGroup->blockSignals(false);
 }
 
 void MainWindow::on_MF_selectAllBox_stateChanged(int arg1)
@@ -898,23 +918,20 @@ void MainWindow::uiInit()
     ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Data")));
     ui->MF_dataWidget->setColumnWidth(0, 55);
     ui->MF_dataWidget->setColumnWidth(1, 55);
-    ui->MF_dataWidget->setColumnWidth(2, 450);
 
     ui->MF_keyWidget->setColumnCount(3);
     ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
     ui->MF_keyWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("KeyA")));
     ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("KeyB")));
-    ui->MF_keyWidget->setColumnWidth(0, 35);
-    ui->MF_keyWidget->setColumnWidth(1, 125);
-    ui->MF_keyWidget->setColumnWidth(2, 125);
+    ui->MF_keyWidget->setColumnWidth(0, 45);
 
     MF_widgetReset();
-    typeBtnGroup = new QButtonGroup(this);
-    typeBtnGroup->addButton(ui->MF_Type_miniButton, 0);
-    typeBtnGroup->addButton(ui->MF_Type_1kButton, 1);
-    typeBtnGroup->addButton(ui->MF_Type_2kButton, 2);
-    typeBtnGroup->addButton(ui->MF_Type_4kButton, 4);
-    connect(typeBtnGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), this, &MainWindow::MF_onTypeChanged);
+    MFCardTypeBtnGroup = new QButtonGroup(this);
+    MFCardTypeBtnGroup->addButton(ui->MF_Type_miniButton, 0);
+    MFCardTypeBtnGroup->addButton(ui->MF_Type_1kButton, 1);
+    MFCardTypeBtnGroup->addButton(ui->MF_Type_2kButton, 2);
+    MFCardTypeBtnGroup->addButton(ui->MF_Type_4kButton, 4);
+    connect(MFCardTypeBtnGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), this, &MainWindow::MF_onMFCardTypeChanged);
 
     ui->MF_keyWidget->installEventFilter(this);
     ui->MF_dataWidget->installEventFilter(this);
@@ -954,13 +971,14 @@ void MainWindow::uiInit()
     ui->Set_Client_forceEnabledBox->setChecked(keepButtonsEnabled);
     settings->endGroup();
 
+    settings->beginGroup("Client_Env");
+    ui->Set_Client_envScriptEdit->setText(settings->value("scriptPath").toString());
+    settings->endGroup();
+
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
     ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
 
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
-    on_PM3_refreshPortButton_clicked();
-
-    loadClientPreloadEnv();
 }
 
 void MainWindow::signalInit()
@@ -970,9 +988,11 @@ void MainWindow::signalInit()
     connect(util, &Util::refreshOutput, this, &MainWindow::refreshOutput);
 
     connect(this, &MainWindow::connectPM3, pm3, &PM3Process::connectPM3);
+    connect(this, &MainWindow::reconnectPM3, pm3, &PM3Process::reconnectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
     connect(pm3, &PM3Process::PM3StatedChanged, util, &Util::setRunningState);
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
+    connect(this, &MainWindow::setProcEnv, pm3, &PM3Process::setProcEnv);
 
     connect(util, &Util::write, pm3, &PM3Process::write);
 
@@ -1055,13 +1075,18 @@ void MainWindow::setState(bool st)
     {
         setStatusBar(programStatusBar, tr("Idle"));
     }
-    ui->MF_attackGroupBox->setEnabled(st || keepButtonsEnabled);
-    ui->MF_normalGroupBox->setEnabled(st || keepButtonsEnabled);
-    ui->MF_UIDGroupBox->setEnabled(st || keepButtonsEnabled);
-    ui->MF_simGroupBox->setEnabled(st || keepButtonsEnabled);
-    ui->MF_sniffGroupBox->setEnabled(st || keepButtonsEnabled);
-    ui->Raw_CMDEdit->setEnabled(st || keepButtonsEnabled);
-    ui->Raw_sendCMDButton->setEnabled(st || keepButtonsEnabled);
+    setButtonsEnabled(st || keepButtonsEnabled);
+}
+
+void MainWindow::setButtonsEnabled(bool st)
+{
+    ui->MF_attackGroupBox->setEnabled(st);
+    ui->MF_normalGroupBox->setEnabled(st);
+    ui->MF_UIDGroupBox->setEnabled(st);
+    ui->MF_simGroupBox->setEnabled(st);
+    ui->MF_sniffGroupBox->setEnabled(st);
+    ui->Raw_CMDEdit->setEnabled(st);
+    ui->Raw_sendCMDButton->setEnabled(st);
 }
 
 void MainWindow::on_GroupBox_clicked(bool checked)
@@ -1099,52 +1124,6 @@ void MainWindow::on_MF_Attack_darksideButton_clicked()
     setState(true);
 }
 
-void MainWindow::on_Set_Client_envDeleteButton_clicked()
-{
-    ui->Set_Client_envTable->removeRow(ui->Set_Client_envTable->currentRow());
-}
-
-void MainWindow::on_Set_Client_envAddButton_clicked()
-{
-    ui->Set_Client_envTable->insertRow(ui->Set_Client_envTable->rowCount());
-}
-
-void MainWindow::on_Set_Client_envClearButton_clicked()
-{
-    ui->Set_Client_envTable->clearContents();
-    ui->Set_Client_envTable->setRowCount(0);
-}
-
-void MainWindow::on_Set_Client_envSaveButton_clicked()
-{
-    settings->beginGroup("Client_Env");
-    for(int i = 0; i < ui->Set_Client_envTable->rowCount(); i++)
-    {
-        QTableWidgetItem* key = ui->Set_Client_envTable->item(i, 0);
-        QTableWidgetItem* val = ui->Set_Client_envTable->item(i, 1);
-        if(key == nullptr || val == nullptr || key->text().isEmpty() || val->text().isEmpty())
-            continue;
-        settings->setValue(key->text(), val->text());
-        qDebug() << "Env saved: " << i << key->text() << val->text();
-    }
-    settings->endGroup();
-}
-
-void MainWindow::loadClientPreloadEnv()
-{
-    ui->Set_Client_envTable->clearContents();
-    settings->beginGroup("Client_Env");
-    QStringList keyList = settings->allKeys();
-    ui->Set_Client_envTable->setRowCount(keyList.size());
-    for(int i = 0; i < keyList.size(); i++)
-    {
-        ui->Set_Client_envTable->setItem(i, 0, new QTableWidgetItem(keyList[i]));
-        ui->Set_Client_envTable->setItem(i, 1, new QTableWidgetItem(settings->value(keyList[i]).toString()));
-    }
-    settings->endGroup();
-}
-
-
 void MainWindow::on_Set_Client_startArgsEdit_editingFinished()
 {
     settings->beginGroup("Client_Args");
@@ -1158,11 +1137,23 @@ void MainWindow::on_Set_Client_forceEnabledBox_stateChanged(int arg1)
     keepButtonsEnabled = (arg1 == Qt::Checked);
     settings->setValue("state", keepButtonsEnabled);
     settings->endGroup();
+    if(keepButtonsEnabled)
+        setButtonsEnabled(true);
 }
-
-
 
 void MainWindow::on_Set_GUI_setLanguageButton_clicked()
 {
     Util::chooseLanguage(settings, this);
+}
+
+void MainWindow::on_PM3_refreshPortButton_clicked()
+{
+    on_portSearchTimer_timeout();
+}
+
+void MainWindow::on_Set_Client_envScriptEdit_editingFinished()
+{
+    settings->beginGroup("Client_Env");
+    settings->setValue("scriptPath", ui->Set_Client_envScriptEdit->text());
+    settings->endGroup();
 }
