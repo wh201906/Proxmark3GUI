@@ -2,6 +2,7 @@
 #define MF_ATTACK_HARDNESTEDDIALOG_H
 
 #include <QDialog>
+#include "common/util.h"
 
 namespace Ui
 {

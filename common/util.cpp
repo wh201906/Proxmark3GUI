@@ -1,11 +1,12 @@
 ﻿#include "util.h"
 
+Util::ClientType Util::clientType = CLIENTTYPE_OFFICIAL;
+
 Util::Util(QObject *parent) : QObject(parent)
 {
     isRequiringOutput = false;
     requiredOutput = new QString();
     timeStamp = QTime::currentTime();
-    this->clientType = CLIENTTYPE_OFFICIAL;
     qRegisterMetaType<Util::ClientType>("Util::ClientType");
 }
 
@@ -79,14 +80,15 @@ void Util::delay(unsigned int msec)
     while(QTime::currentTime() < timer)
         QApplication::processEvents(QEventLoop::AllEvents, 100);
 }
+
 Util::ClientType Util::getClientType()
 {
-    return this->clientType;
+    return Util::clientType;
 }
 
 void Util::setClientType(Util::ClientType clientType)
 {
-    this->clientType = clientType;
+    Util::clientType = clientType;
 }
 
 void Util::setRunningState(bool st)

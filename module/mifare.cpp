@@ -298,6 +298,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
 {
     QString data;
     QString result;
+    QRegularExpressionMatch currMatch;
     bool isTrailerBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
 
     if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
@@ -317,9 +318,10 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
                          + " "
                          + key,
                          waitTime);
-            if(result.indexOf("isOk:01") != -1)
+            currMatch = dataPattern->match(result);
+            if(currMatch.hasMatch())
             {
-                data = dataPattern->match(result).captured().toUpper();
+                data = currMatch.captured().toUpper();
                 data.remove(" ");
                 // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
                 // if the given key type is KeyB, it will never get the KeyA from the key block
@@ -347,18 +349,34 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
                          "hf mf cgetblk "
                          + QString::number(blockId),
                          waitTime);
-            if(result.indexOf("Chinese magic") != -1)
+            currMatch = dataPattern->match(result);
+            if(currMatch.hasMatch())
             {
-                data = dataPattern->match(result).captured().toUpper();
+                data = currMatch.captured().toUpper();
                 data.remove(" ");
             }
             else
                 data = "";
         }
-        else if(targetType == TARGET_EMULATOR)
+    }
+    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        if(targetType == TARGET_EMULATOR)
         {
             result = util->execCMDWithOutput(
                          "hf mf eget "
+                         + QString::number(blockId),
+                         150);
+            data = dataPattern->match(result).captured().toUpper();
+            data.remove(" ");
+        }
+    }
+    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        if(targetType == TARGET_EMULATOR)
+        {
+            result = util->execCMDWithOutput(
+                         "hf mf egetblk "
                          + QString::number(blockId),
                          150);
             data = dataPattern->match(result).captured().toUpper();
@@ -373,7 +391,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
     QStringList data;
     QString result, tmp;
     QRegularExpressionMatch reMatch;
-    int offset = -1;
+    int offset = -1; // for targetType == TARGET_EMULATOR
 
     for(int i = 0; i < cardType.blk[sectorId]; i++)
     {
@@ -397,7 +415,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
                          + " "
                          + key,
                          waitTime);
-            offset = result.indexOf("isOk:01");
+            offset = result.indexOf("isOk:01"); // find successful flag
         }
         else if(targetType == TARGET_UID)
         {
@@ -405,7 +423,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
                          "hf mf cgetsc "
                          + QString::number(sectorId),
                          waitTime);
-            offset = result.indexOf("Chinese magic");
+            offset = result.indexOf("error") == -1 ? 0 : -1; // find failed flag
         }
         if(offset != -1)
         {
@@ -424,7 +442,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         }
         // if failed, try to read them seperately.
         // (when one of the block cannot be read, the rdsc will return nothing, so you need to read the rest of blocks manually)
-        else if(targetType != TARGET_UID) // if the targetType is Chinese Magic Card, then the result implies the backdoor command is invalid.
+        else if(targetType == TARGET_UID || targetType == TARGET_EMULATOR) // if the targetType is Chinese Magic Card, then the result implies the backdoor command is invalid.
         {
             for(int i = 0; i < cardType.blk[sectorId]; i++)
                 data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, targetType, waitTime);

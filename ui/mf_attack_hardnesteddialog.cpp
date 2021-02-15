@@ -21,14 +21,26 @@ MF_Attack_hardnestedDialog::~MF_Attack_hardnestedDialog()
 
 void MF_Attack_hardnestedDialog::on_buttonBox_accepted()
 {
-    emit sendCMD("hf mf hardnested "
-                 + ui->knownKeySectorBox->currentText()
-                 + " "
-                 + ui->knownKeyTypeBox->currentText()
-                 + " "
-                 + ui->knownKeyBox->text()
-                 + " "
-                 + ui->targetKeySectorBox->currentText()
-                 + " "
-                 + ui->targetKeyTypeBox->currentText());
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        emit sendCMD("hf mf hardnested "
+                     + ui->knownKeySectorBox->currentText()
+                     + " "
+                     + ui->knownKeyTypeBox->currentText()
+                     + " "
+                     + ui->knownKeyBox->text()
+                     + " "
+                     + ui->targetKeySectorBox->currentText()
+                     + " "
+                     + ui->targetKeyTypeBox->currentText());
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN) // same format in v4.9237
+        emit sendCMD("hf mf hardnested "
+                     + ui->knownKeySectorBox->currentText()
+                     + " "
+                     + ui->knownKeyTypeBox->currentText()
+                     + " "
+                     + ui->knownKeyBox->text()
+                     + " "
+                     + ui->targetKeySectorBox->currentText()
+                     + " "
+                     + ui->targetKeyTypeBox->currentText());
 }

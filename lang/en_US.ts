@@ -989,56 +989,56 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
 <context>
     <name>Mifare</name>
     <message>
-        <location filename="../module/mifare.cpp" line="613"/>
+        <location filename="../module/mifare.cpp" line="617"/>
         <source>Success!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="225"/>
-        <location filename="../module/mifare.cpp" line="613"/>
+        <location filename="../module/mifare.cpp" line="229"/>
         <location filename="../module/mifare.cpp" line="617"/>
-        <location filename="../module/mifare.cpp" line="641"/>
-        <location filename="../module/mifare.cpp" line="680"/>
-        <location filename="../module/mifare.cpp" line="693"/>
-        <location filename="../module/mifare.cpp" line="739"/>
+        <location filename="../module/mifare.cpp" line="621"/>
+        <location filename="../module/mifare.cpp" line="645"/>
+        <location filename="../module/mifare.cpp" line="684"/>
+        <location filename="../module/mifare.cpp" line="697"/>
+        <location filename="../module/mifare.cpp" line="743"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="225"/>
+        <location filename="../module/mifare.cpp" line="229"/>
         <source>Plz provide at least one known key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="464"/>
-        <location filename="../module/mifare.cpp" line="617"/>
+        <location filename="../module/mifare.cpp" line="468"/>
+        <location filename="../module/mifare.cpp" line="621"/>
         <source>Failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="642"/>
+        <location filename="../module/mifare.cpp" line="646"/>
         <source>The Access Bits is invalid!
 It could make the whole sector blocked irreversibly!
 Continue to write?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="680"/>
+        <location filename="../module/mifare.cpp" line="684"/>
         <source>Successful!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="693"/>
+        <location filename="../module/mifare.cpp" line="697"/>
         <source>Failed to write to these blocks:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="697"/>
+        <location filename="../module/mifare.cpp" line="701"/>
         <source>Select them?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="739"/>
+        <location filename="../module/mifare.cpp" line="743"/>
         <source>Failed to read card.</source>
         <translation type="unfinished"></translation>
     </message>

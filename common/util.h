@@ -52,12 +52,12 @@ public:
     void execCMD(const QString& cmd);
     QString execCMDWithOutput(const QString& cmd, ReturnTrigger trigger = 10000);
     void delay(unsigned int msec);
-    ClientType getClientType();
+    static ClientType getClientType();
     static const int rawTabIndex = 1;
     static bool chooseLanguage(QSettings *guiSettings, QMainWindow *window);
 public slots:
     void processOutput(const QString& output);
-    void setClientType(Util::ClientType clientType);
+    static void setClientType(Util::ClientType clientType);
     void setRunningState(bool st);
 
 private:
@@ -65,7 +65,7 @@ private:
     bool isRunning;
     QString* requiredOutput;
     QTime timeStamp;
-    ClientType clientType;
+    static ClientType clientType;
 signals:
     void refreshOutput(const QString& output);
     void write(QString data); // connected to PM3Process::write(QString data);
