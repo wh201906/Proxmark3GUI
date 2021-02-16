@@ -6,7 +6,8 @@ const Mifare::CardType Mifare::card_mini =
     5,
     20,
     {4, 4, 4, 4, 4},
-    {0, 4, 8, 12, 16}
+    {0, 4, 8, 12, 16},
+    "mini"
 };
 const Mifare::CardType Mifare::card_1k =
 {
@@ -14,7 +15,8 @@ const Mifare::CardType Mifare::card_1k =
     16,
     64,
     {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60}
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60},
+    "1k"
 };
 const Mifare::CardType Mifare::card_2k =
 {
@@ -22,7 +24,8 @@ const Mifare::CardType Mifare::card_2k =
     32,
     128,
     {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4},
-    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124}
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124},
+    "2k"
 };
 const Mifare::CardType Mifare::card_4k =
 {
@@ -30,7 +33,8 @@ const Mifare::CardType Mifare::card_4k =
     40,
     256,
     {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 16, 16, 16, 16, 16, 16, 16, 16},
-    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 144, 160, 176, 192, 208, 224, 240}
+    {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 144, 160, 176, 192, 208, 224, 240},
+    "4k"
 };
 
 const Mifare::AccessType Mifare::dataCondition[8][4] =
@@ -79,26 +83,24 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
     data_clearKey();  // fill with blank QString
     data_clearData(); // fill with blank QString
     dataPattern = new QRegularExpression("([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}");
-    keyPattern_res = new QRegularExpression("\\|\\d{3}\\|.+?\\|.+?\\|.+?\\|.+?\\|");
-    keyPattern = new QRegularExpression("\\|\\d{3}\\|.+?\\|.+?\\|");
+    keyPattern_res = new QRegularExpression("\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|");
+    keyPattern = new QRegularExpression("\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|");
 }
 
 QString Mifare::info(bool isRequiringOutput)
 {
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         if(isRequiringOutput)
         {
             QString result = util->execCMDWithOutput("hf 14a info", 500);
-            result.replace("UID :", "|||");
-            result.replace("ATQA :", "|||");
-            result.replace("SAK :", "|||");
-            result.replace("TYPE :", "|||");
-            QStringList lis = result.split("|||");
-            if(lis.length() > 4)
+            int begin, end;
+            begin = result.indexOf("UID");
+            if(begin != -1)
             {
-                qDebug() << lis[1] + lis[2] + lis[3];
-                return lis[1] + lis[2] + lis[3];
+                end = result.indexOf("SAK", begin);
+                end = result.indexOf("\n", end);
+                return result.mid(begin, end - begin + 1);
             }
             else
                 return "";
@@ -106,7 +108,7 @@ QString Mifare::info(bool isRequiringOutput)
         else
         {
             util->execCMD("hf 14a info");
-            ui->funcTab->setCurrentIndex(1);
+            ui->funcTab->setCurrentIndex(Util::rawTabIndex);
             return "";
         }
     }
@@ -115,17 +117,17 @@ QString Mifare::info(bool isRequiringOutput)
 void Mifare::chk()
 {
     QRegularExpressionMatch reMatch;
-    QString result = util->execCMDWithOutput(
-                         "hf mf chk *"
-                         + QString::number(cardType.type)
-                         + " ?",
-                         1000 + cardType.type * 1000);
-    qDebug() << result;
-
+    QString result;
     int offset = 0;
     QString data;
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
+        result = util->execCMDWithOutput(
+                     "hf mf chk *"
+                     + QString::number(cardType.type)
+                     + " ?",
+                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern->pattern()}));
+        qDebug() << result;
         for(int i = 0; i < cardType.sector_size; i++)
         {
             reMatch = keyPattern->match(result, offset);
@@ -146,8 +148,13 @@ void Mifare::chk()
             }
         }
     }
-    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
+        result = util->execCMDWithOutput(
+                     "hf mf chk --"
+                     + cardType.typeText,
+                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern_res->pattern()}));
+        qDebug() << "mf_chk_iceman_result" << result;
         for(int i = 0; i < cardType.sector_size; i++)
         {
             reMatch = keyPattern_res->match(result, offset);
@@ -178,21 +185,22 @@ void Mifare::nested()
     QString result;
     int offset = 0;
     QString data;
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         result = util->execCMDWithOutput(
                      "hf mf nested "
                      + QString::number(cardType.type)
-                     + " *", 10000);
+                     + " *",
+                     Util::ReturnTrigger(15000, {"Can't found", "\\|000\\|"}));
     }
-    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         QString knownKeyInfo = "";
         for(int i = 0; i < cardType.sector_size; i++)
         {
             if(data_isKeyValid(keyAList->at(i)))
             {
-                knownKeyInfo = " " + QString::number(i * 4) + " A " + keyAList->at(i);
+                knownKeyInfo = " --blk " + QString::number(i * 4) + " -a -k " + keyAList->at(i);
                 break;
             }
         }
@@ -202,7 +210,7 @@ void Mifare::nested()
             {
                 if(data_isKeyValid(keyBList->at(i)))
                 {
-                    knownKeyInfo = " " + QString::number(i * 4) + " B " + keyBList->at(i);
+                    knownKeyInfo = " --blk " + QString::number(i * 4) + " -b -k " + keyBList->at(i);
                     break;
                 }
             }
@@ -210,9 +218,10 @@ void Mifare::nested()
         if(knownKeyInfo != "")
         {
             result = util->execCMDWithOutput(
-                         "hf mf nested "
-                         + QString::number(cardType.type)
-                         + knownKeyInfo, 10000);
+                         "hf mf nested --"
+                         + cardType.typeText
+                         + knownKeyInfo,
+                         Util::ReturnTrigger(15000, {"Can't authenticate", keyPattern_res->pattern()}));
         }
         else
         {
@@ -248,34 +257,57 @@ void Mifare::hardnested()
     MF_Attack_hardnestedDialog dialog(cardType.block_size);
     connect(&dialog, &MF_Attack_hardnestedDialog::sendCMD, util, &Util::execCMD);
     if(dialog.exec() == QDialog::Accepted)
-        ui->funcTab->setCurrentIndex(1);
+        ui->funcTab->setCurrentIndex(Util::rawTabIndex);
+}
+
+void Mifare::darkside()
+{
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf mf mifare");
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf mf darkside");
+
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::sniff()
 {
-    util->execCMD("hf mf sniff");
-    ui->funcTab->setCurrentIndex(1);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf mf sniff");
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf sniff");
+
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
-void Mifare::snoop()
+void Mifare::sniff14a()
 {
-    util->execCMD("hf 14a snoop");
-    ui->funcTab->setCurrentIndex(1);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf 14a snoop");
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf 14a sniff");
+
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::list()
 {
-    util->execCMD("hf list mf");
-    ui->funcTab->setCurrentIndex(1);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf list mf");
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("trace list -t mf");
+
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, TargetType targetType, int waitTime)
 {
     QString data;
     QString result;
-    bool isKeyBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
+    QRegularExpressionMatch currMatch;
+    bool isTrailerBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
 
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         if(targetType == TARGET_MIFARE)
         {
@@ -292,13 +324,14 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
                          + " "
                          + key,
                          waitTime);
-            if(result.indexOf("isOk:01") != -1)
+            currMatch = dataPattern->match(result);
+            if(currMatch.hasMatch())
             {
-                data = dataPattern->match(result).captured().toUpper();
+                data = currMatch.captured().toUpper();
                 data.remove(" ");
                 // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
                 // if the given key type is KeyB, it will never get the KeyA from the key block
-                if(isKeyBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
+                if(isTrailerBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
                 {
                     data.replace(0, 12, key);
                     QList<quint8> ACBits = data_getACBits(data.mid(12, 8));
@@ -307,7 +340,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
                         data.replace(20, 12, "????????????");
                     }
                 }
-                else if(isKeyBlock && keyType == KEY_B)
+                else if(isTrailerBlock && keyType == KEY_B)
                 {
                     data.replace(20, 12, key);;
                     data.replace(0, 12, "????????????"); // fill the keyA part with ?
@@ -322,18 +355,34 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
                          "hf mf cgetblk "
                          + QString::number(blockId),
                          waitTime);
-            if(result.indexOf("Chinese magic") != -1)
+            currMatch = dataPattern->match(result);
+            if(currMatch.hasMatch())
             {
-                data = dataPattern->match(result).captured().toUpper();
+                data = currMatch.captured().toUpper();
                 data.remove(" ");
             }
             else
                 data = "";
         }
-        else if(targetType == TARGET_EMULATOR)
+    }
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        if(targetType == TARGET_EMULATOR)
         {
             result = util->execCMDWithOutput(
                          "hf mf eget "
+                         + QString::number(blockId),
+                         150);
+            data = dataPattern->match(result).captured().toUpper();
+            data.remove(" ");
+        }
+    }
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        if(targetType == TARGET_EMULATOR)
+        {
+            result = util->execCMDWithOutput(
+                         "hf mf egetblk "
                          + QString::number(blockId),
                          150);
             data = dataPattern->match(result).captured().toUpper();
@@ -348,14 +397,14 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
     QStringList data;
     QString result, tmp;
     QRegularExpressionMatch reMatch;
-    int offset = -1;
+    int offset = -1; // for targetType == TARGET_EMULATOR
 
     for(int i = 0; i < cardType.blk[sectorId]; i++)
     {
         data.append("");
     }
 
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         // try to read all blocks together
         if(targetType == TARGET_MIFARE)
@@ -372,7 +421,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
                          + " "
                          + key,
                          waitTime);
-            offset = result.indexOf("isOk:01");
+            offset = result.indexOf("isOk:01"); // find successful flag
         }
         else if(targetType == TARGET_UID)
         {
@@ -380,7 +429,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
                          "hf mf cgetsc "
                          + QString::number(sectorId),
                          waitTime);
-            offset = result.indexOf("Chinese magic");
+            offset = result.indexOf("error") == -1 ? 0 : -1; // find failed flag
         }
         if(offset != -1)
         {
@@ -399,7 +448,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         }
         // if failed, try to read them seperately.
         // (when one of the block cannot be read, the rdsc will return nothing, so you need to read the rest of blocks manually)
-        else if(targetType != TARGET_UID) // if the targetType is Chinese Magic Card, then the result implies the backdoor command is invalid.
+        else if(targetType == TARGET_UID || targetType == TARGET_EMULATOR) // if the targetType is Chinese Magic Card, then the result implies the backdoor command is invalid.
         {
             for(int i = 0; i < cardType.blk[sectorId]; i++)
                 data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, targetType, waitTime);
@@ -536,12 +585,12 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
 {
     QString result;
     QString input = data.toUpper();
-    input.remove(" ");
 
+    input.remove(" ");
     if(data_isDataValid(input) != DATA_NOSPACE)
         return false;
 
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         if(targetType == TARGET_MIFARE)
         {
@@ -567,7 +616,7 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
                          + " "
                          + input,
                          waitTime);
-            return (result.indexOf("Chinese magic") != -1);
+            return (result.indexOf("error") == -1); // failed flag
         }
         else if(targetType == TARGET_EMULATOR)
         {
@@ -601,6 +650,8 @@ void Mifare::writeSelected(TargetType targetType)
 {
     QList<int> failedBlocks;
     QList<int> selectedBlocks;
+    bool yes2All = false, no2All = false;
+
     for(int i = 0; i < cardType.block_size; i++)
     {
         if(ui->MF_dataWidget->item(i, 1)->checkState() == Qt::Checked)
@@ -609,6 +660,29 @@ void Mifare::writeSelected(TargetType targetType)
     for(int item : selectedBlocks)
     {
         bool result = false;
+        bool isTrailerBlock = (item < 128 && ((item + 1) % 4 == 0)) || ((item + 1) % 16 == 0);
+
+        if(isTrailerBlock && !data_isACBitsValid(dataList->at(item).mid(12, 8))) // trailer block is invalid
+        {
+            if(!yes2All && !no2All)
+            {
+                QMessageBox::StandardButton choice = QMessageBox::information(parent, tr("Info"),
+                                                     tr("The Access Bits is invalid!\nIt could make the whole sector blocked irreversibly!\nContinue to write?"),
+                                                     QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll);
+                if(choice == QMessageBox::No)
+                    continue;
+                else if(choice == QMessageBox::YesToAll)
+                    yes2All = true;
+                else if(choice == QMessageBox::NoToAll)
+                {
+                    no2All = true;
+                    continue;
+                }
+            }
+            else if(no2All)
+                continue;
+        }
+
         if(targetType == TARGET_MIFARE)
         {
             result = _writeblk(item, KEY_A, keyAList->at(data_b2s(item)), dataList->at(item), TARGET_MIFARE);
@@ -667,23 +741,32 @@ void Mifare::writeSelected(TargetType targetType)
 
 void Mifare::dump()
 {
-    util->execCMD("hf mf dump");
-    ui->funcTab->setCurrentIndex(1);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf mf dump");
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::restore()
 {
-    util->execCMD("hf mf restore");
-    ui->funcTab->setCurrentIndex(1);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf mf restore");
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::wipeC()
 {
-    util->execCMD(
-        "hf mf cwipe "
-        + QString::number(cardType.type)
-        + " f");
-    ui->funcTab->setCurrentIndex(1);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        util->execCMD(
+            "hf mf cwipe "
+            + QString::number(cardType.type)
+            + " f");
+    }
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        util->execCMD("hf mf cwipe");
+    }
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::setParameterC()
@@ -693,50 +776,78 @@ void Mifare::setParameterC()
         QMessageBox::information(parent, tr("Info"), tr("Failed to read card."));
     else
     {
-        QStringList lis = result.split("\r\n");
-        lis[0].replace(" ", "");
-        lis[1].replace(" ", "");
-        lis[2].replace(" ", "");
-        MF_UID_parameterDialog dialog(lis[0].toUpper(), lis[1].toUpper(), lis[2].mid(0, 2).toUpper());
+        result.replace("\r\n", "");
+        result.replace(QRegularExpression("\\[.\\]"), "");
+        result.replace("UID", "");
+        result.replace("ATQA", "");
+        result.replace("SAK", "");
+        result.replace(" ", "");
+        QStringList lis = result.split(':');
+        qDebug() << lis;
+        MF_UID_parameterDialog dialog(lis[1].toUpper(), lis[2].toUpper(), lis[3].toUpper());
         connect(&dialog, &MF_UID_parameterDialog::sendCMD, util, &Util::execCMD);
         if(dialog.exec() == QDialog::Accepted)
-            ui->funcTab->setCurrentIndex(1);
+            ui->funcTab->setCurrentIndex(Util::rawTabIndex);
     }
 }
 
 void Mifare::lockC()
 {
-    util->execCMD("hf 14a raw -pa -b7 40");
-    util->execCMD("hf 14a raw -pa 43");
-    util->execCMD("hf 14a raw -pa E0 00 39 F7");
-    util->execCMD("hf 14a raw -pa E1 00 E1 EE");
-    util->execCMD("hf 14a raw -pa 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
-    util->execCMD("hf 14a raw 52");
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        util->execCMD("hf 14a raw -pa -b7 40");
+        util->execCMD("hf 14a raw -pa 43");
+        util->execCMD("hf 14a raw -pa E0 00 39 F7");
+        util->execCMD("hf 14a raw -pa E1 00 E1 EE");
+        util->execCMD("hf 14a raw -pa 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
+        util->execCMD("hf 14a raw -a 52");
+    }
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        util->execCMD("hf 14a raw -ak -b 7 40");
+        util->execCMD("hf 14a raw -ak 43");
+        util->execCMD("hf 14a raw -ak E0 00 39 F7");
+        util->execCMD("hf 14a raw -ak E1 00 E1 EE");
+        util->execCMD("hf 14a raw -ak 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
+        util->execCMD("hf 14a raw -a 52");
+    }
 }
 
 void Mifare::wipeE()
 {
-    util->execCMD("hf mf eclr");
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf mf eclr");
 }
 
 void Mifare::simulate()
 {
-    MF_Sim_simDialog dialog(cardType.type);
+    MF_Sim_simDialog dialog(cardType.type, cardType.typeText);
     connect(&dialog, &MF_Sim_simDialog::sendCMD, util, &Util::execCMD);
     if(dialog.exec() == QDialog::Accepted)
-        ui->funcTab->setCurrentIndex(1);
+        ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::loadSniff(const QString& file)
 {
-    util->execCMD("hf list mf -l " + file);
-    ui->funcTab->setCurrentIndex(1);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf list mf -l " + file);
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        if(util->execCMDWithOutput("trace load -f " + file, Util::ReturnTrigger({"loaded"})) != "")
+            util->execCMD("trace list -t mf");
+    }
+
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::saveSniff(const QString& file)
 {
-    util->execCMD("hf list mf -s " + file);
-    ui->funcTab->setCurrentIndex(1);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf list mf -s " + file);
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("trace save -f " + file);
+
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::data_syncWithDataWidget(bool syncAll, int block)
@@ -846,7 +957,7 @@ void Mifare::data_clearKey(bool clearAll)
     }
 }
 
-bool Mifare::data_isKeyValid(const QString &key)
+bool Mifare::data_isKeyValid(const QString& key)
 {
     if(key.length() != 12)
         return false;
@@ -912,7 +1023,7 @@ void Mifare::setCardType(int type)
     }
 }
 
-bool Mifare::data_loadDataFile(const QString &filename)
+bool Mifare::data_loadDataFile(const QString& filename)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::ReadOnly))
@@ -959,7 +1070,7 @@ bool Mifare::data_loadDataFile(const QString &filename)
     }
 }
 
-bool Mifare::data_loadKeyFile(const QString &filename)
+bool Mifare::data_loadKeyFile(const QString& filename)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::ReadOnly))
@@ -996,7 +1107,7 @@ bool Mifare::data_loadKeyFile(const QString &filename)
     }
 }
 
-QString Mifare::bin2text(const QByteArray &buff, int i, int length)
+QString Mifare::bin2text(const QByteArray& buff, int i, int length)
 {
     QString ret = "";
     char LByte, RByte;
@@ -1014,7 +1125,7 @@ QString Mifare::bin2text(const QByteArray &buff, int i, int length)
     return ret;
 }
 
-bool Mifare::data_saveDataFile(const QString &filename, bool isBin)
+bool Mifare::data_saveDataFile(const QString& filename, bool isBin)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::WriteOnly))
@@ -1058,7 +1169,7 @@ bool Mifare::data_saveDataFile(const QString &filename, bool isBin)
     }
 }
 
-bool Mifare::data_saveKeyFile(const QString &filename, bool isBin)
+bool Mifare::data_saveKeyFile(const QString& filename, bool isBin)
 {
     QFile file(filename, this);
     if(file.open(QIODevice::WriteOnly))
@@ -1153,12 +1264,12 @@ void Mifare::data_data2Key()
     }
 }
 
-void Mifare::data_setData(int block, const QString &data)
+void Mifare::data_setData(int block, const QString& data)
 {
     dataList->replace(block, data);
 }
 
-void Mifare::data_setKey(int sector, KeyType keyType, const QString &key)
+void Mifare::data_setKey(int sector, KeyType keyType, const QString& key)
 {
     if(keyType == KEY_A)
         keyAList->replace(sector, key);
@@ -1192,24 +1303,36 @@ int Mifare::data_b2s(int block)
         return -1;
 }
 
-QList<quint8> Mifare::data_getACBits(const QString& text) //return empty QList if the text is invalid
+bool Mifare::data_isACBitsValid(const QString& text, QList<quint8>* returnHalfBytes)
 {
     QString input = text;
-    QList<quint8> result;
     input.remove(" ");
     if(input.length() < 6)
     {
-        return result;
+        return false;
     }
     input = input.left(6);
     quint32 val = input.toUInt(nullptr, 16);
-    quint8 halfBytes[6];
+    QList<quint8> halfBytes;
     for(int i = 0; i < 6; i++)
     {
-        halfBytes[i] = (val >> ((5 - i) * 4)) & 0xf;
+        halfBytes.append((val >> ((5 - i) * 4)) & 0xf);
     }
     qDebug() << val;
     if((~halfBytes[0] & 0xf) == halfBytes[5] && (~halfBytes[1] & 0xf) == halfBytes[2] && (~halfBytes[3] & 0xf) == halfBytes[4])
+    {
+        if(returnHalfBytes != nullptr)
+            *returnHalfBytes = halfBytes;
+        return true;
+    }
+    else
+        return false;
+}
+
+QList<quint8> Mifare::data_getACBits(const QString& text) //return empty QList if the text is invalid
+{
+    QList<quint8> halfBytes, result;
+    if(data_isACBitsValid(text, &halfBytes))
     {
         for(int i = 0; i < 4; i++)
         {

@@ -15,10 +15,10 @@ MF_trailerDecoderDialog::MF_trailerDecoderDialog(QWidget *parent) :
     sizeGroup->addButton(ui->size4Button, 4);
     sizeGroup->addButton(ui->size16Button, 16);
     connect(sizeGroup, QOverload<int, bool>::of(&QButtonGroup::buttonToggled), this, &MF_trailerDecoderDialog::on_blockSizeChanged);
-    connect(ui->C0Box, &QSpinBox::textChanged, this, &MF_trailerDecoderDialog::on_boxChanged);
-    connect(ui->C1Box, &QSpinBox::textChanged, this, &MF_trailerDecoderDialog::on_boxChanged);
-    connect(ui->C2Box, &QSpinBox::textChanged, this, &MF_trailerDecoderDialog::on_boxChanged);
-    connect(ui->C3Box, &QSpinBox::textChanged, this, &MF_trailerDecoderDialog::on_boxChanged);
+    connect(ui->C0Box, QOverload<int>::of(&QSpinBox::valueChanged), this, &MF_trailerDecoderDialog::on_boxChanged);
+    connect(ui->C1Box, QOverload<int>::of(&QSpinBox::valueChanged), this, &MF_trailerDecoderDialog::on_boxChanged);
+    connect(ui->C2Box, QOverload<int>::of(&QSpinBox::valueChanged), this, &MF_trailerDecoderDialog::on_boxChanged);
+    connect(ui->C3Box, QOverload<int>::of(&QSpinBox::valueChanged), this, &MF_trailerDecoderDialog::on_boxChanged);
 
     ui->dataBlockWidget->setRowCount(3);
     ui->dataBlockWidget->setColumnCount(4);
@@ -123,7 +123,7 @@ void MF_trailerDecoderDialog::setTableItem(QTableWidget* widget, int row, int co
     widget->item(row, column)->setText(text);
 }
 
-void MF_trailerDecoderDialog::on_boxChanged(const QString &arg1)
+void MF_trailerDecoderDialog::on_boxChanged(int arg1)
 {
     quint8 ACBits[4];
     ACBits[0] = ui->C0Box->value();

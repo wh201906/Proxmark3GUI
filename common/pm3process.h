@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
+#include <QProcessEnvironment>
 
 #include "util.h"
 
@@ -21,9 +22,11 @@ public:
     void testThread();
 
 public slots:
-    void connectPM3(const QString path, const QString port);
-    void setSerialListener(const QString &name, bool state);
+    void connectPM3(const QString& path, const QString& port, const QStringList args);
+    void setSerialListener(const QString& name, bool state);
     qint64 write(QString data);
+    void reconnectPM3();
+    void setProcEnv(const QStringList* env);
 private slots:
     void onTimeout();
     void onReadyRead();
@@ -33,9 +36,13 @@ private:
     void setRequiringOutput(bool st);// It only works in this class now
     QTimer* serialListener;
     QSerialPortInfo* portInfo;
+    QString currPath;
+    QString currPort;
+    QStringList currArgs;
+
 signals:
-    void PM3StatedChanged(bool st, QString info = "");
-    void newOutput(QString output);
+    void PM3StatedChanged(bool st, const QString& info = "");
+    void newOutput(const QString& output);
     void changeClientType(Util::ClientType);
 };
 

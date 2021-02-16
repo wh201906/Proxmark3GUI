@@ -1,5 +1,7 @@
 # Proxmark3GUI
-一个自制的[Proxmark3](https://github.com/Proxmark/proxmark3) GUI
+![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total)  
+
+一个自制的[Proxmark3](https://github.com/Proxmark/proxmark3) GUI，可在Windows/Linux系统下运行
 
 [English](../../README.md)
 
@@ -30,22 +32,46 @@
 ***
 
  ## 关于冰人版
- 这个GUI一开始是针对官方版本做的，现在正在尽力让它兼容冰人版的功能  
- （没钱买RDV4也没钱买两台PM3，测一次冰人就要烧一次固件 qwq）
+ [冰人版](https://github.com/RfidResearchGroup/proxmark3)(Iceman/RRG)的客户端和固件更新更为激进，相比官方版具有更多的功能  
+ 此GUI所有功能均兼容冰人版（在v4.9237上测试通过）  
 
- [已支持功能](../doc/supported_Iceman.md)
 ***
 
 ## 关于预编译Windows客户端
 
-一个国外大佬 [Gator96100](https://github.com/Gator96100) 做了个 [ProxSpace](https://github.com/Gator96100/ProxSpace) 以便在Windows平台上编译PM3固件和客户端，他还把自己编译好的客户端放到了[论坛](http://www.proxmark.org/forum/viewtopic.php?id=3975)里面  
-文件都是放到Google Drive上面的，国内网络无法访问，所以我在release版本里面放了个带预编译客户端版本的GUI。这个GUI也可以搭配你自己的客户端使用  
+一位国外大佬 [Gator96100](https://github.com/Gator96100) 做了个 [ProxSpace](https://github.com/Gator96100/ProxSpace) 以便在Windows平台上编译PM3固件和客户端，他还把自己编译好的客户端放到了[网站](https://www.proxmarkbuilds.org/)上  
+release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客户端使用  
 (本来打算在CSDN下载里面放几个最新版客户端的，结果不能把下载币改为0)  
 感谢大佬  
 
 ***
 
+## 在Linux系统下编译
+
+    cd ~
+    git clone https://github.com/wh201906/Proxmark3GUI.git
+    cd Proxmark3GUI
+    mkdir build
+    cd build
+    qmake ../
+    make
+    make clean
+    cp -r ../lang ./
+    ./Proxmark3GUI
+
+***
+
 ## 更新日志:
+
+### V0.1.4
++ 优化性能  
++ 优化用户界面  
++ 自动搜索可用端口  
++ 支持高分屏  
++ 可通过外部脚本配置环境变量  
+(在客户端需要配置环境变量时很有用)  
++ 全功能兼容冰人版（在v4.9237上测试通过）  
++ 修复部分bug
 
 ### V0.1.3
 + 修复访问控制位解码器

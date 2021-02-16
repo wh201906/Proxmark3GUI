@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    common/myeventfilter.cpp \
     main.cpp \
     common/pm3process.cpp \
     common/util.cpp \
@@ -27,6 +28,7 @@ SOURCES += \
     ui/mf_attack_hardnesteddialog.cpp \
 
 HEADERS += \
+    common/myeventfilter.h \
     common/pm3process.h \
     common/util.h \
     module/mifare.h \
@@ -52,7 +54,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-VERSION = 0.1.3
+VERSION = 0.1.4
 QMAKE_TARGET_PRODUCT = "Proxmark3GUI"
 QMAKE_TARGET_DESCRIPTION = "Proxmark3GUI"
 QMAKE_TARGET_COMPANY = "wh201906"

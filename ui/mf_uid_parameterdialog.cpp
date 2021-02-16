@@ -18,10 +18,18 @@ MF_UID_parameterDialog::~MF_UID_parameterDialog()
 
 void MF_UID_parameterDialog::on_buttonBox_accepted()
 {
-    emit sendCMD("hf mf csetuid "
-                 + ui->UIDLineEdit->text()
-                 + " "
-                 + ui->ATQALineEdit->text()
-                 + " "
-                 + ui->SAKLineEdit->text());
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        emit sendCMD("hf mf csetuid "
+                     + ui->UIDLineEdit->text()
+                     + " "
+                     + ui->ATQALineEdit->text()
+                     + " "
+                     + ui->SAKLineEdit->text());
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN) // same format in v4.9237
+        emit sendCMD("hf mf csetuid "
+                     + ui->UIDLineEdit->text()
+                     + " "
+                     + ui->ATQALineEdit->text()
+                     + " "
+                     + ui->SAKLineEdit->text());
 }

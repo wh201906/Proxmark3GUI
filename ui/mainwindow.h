@@ -19,7 +19,12 @@
 #include <QGroupBox>
 #include <QSizePolicy>
 #include <QSettings>
+#include <QPushButton>
+#include <QProcessEnvironment>
+#include <QScrollBar>
+#include <QTimer>
 
+#include "common/myeventfilter.h"
 #include "common/pm3process.h"
 #include "module/mifare.h"
 #include "common/util.h"
@@ -43,11 +48,13 @@ public:
     void initUI();
     bool eventFilter(QObject *watched, QEvent *event);
 public slots:
-    void refreshOutput(const QString &output);
-    void refreshCMD(const QString &cmd);
-    void setStatusBar(QLabel* target, const QString & text);
-    void onPM3StateChanged(bool st, QString info);
-    void MF_onTypeChanged(int id, bool st);
+    void refreshOutput(const QString& output);
+    void refreshCMD(const QString& cmd);
+    void setStatusBar(QLabel* target, const QString& text);
+    void onPM3StateChanged(bool st, const QString& info);
+    void MF_onMFCardTypeChanged(int id, bool st);
+    void on_Raw_CMDEdit_keyPressed(QObject *obj_addr, QEvent &event);
+    void on_MF_keyWidget_resized(QObject *obj_addr, QEvent &event);
 private slots:
 
     void on_PM3_connectButton_clicked();
@@ -59,7 +66,8 @@ private slots:
     void on_Raw_clearOutputButton_clicked();
 
     void sendMSG();
-    void on_PM3_refreshPortButton_clicked();
+
+    void on_portSearchTimer_timeout();
 
     void on_Raw_CMDHistoryBox_stateChanged(int arg1);
 
@@ -86,7 +94,6 @@ private slots:
     void on_MF_Attack_infoButton_clicked();
 
     void on_MF_RW_writeSelectedButton_clicked();
-
 
     void on_MF_RW_dumpButton_clicked();
 
@@ -142,27 +149,56 @@ private slots:
 
     void on_MF_fillKeysButton_clicked();
 
-    void on_MF_Sniff_snoopButton_clicked();
+    void on_MF_14aSniff_snoopButton_clicked();
 
     void on_MF_trailerDecoderButton_clicked();
 
     void on_MF_selectTrailerBox_stateChanged(int arg1);
 
+    void on_stopButton_clicked();
+
+    void on_Raw_CMDEdit_textChanged(const QString &arg1);
+
+    void on_MF_Attack_darksideButton_clicked();
+
+    void on_Set_Client_startArgsEdit_editingFinished();
+
+    void on_Set_Client_forceEnabledBox_stateChanged(int arg1);
+
+    void on_Set_GUI_setLanguageButton_clicked();
+
+    void setButtonsEnabled(bool st);
+
+    void on_PM3_refreshPortButton_clicked();
+
+    void on_Set_Client_envScriptEdit_editingFinished();
+
 private:
     Ui::MainWindow* ui;
-    QButtonGroup* typeBtnGroup;
+    QButtonGroup* MFCardTypeBtnGroup;
     QLabel* connectStatusBar;
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
+    QPushButton* stopButton;
     QAction* myInfo;
+    QAction* currVersion;
     QAction* checkUpdate;
     QSettings* settings;
+    MyEventFilter* keyEventFilter;
+    MyEventFilter* resizeEventFilter;
+
+    QString stashedCMDEditText;
+    int stashedIndex = -1;
 
     void uiInit();
 
     PM3Process* pm3;
     bool pm3state;
+    bool keepButtonsEnabled;
     QThread* pm3Thread;
+    QTimer* portSearchTimer;
+    QStringList portList;
+    QStringList clientEnv;
 
     Mifare* mifare;
     Util* util;
@@ -172,12 +208,14 @@ private:
 
     void signalInit();
     void MF_widgetReset();
-    void setTableItem(QTableWidget *widget, int row, int column, const QString &text);
+    void setTableItem(QTableWidget *widget, int row, int column, const QString& text);
     void setState(bool st);
-    void saveClientPath(const QString &path);
+    void saveClientPath(const QString& path);
 signals:
-    void connectPM3(const QString path, const QString port);
+    void connectPM3(const QString& path, const QString& port, const QStringList args);
+    void reconnectPM3();
     void killPM3();
-    void setSerialListener(const QString &name, bool state);
+    void setSerialListener(const QString& name, bool state);
+    void setProcEnv(const QStringList *env);
 };
 #endif // MAINWINDOW_H
