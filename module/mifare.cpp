@@ -89,7 +89,7 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
 
 QString Mifare::info(bool isRequiringOutput)
 {
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         if(isRequiringOutput)
         {
@@ -120,7 +120,7 @@ void Mifare::chk()
     QString result;
     int offset = 0;
     QString data;
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         result = util->execCMDWithOutput(
                      "hf mf chk *"
@@ -148,7 +148,7 @@ void Mifare::chk()
             }
         }
     }
-    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         result = util->execCMDWithOutput(
                      "hf mf chk --"
@@ -185,7 +185,7 @@ void Mifare::nested()
     QString result;
     int offset = 0;
     QString data;
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         result = util->execCMDWithOutput(
                      "hf mf nested "
@@ -193,7 +193,7 @@ void Mifare::nested()
                      + " *",
                      Util::ReturnTrigger(15000, {"Can't found", "\\|000\\|"}));
     }
-    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         QString knownKeyInfo = "";
         for(int i = 0; i < cardType.sector_size; i++)
@@ -262,34 +262,41 @@ void Mifare::hardnested()
 
 void Mifare::darkside()
 {
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
-    {
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
         util->execCMD("hf mf mifare");
-        ui->funcTab->setCurrentIndex(Util::rawTabIndex);
-    }
-    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
-    {
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
         util->execCMD("hf mf darkside");
-        ui->funcTab->setCurrentIndex(Util::rawTabIndex);
-    }
 
+    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::sniff()
 {
-    util->execCMD("hf mf sniff");
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf mf sniff");
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf sniff");
+
     ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
-void Mifare::snoop()
+void Mifare::sniff14a()
 {
-    util->execCMD("hf 14a snoop");
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf 14a snoop");
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf 14a sniff");
+
     ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::list()
 {
-    util->execCMD("hf list mf");
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf list mf");
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("trace list -t mf");
+
     ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
@@ -300,7 +307,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
     QRegularExpressionMatch currMatch;
     bool isTrailerBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
 
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         if(targetType == TARGET_MIFARE)
         {
@@ -358,7 +365,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
                 data = "";
         }
     }
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         if(targetType == TARGET_EMULATOR)
         {
@@ -370,7 +377,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
             data.remove(" ");
         }
     }
-    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         if(targetType == TARGET_EMULATOR)
         {
@@ -397,7 +404,7 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         data.append("");
     }
 
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         // try to read all blocks together
         if(targetType == TARGET_MIFARE)
@@ -583,7 +590,7 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
     if(data_isDataValid(input) != DATA_NOSPACE)
         return false;
 
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL || util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         if(targetType == TARGET_MIFARE)
         {
@@ -734,26 +741,28 @@ void Mifare::writeSelected(TargetType targetType)
 
 void Mifare::dump()
 {
-    util->execCMD("hf mf dump");
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf mf dump");
     ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::restore()
 {
-    util->execCMD("hf mf restore");
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf mf restore");
     ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::wipeC()
 {
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         util->execCMD(
             "hf mf cwipe "
             + QString::number(cardType.type)
             + " f");
     }
-    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         util->execCMD("hf mf cwipe");
     }
@@ -784,7 +793,7 @@ void Mifare::setParameterC()
 
 void Mifare::lockC()
 {
-    if(util->getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
     {
         util->execCMD("hf 14a raw -pa -b7 40");
         util->execCMD("hf 14a raw -pa 43");
@@ -793,7 +802,7 @@ void Mifare::lockC()
         util->execCMD("hf 14a raw -pa 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
         util->execCMD("hf 14a raw -a 52");
     }
-    else if(util->getClientType() == Util::CLIENTTYPE_ICEMAN)
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
         util->execCMD("hf 14a raw -ak -b 7 40");
         util->execCMD("hf 14a raw -ak 43");
@@ -806,12 +815,13 @@ void Mifare::lockC()
 
 void Mifare::wipeE()
 {
-    util->execCMD("hf mf eclr");
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("hf mf eclr");
 }
 
 void Mifare::simulate()
 {
-    MF_Sim_simDialog dialog(cardType.type);
+    MF_Sim_simDialog dialog(cardType.type, cardType.typeText);
     connect(&dialog, &MF_Sim_simDialog::sendCMD, util, &Util::execCMD);
     if(dialog.exec() == QDialog::Accepted)
         ui->funcTab->setCurrentIndex(Util::rawTabIndex);
@@ -819,13 +829,24 @@ void Mifare::simulate()
 
 void Mifare::loadSniff(const QString& file)
 {
-    util->execCMD("hf list mf -l " + file);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf list mf -l " + file);
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        if(util->execCMDWithOutput("trace load -f " + file, Util::ReturnTrigger({"loaded"})) != "")
+            util->execCMD("trace list -t mf");
+    }
+
     ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 
 void Mifare::saveSniff(const QString& file)
 {
-    util->execCMD("hf list mf -s " + file);
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        util->execCMD("hf list mf -s " + file);
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        util->execCMD("trace save -f " + file);
+
     ui->funcTab->setCurrentIndex(Util::rawTabIndex);
 }
 

@@ -149,7 +149,7 @@ private slots:
 
     void on_MF_fillKeysButton_clicked();
 
-    void on_MF_Sniff_snoopButton_clicked();
+    void on_MF_14aSniff_snoopButton_clicked();
 
     void on_MF_trailerDecoderButton_clicked();
 

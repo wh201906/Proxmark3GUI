@@ -45,72 +45,102 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="37"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="38"/>
         <source>u</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="66"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="67"/>
         <source>UID 4 or 7 bytes. If not specified, the UID 4B from emulator memory will be used</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="87"/>
-        <source>n</source>
+        <location filename="../ui/mf_sim_simdialog.ui" line="105"/>
+        <source>--atqa</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="116"/>
-        <source>Automatically exit simulation after &lt;numreads&gt; blocks have been read by reader. 0 = infinite</source>
+        <location filename="../ui/mf_sim_simdialog.ui" line="134"/>
+        <source>Provide explicit ATQA (2 bytes)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="137"/>
-        <source>i</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="150"/>
-        <source>Interactive, means that console will not be returned until simulation finishes or is aborted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="171"/>
-        <source>x</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="184"/>
-        <source>Crack, performs the &apos;reader attack&apos;, nr/ar attack against a legitimate reader, fishes out the key(s)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="205"/>
-        <source>e</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="218"/>
-        <source>set keys found from &apos;reader attack&apos; to emulator memory (implies x and i)</source>
+        <location filename="../ui/mf_sim_simdialog.ui" line="172"/>
+        <source>--sak</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/mf_sim_simdialog.ui" line="239"/>
-        <source>f</source>
+        <source>n</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/mf_sim_simdialog.ui" line="268"/>
+        <source>Automatically exit simulation after &lt;numreads&gt; blocks have been read by reader. 0 = infinite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="306"/>
+        <source>i</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="319"/>
+        <source>Interactive, means that console will not be returned until simulation finishes or is aborted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="357"/>
+        <source>x</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="370"/>
+        <source>Crack, performs the &apos;reader attack&apos;, nr/ar attack against a legitimate reader, fishes out the key(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="408"/>
+        <source>e</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="421"/>
+        <source>set keys found from &apos;reader attack&apos; to emulator memory (implies x(--crack) and i)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="577"/>
+        <source>-v</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="590"/>
+        <source>verbose output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="459"/>
+        <source>f</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="201"/>
+        <source>Provide explicit SAK (1 byte)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="488"/>
         <source>get UIDs to use for &apos;reader attack&apos; from file &apos;f &lt;filename.txt&gt;&apos; (implies x and i)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="289"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="526"/>
         <source>r</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="302"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="539"/>
         <source>Generate random nonces instead of sequential nonces. Standard reader attack won&apos;t work with this option, only moebius attack works</source>
         <translation type="unfinished"></translation>
     </message>
@@ -352,7 +382,7 @@ It could make the whole sector blocked irreversibly!</source>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="493"/>
-        <location filename="../ui/mainwindow.cpp" line="918"/>
+        <location filename="../ui/mainwindow.cpp" line="921"/>
         <source>Data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -409,11 +439,6 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="688"/>
         <source>Key Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/mainwindow.ui" line="1140"/>
-        <source>Snoop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -554,6 +579,11 @@ It could make the whole sector blocked irreversibly!</source>
         <location filename="../ui/mainwindow.ui" line="1093"/>
         <location filename="../ui/mainwindow.ui" line="1127"/>
         <source>Sniff</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.ui" line="1140"/>
+        <source>Sniff(14a)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -739,7 +769,7 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="134"/>
-        <location filename="../ui/mainwindow.cpp" line="906"/>
+        <location filename="../ui/mainwindow.cpp" line="909"/>
         <source>Not Connected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -934,54 +964,54 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="907"/>
-        <location filename="../ui/mainwindow.cpp" line="1076"/>
+        <location filename="../ui/mainwindow.cpp" line="910"/>
+        <location filename="../ui/mainwindow.cpp" line="1079"/>
         <source>Idle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="909"/>
+        <location filename="../ui/mainwindow.cpp" line="912"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="916"/>
-        <location filename="../ui/mainwindow.cpp" line="923"/>
+        <location filename="../ui/mainwindow.cpp" line="919"/>
+        <location filename="../ui/mainwindow.cpp" line="926"/>
         <source>Sec</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="917"/>
+        <location filename="../ui/mainwindow.cpp" line="920"/>
         <source>Blk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="924"/>
+        <location filename="../ui/mainwindow.cpp" line="927"/>
         <source>KeyA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="925"/>
+        <location filename="../ui/mainwindow.cpp" line="928"/>
         <source>KeyB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1013"/>
+        <location filename="../ui/mainwindow.cpp" line="1016"/>
         <source>HW Version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1015"/>
+        <location filename="../ui/mainwindow.cpp" line="1018"/>
         <source>PM3:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1017"/>
+        <location filename="../ui/mainwindow.cpp" line="1020"/>
         <source>State:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1072"/>
+        <location filename="../ui/mainwindow.cpp" line="1075"/>
         <source>Running</source>
         <translation type="unfinished"></translation>
     </message>
@@ -989,56 +1019,56 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
 <context>
     <name>Mifare</name>
     <message>
-        <location filename="../module/mifare.cpp" line="617"/>
+        <location filename="../module/mifare.cpp" line="641"/>
         <source>Success!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="229"/>
-        <location filename="../module/mifare.cpp" line="617"/>
-        <location filename="../module/mifare.cpp" line="621"/>
+        <location filename="../module/mifare.cpp" line="228"/>
+        <location filename="../module/mifare.cpp" line="641"/>
         <location filename="../module/mifare.cpp" line="645"/>
-        <location filename="../module/mifare.cpp" line="684"/>
-        <location filename="../module/mifare.cpp" line="697"/>
-        <location filename="../module/mifare.cpp" line="743"/>
+        <location filename="../module/mifare.cpp" line="669"/>
+        <location filename="../module/mifare.cpp" line="708"/>
+        <location filename="../module/mifare.cpp" line="721"/>
+        <location filename="../module/mifare.cpp" line="776"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="229"/>
+        <location filename="../module/mifare.cpp" line="228"/>
         <source>Plz provide at least one known key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="468"/>
-        <location filename="../module/mifare.cpp" line="621"/>
+        <location filename="../module/mifare.cpp" line="492"/>
+        <location filename="../module/mifare.cpp" line="645"/>
         <source>Failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="646"/>
+        <location filename="../module/mifare.cpp" line="670"/>
         <source>The Access Bits is invalid!
 It could make the whole sector blocked irreversibly!
 Continue to write?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="684"/>
+        <location filename="../module/mifare.cpp" line="708"/>
         <source>Successful!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="697"/>
+        <location filename="../module/mifare.cpp" line="721"/>
         <source>Failed to write to these blocks:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="701"/>
+        <location filename="../module/mifare.cpp" line="725"/>
         <source>Select them?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="743"/>
+        <location filename="../module/mifare.cpp" line="776"/>
         <source>Failed to read card.</source>
         <translation type="unfinished"></translation>
     </message>

@@ -836,10 +836,10 @@ void MainWindow::on_MF_Sniff_sniffButton_clicked()
     setState(true);
 }
 
-void MainWindow::on_MF_Sniff_snoopButton_clicked()
+void MainWindow::on_MF_14aSniff_snoopButton_clicked()
 {
     setState(false);
-    mifare->snoop();
+    mifare->sniff14a();
     setState(true);
 }
 
@@ -852,6 +852,7 @@ void MainWindow::MF_widgetReset()
 {
     int secs = mifare->cardType.sector_size;
     int blks = mifare->cardType.block_size;
+    QBrush trailerItemForeColor = QBrush(QColor(0, 160, 255));
     ui->MF_RW_blockBox->clear();
     ui->MF_keyWidget->setRowCount(secs);
     ui->MF_dataWidget->setRowCount(blks);
@@ -876,8 +877,10 @@ void MainWindow::MF_widgetReset()
         setTableItem(ui->MF_keyWidget, i, 1, "");
         setTableItem(ui->MF_keyWidget, i, 2, "");
         setTableItem(ui->MF_dataWidget, mifare->cardType.blks[i], 0, QString::number(i));
+        ui->MF_dataWidget->item(mifare->cardType.blks[i] + mifare->cardType.blk[i] - 1, 2)->setForeground(trailerItemForeColor);
         ui->MF_dataWidget->item(mifare->cardType.blks[i], 0)->setCheckState(Qt::Checked);
     }
+    ui->MF_dataWidget->item(0, 2)->setForeground(QBrush(QColor(255, 160, 0)));
     ui->MF_selectAllBox->setCheckState(Qt::Checked);
     ui->MF_selectTrailerBox->setCheckState(Qt::Checked);
 

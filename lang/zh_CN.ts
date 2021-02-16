@@ -45,72 +45,102 @@
         <translation>模拟</translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="37"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="38"/>
         <source>u</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="66"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="67"/>
         <source>UID 4 or 7 bytes. If not specified, the UID 4B from emulator memory will be used</source>
         <translation>4或7字节的UID，如果不指定，则使用模拟器内存中的4字节UID</translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="87"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="105"/>
+        <source>--atqa</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="134"/>
+        <source>Provide explicit ATQA (2 bytes)</source>
+        <translation>指定ATQA（2个字节）</translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="172"/>
+        <source>--sak</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="201"/>
+        <source>Provide explicit SAK (1 byte)</source>
+        <translation>指定SAK（1个字节）</translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="239"/>
         <source>n</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="116"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="268"/>
         <source>Automatically exit simulation after &lt;numreads&gt; blocks have been read by reader. 0 = infinite</source>
         <translation>在读卡器读取&lt;n&gt;个块后自动退出模拟，n为0或不指定时永远不退出</translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="137"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="306"/>
         <source>i</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="150"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="319"/>
         <source>Interactive, means that console will not be returned until simulation finishes or is aborted</source>
         <translation>交互模式，勾选后PM3客户端将在模拟完成或者模拟中断后才可继续使用</translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="171"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="357"/>
         <source>x</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="184"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="370"/>
         <source>Crack, performs the &apos;reader attack&apos;, nr/ar attack against a legitimate reader, fishes out the key(s)</source>
         <translation>破解，对读卡器进行攻击，通过nr/ar攻击来钓出密码(无卡嗅探)</translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="205"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="408"/>
         <source>e</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="218"/>
-        <source>set keys found from &apos;reader attack&apos; to emulator memory (implies x and i)</source>
-        <translation>在获得密码后自动将密码写入模拟器内存（自动勾选x和i）</translation>
+        <location filename="../ui/mf_sim_simdialog.ui" line="421"/>
+        <source>set keys found from &apos;reader attack&apos; to emulator memory (implies x(--crack) and i)</source>
+        <translation>在获得密码后自动将密码写入模拟器内存（自动勾选x(--crack)和i）</translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="239"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="577"/>
+        <source>-v</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="590"/>
+        <source>verbose output</source>
+        <translation>更多输出内容</translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_sim_simdialog.ui" line="459"/>
         <source>f</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="268"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="488"/>
         <source>get UIDs to use for &apos;reader attack&apos; from file &apos;f &lt;filename.txt&gt;&apos; (implies x and i)</source>
         <translation>从&lt;filename.txt&gt;当中获取用于破解读卡器的UID（批量模拟）（自动勾选x和i）</translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="289"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="526"/>
         <source>r</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/mf_sim_simdialog.ui" line="302"/>
+        <location filename="../ui/mf_sim_simdialog.ui" line="539"/>
         <source>Generate random nonces instead of sequential nonces. Standard reader attack won&apos;t work with this option, only moebius attack works</source>
         <translation>生成随机nonce而不是顺序的nonce，这种情况下PM3将不对读卡器进行标准攻击，只进行moebius攻击</translation>
     </message>
@@ -356,7 +386,7 @@ It could make the whole sector blocked irreversibly!</source>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="493"/>
-        <location filename="../ui/mainwindow.cpp" line="918"/>
+        <location filename="../ui/mainwindow.cpp" line="921"/>
         <source>Data</source>
         <translation>数据</translation>
     </message>
@@ -414,11 +444,6 @@ It could make the whole sector blocked irreversibly!</source>
         <location filename="../ui/mainwindow.ui" line="688"/>
         <source>Key Type:</source>
         <translation>密钥类型：</translation>
-    </message>
-    <message>
-        <location filename="../ui/mainwindow.ui" line="1140"/>
-        <source>Snoop</source>
-        <translation>嗅探(Snoop)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1153"/>
@@ -559,6 +584,11 @@ It could make the whole sector blocked irreversibly!</source>
         <location filename="../ui/mainwindow.ui" line="1127"/>
         <source>Sniff</source>
         <translation>嗅探</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.ui" line="1140"/>
+        <source>Sniff(14a)</source>
+        <translation>嗅探(14a)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="1208"/>
@@ -747,7 +777,7 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="134"/>
-        <location filename="../ui/mainwindow.cpp" line="906"/>
+        <location filename="../ui/mainwindow.cpp" line="909"/>
         <source>Not Connected</source>
         <translation>未连接</translation>
     </message>
@@ -942,54 +972,54 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
         <translation>Trace文件(*.trc)</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="907"/>
-        <location filename="../ui/mainwindow.cpp" line="1076"/>
+        <location filename="../ui/mainwindow.cpp" line="910"/>
+        <location filename="../ui/mainwindow.cpp" line="1079"/>
         <source>Idle</source>
         <translation>空闲</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="909"/>
+        <location filename="../ui/mainwindow.cpp" line="912"/>
         <source>Stop</source>
         <translation>停止</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="916"/>
-        <location filename="../ui/mainwindow.cpp" line="923"/>
+        <location filename="../ui/mainwindow.cpp" line="919"/>
+        <location filename="../ui/mainwindow.cpp" line="926"/>
         <source>Sec</source>
         <translation>扇区</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="917"/>
+        <location filename="../ui/mainwindow.cpp" line="920"/>
         <source>Blk</source>
         <translation>块</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="924"/>
+        <location filename="../ui/mainwindow.cpp" line="927"/>
         <source>KeyA</source>
         <translation>密钥A</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="925"/>
+        <location filename="../ui/mainwindow.cpp" line="928"/>
         <source>KeyB</source>
         <translation>密钥B</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1013"/>
+        <location filename="../ui/mainwindow.cpp" line="1016"/>
         <source>HW Version:</source>
         <translation>固件版本：</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1015"/>
+        <location filename="../ui/mainwindow.cpp" line="1018"/>
         <source>PM3:</source>
         <translation>连接状态：</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1017"/>
+        <location filename="../ui/mainwindow.cpp" line="1020"/>
         <source>State:</source>
         <translation>运行状态：</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1072"/>
+        <location filename="../ui/mainwindow.cpp" line="1075"/>
         <source>Running</source>
         <translation>正在运行</translation>
     </message>
@@ -997,34 +1027,34 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
 <context>
     <name>Mifare</name>
     <message>
-        <location filename="../module/mifare.cpp" line="617"/>
+        <location filename="../module/mifare.cpp" line="641"/>
         <source>Success!</source>
         <translation>成功！</translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="229"/>
-        <location filename="../module/mifare.cpp" line="617"/>
-        <location filename="../module/mifare.cpp" line="621"/>
+        <location filename="../module/mifare.cpp" line="228"/>
+        <location filename="../module/mifare.cpp" line="641"/>
         <location filename="../module/mifare.cpp" line="645"/>
-        <location filename="../module/mifare.cpp" line="684"/>
-        <location filename="../module/mifare.cpp" line="697"/>
-        <location filename="../module/mifare.cpp" line="743"/>
+        <location filename="../module/mifare.cpp" line="669"/>
+        <location filename="../module/mifare.cpp" line="708"/>
+        <location filename="../module/mifare.cpp" line="721"/>
+        <location filename="../module/mifare.cpp" line="776"/>
         <source>Info</source>
         <translation>信息</translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="229"/>
+        <location filename="../module/mifare.cpp" line="228"/>
         <source>Plz provide at least one known key</source>
         <translation>请至少提供一个已知密码</translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="468"/>
-        <location filename="../module/mifare.cpp" line="621"/>
+        <location filename="../module/mifare.cpp" line="492"/>
+        <location filename="../module/mifare.cpp" line="645"/>
         <source>Failed!</source>
         <translation>失败！</translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="646"/>
+        <location filename="../module/mifare.cpp" line="670"/>
         <source>The Access Bits is invalid!
 It could make the whole sector blocked irreversibly!
 Continue to write?</source>
@@ -1033,22 +1063,22 @@ Continue to write?</source>
 确定要写入吗？</translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="684"/>
+        <location filename="../module/mifare.cpp" line="708"/>
         <source>Successful!</source>
         <translation>成功！</translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="697"/>
+        <location filename="../module/mifare.cpp" line="721"/>
         <source>Failed to write to these blocks:</source>
         <translation>写入以下块失败：</translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="701"/>
+        <location filename="../module/mifare.cpp" line="725"/>
         <source>Select them?</source>
         <translation>选中这些块？</translation>
     </message>
     <message>
-        <location filename="../module/mifare.cpp" line="743"/>
+        <location filename="../module/mifare.cpp" line="776"/>
         <source>Failed to read card.</source>
         <translation>读卡失败。</translation>
     </message>

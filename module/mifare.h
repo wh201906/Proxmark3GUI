@@ -70,7 +70,7 @@ public:
     void darkside();
     void hardnested();
     void sniff();
-    void snoop();
+    void sniff14a();
     void list();
     void readOne(TargetType targetType = TARGET_MIFARE);
     void readSelected(TargetType targetType = TARGET_MIFARE);

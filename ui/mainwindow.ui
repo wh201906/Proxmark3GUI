@@ -1129,7 +1129,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="MF_Sniff_snoopButton">
+              <widget class="QPushButton" name="MF_14aSniff_snoopButton">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -1137,7 +1137,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>Snoop</string>
+                <string>Sniff(14a)</string>
                </property>
               </widget>
              </item>
