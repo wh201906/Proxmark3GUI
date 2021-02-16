@@ -1,5 +1,7 @@
 # Proxmark3GUI
-A GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
+![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total)  
+
+A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 
 [中文](README/doc/README_zh_CN.md)
 
@@ -32,24 +34,45 @@ A GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 ## About Iceman fork/repo
 
 The [Iceman fork/repo](https://github.com/RfidResearchGroup/proxmark3) has more powerful functions like offline sniff. These guys even developed a new hardware called Proxmark3 RDV4 with smart card support. But the official repo and the Iceman repo is not fully compatible.  
-This GUI was designed for only official repo at first, but I'm trying to make it compatible with Iceman repo.  
-
-Supported functions when using Iceman client:  
-
-[supported functions](README/doc/supported_Iceman.md)  
+This GUI is compatible with Iceman/RRG repo(tested on v4.9237)  
 
 ***
 
 ## About Compiled Windows clients
 
 A cool guy [Gator96100](https://github.com/Gator96100) creates [ProxSpace](https://github.com/Gator96100/ProxSpace) and makes it possible to compile both the firmware and client on Windows.  
-Also, he makes the [pre-compiled Windows client](http://www.proxmark.org/forum/viewtopic.php?id=3975) so you can download it and run your PM3 client on Windows instantly.  
+Also, he makes the [pre-compiled Windows client](https://www.proxmarkbuilds.org/) so you can download it and run your PM3 client on Windows instantly.  
 I included his compiled client in my releases so you can use the GUI on the fly, and you can also use the GUI with your prefered client.  
 Great thanks to him.  
 
 ***
 
+## Build on Linux
+
+    cd ~
+    git clone https://github.com/wh201906/Proxmark3GUI.git
+    cd Proxmark3GUI
+    mkdir build
+    cd build
+    qmake ../
+    make
+    make clean
+    cp -r ../lang ./
+    ./Proxmark3GUI
+
+***
+
 ## Update Log:
+
+### V0.1.4
++ Optimize performance  
++ Optimize UI  
++ Search available ports automatically  
++ Add High-DPI support  
++ Support configuring environment variables by script  
+(Useful when the client requires specific environment variables)  
++ All functions are compatible with Iceman/RRG repo(tested on v4.9237)  
++ Fix some bugs
 
 ### V0.1.3
 + Fix Trailer Decoder
