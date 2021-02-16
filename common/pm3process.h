@@ -9,6 +9,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QSerialPort>
 #include <QProcessEnvironment>
+#include <QDir>
 
 #include "util.h"
 
@@ -27,6 +28,7 @@ public slots:
     qint64 write(QString data);
     void reconnectPM3();
     void setProcEnv(const QStringList* env);
+    void setWorkingDir(const QString& dir);
 private slots:
     void onTimeout();
     void onReadyRead();

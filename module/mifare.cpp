@@ -102,16 +102,14 @@ QString Mifare::info(bool isRequiringOutput)
                 end = result.indexOf("\n", end);
                 return result.mid(begin, end - begin + 1);
             }
-            else
-                return "";
         }
         else
         {
             util->execCMD("hf 14a info");
             ui->funcTab->setCurrentIndex(Util::rawTabIndex);
-            return "";
         }
     }
+    return "";
 }
 
 void Mifare::chk()
@@ -629,6 +627,7 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
             return true;
         }
     }
+    return false;
 }
 
 void Mifare::writeOne(TargetType targetType)

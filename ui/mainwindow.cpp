@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent):
     pm3 = new PM3Process(pm3Thread);
     pm3Thread->start();
     pm3state = false;
+    clientWorkingDir = new QDir;
 
     util = new Util(this);
     mifare = new Mifare(ui, util, this);
@@ -94,6 +95,7 @@ void MainWindow::on_PM3_connectButton_clicked()
     {
         QStringList args = ui->Set_Client_startArgsEdit->text().replace("<port>", port).split(' ');
         saveClientPath(ui->PM3_pathEdit->text());
+
         QProcess envSetProcess;
         QFileInfo envScriptPath(ui->Set_Client_envScriptEdit->text());
         if(envScriptPath.exists())
@@ -113,6 +115,15 @@ void MainWindow::on_PM3_connectButton_clicked()
         else
             clientEnv.clear();
         emit setProcEnv(&clientEnv);
+
+        clientWorkingDir->setPath(QApplication::applicationDirPath());
+        qDebug() << clientWorkingDir->absolutePath();
+        clientWorkingDir->mkpath(ui->Set_Client_workingDirEdit->text());
+        qDebug() << clientWorkingDir->absolutePath();
+        clientWorkingDir->cd(ui->Set_Client_workingDirEdit->text());
+        qDebug() << clientWorkingDir->absolutePath();
+        emit setWorkingDir(clientWorkingDir->absolutePath());
+
         emit connectPM3(ui->PM3_pathEdit->text(), port, args);
     }
 }
@@ -976,6 +987,7 @@ void MainWindow::uiInit()
 
     settings->beginGroup("Client_Env");
     ui->Set_Client_envScriptEdit->setText(settings->value("scriptPath").toString());
+    ui->Set_Client_workingDirEdit->setText(settings->value("workingDir", "../data").toString());
     settings->endGroup();
 
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
@@ -996,6 +1008,7 @@ void MainWindow::signalInit()
     connect(pm3, &PM3Process::PM3StatedChanged, util, &Util::setRunningState);
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
     connect(this, &MainWindow::setProcEnv, pm3, &PM3Process::setProcEnv);
+    connect(this, &MainWindow::setWorkingDir, pm3, &PM3Process::setWorkingDir);
 
     connect(util, &Util::write, pm3, &PM3Process::write);
 
@@ -1158,5 +1171,12 @@ void MainWindow::on_Set_Client_envScriptEdit_editingFinished()
 {
     settings->beginGroup("Client_Env");
     settings->setValue("scriptPath", ui->Set_Client_envScriptEdit->text());
+    settings->endGroup();
+}
+
+void MainWindow::on_Set_Client_saveWorkingDirButton_clicked()
+{
+    settings->beginGroup("Client_Env");
+    settings->setValue("workingDir", ui->Set_Client_workingDirEdit->text());
     settings->endGroup();
 }

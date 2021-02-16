@@ -130,7 +130,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -1538,7 +1538,7 @@
        <attribute name="title">
         <string>Settings</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_15">
+       <layout class="QHBoxLayout" name="horizontalLayout_18">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_12">
           <item>
@@ -1567,6 +1567,49 @@
                 <string>Note:
 If the client requires some enviroment variables, you can make a script file(*.bat on Windows or *.sh on Linux) to configure them,
 then put the path of the script there</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_19">
+               <property name="text">
+                <string>Client working directory:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_15">
+               <item>
+                <widget class="QLineEdit" name="Set_Client_workingDirEdit">
+                 <property name="text">
+                  <string>../data</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="Set_Client_saveWorkingDirButton">
+                 <property name="text">
+                  <string>Save</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>Note:
+On Windows, the client working directory should not be identical to the path of GUI, otherwise the client will use the wrong .dll file.</string>
                </property>
                <property name="wordWrap">
                 <bool>true</bool>

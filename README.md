@@ -72,6 +72,7 @@ Great thanks to him.
 + Support configuring environment variables by script  
 (Useful when the client requires specific environment variables)  
 + All functions are compatible with Iceman/RRG repo(tested on v4.9237)  
++ Support specifying client working directory
 + Fix some bugs
 
 ### V0.1.3

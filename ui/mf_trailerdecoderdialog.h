@@ -27,7 +27,7 @@ private slots:
 
     void on_blockSizeChanged(int id, bool st);
 
-    void on_boxChanged(int arg1);
+    void on_boxChanged();
 private:
     Ui::MF_trailerDecoderDialog *ui;
     QRegularExpressionValidator* validator;

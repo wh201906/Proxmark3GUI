@@ -173,6 +173,8 @@ private slots:
 
     void on_Set_Client_envScriptEdit_editingFinished();
 
+    void on_Set_Client_saveWorkingDirButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;
@@ -199,6 +201,7 @@ private:
     QTimer* portSearchTimer;
     QStringList portList;
     QStringList clientEnv;
+    QDir* clientWorkingDir;
 
     Mifare* mifare;
     Util* util;
@@ -217,5 +220,6 @@ signals:
     void killPM3();
     void setSerialListener(const QString& name, bool state);
     void setProcEnv(const QStringList *env);
+    void setWorkingDir(const QString& dir);
 };
 #endif // MAINWINDOW_H

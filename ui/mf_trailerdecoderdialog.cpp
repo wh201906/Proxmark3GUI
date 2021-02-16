@@ -123,7 +123,7 @@ void MF_trailerDecoderDialog::setTableItem(QTableWidget* widget, int row, int co
     widget->item(row, column)->setText(text);
 }
 
-void MF_trailerDecoderDialog::on_boxChanged(int arg1)
+void MF_trailerDecoderDialog::on_boxChanged()
 {
     quint8 ACBits[4];
     ACBits[0] = ui->C0Box->value();

@@ -55,7 +55,11 @@ void PM3Process::connectPM3(const QString& path, const QString& port, const QStr
             result = result.left(result.indexOf("\r\n"));
             result = result.mid(3, result.lastIndexOf(" ") - 3);
             emit PM3StatedChanged(true, result);
-            setSerialListener(port, true);
+
+            // if the arguments don't contain <port>, then disable the port listener
+            // useful when using offline sniff
+            if(args.indexOf(port) != -1)
+                setSerialListener(port, true);
         }
         else
             kill();
@@ -132,5 +136,11 @@ void PM3Process::setProcEnv(const QStringList* env)
 {
 //    qDebug() << "passed Env List" << *env;
     this->setEnvironment(*env);
-//    qDebug() << "final Env List" << processEnvironment().toStringList();
+    //    qDebug() << "final Env List" << processEnvironment().toStringList();
+}
+
+void PM3Process::setWorkingDir(const QString& dir)
+{
+    // the working directory cannot be the default, or the client will failed to load the dll
+    this->setWorkingDirectory(dir);
 }
