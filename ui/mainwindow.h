@@ -53,7 +53,7 @@ public slots:
     void setStatusBar(QLabel* target, const QString& text);
     void onPM3StateChanged(bool st, const QString& info);
     void MF_onMFCardTypeChanged(int id, bool st);
-    void on_Raw_CMDEdit_keyPressed(QObject *obj_addr, QEvent &event);
+    void on_Raw_keyPressed(QObject *obj_addr, QEvent &event);
     void on_MF_keyWidget_resized(QObject *obj_addr, QEvent &event);
 private slots:
 
@@ -207,7 +207,6 @@ private:
     Util* util;
 
     MF_trailerDecoderDialog* decDialog;
-
 
     void signalInit();
     void MF_widgetReset();

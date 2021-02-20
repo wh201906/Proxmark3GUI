@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent):
     util = new Util(this);
     mifare = new Mifare(ui, util, this);
 
-    keyEventFilter = new MyEventFilter(QEvent::KeyRelease);
+    keyEventFilter = new MyEventFilter(QEvent::KeyPress);
     resizeEventFilter = new MyEventFilter(QEvent::Resize);
 
     // hide unused tabs
@@ -155,7 +155,7 @@ void MainWindow::on_PM3_disconnectButton_clicked()
 void MainWindow::refreshOutput(const QString& output)
 {
 //    qDebug() << "MainWindow::refresh:" << output;
-    ui->Raw_outputEdit->insertPlainText(output);
+    ui->Raw_outputEdit->appendPlainText(output);
     ui->Raw_outputEdit->moveCursor(QTextCursor::End);
 }
 
@@ -240,33 +240,40 @@ void MainWindow::refreshCMD(const QString& cmd)
     ui->Raw_CMDEdit->blockSignals(false);
 }
 
-void MainWindow::on_Raw_CMDEdit_keyPressed(QObject* obj_addr, QEvent& event)
+void MainWindow::on_Raw_keyPressed(QObject* obj_addr, QEvent& event)
 {
-    if(obj_addr == ui->Raw_CMDEdit && event.type() == QEvent::KeyRelease)
+    if(event.type() == QEvent::KeyPress)
     {
         QKeyEvent& keyEvent = static_cast<QKeyEvent&>(event);
-        if(keyEvent.key() == Qt::Key_Up)
+        if(obj_addr == ui->Raw_CMDEdit)
         {
-            if(stashedIndex > 0)
-                stashedIndex--;
-            else if(stashedIndex == -1)
-                stashedIndex = ui->Raw_CMDHistoryWidget->count() - 1;
+            if(keyEvent.key() == Qt::Key_Up)
+            {
+                if(stashedIndex > 0)
+                    stashedIndex--;
+                else if(stashedIndex == -1)
+                    stashedIndex = ui->Raw_CMDHistoryWidget->count() - 1;
+            }
+            else if(keyEvent.key() == Qt::Key_Down)
+            {
+                if(stashedIndex < ui->Raw_CMDHistoryWidget->count() - 1 && stashedIndex != -1)
+                    stashedIndex++;
+                else if(stashedIndex == ui->Raw_CMDHistoryWidget->count() - 1)
+                    stashedIndex = -1;
+            }
+            if(keyEvent.key() == Qt::Key_Up || keyEvent.key() == Qt::Key_Down)
+            {
+                ui->Raw_CMDEdit->blockSignals(true);
+                if(stashedIndex == -1)
+                    ui->Raw_CMDEdit->setText(stashedCMDEditText);
+                else
+                    ui->Raw_CMDEdit->setText(ui->Raw_CMDHistoryWidget->item(stashedIndex)->text());
+                ui->Raw_CMDEdit->blockSignals(false);
+            }
         }
-        else if(keyEvent.key() == Qt::Key_Down)
+        else if(obj_addr == ui->Raw_outputEdit)
         {
-            if(stashedIndex < ui->Raw_CMDHistoryWidget->count() - 1 && stashedIndex != -1)
-                stashedIndex++;
-            else if(stashedIndex == ui->Raw_CMDHistoryWidget->count() - 1)
-                stashedIndex = -1;
-        }
-        if(keyEvent.key() == Qt::Key_Up || keyEvent.key() == Qt::Key_Down)
-        {
-            ui->Raw_CMDEdit->blockSignals(true);
-            if(stashedIndex == -1)
-                ui->Raw_CMDEdit->setText(stashedCMDEditText);
-            else
-                ui->Raw_CMDEdit->setText(ui->Raw_CMDHistoryWidget->item(stashedIndex)->text());
-            ui->Raw_CMDEdit->blockSignals(false);
+            ui->Raw_CMDEdit->setFocus();
         }
     }
 }
@@ -907,11 +914,12 @@ void MainWindow::MF_widgetReset()
 
 void MainWindow::uiInit()
 {
-    connect(ui->Raw_CMDEdit, &QLineEdit::editingFinished, this, &MainWindow::sendMSG);
+    connect(ui->Raw_CMDEdit, &QLineEdit::returnPressed, this, &MainWindow::sendMSG);
     ui->Raw_CMDEdit->installEventFilter(keyEventFilter);
-    connect(keyEventFilter, &MyEventFilter::eventHappened, this, &MainWindow::on_Raw_CMDEdit_keyPressed);
+    connect(keyEventFilter, &MyEventFilter::eventHappened, this, &MainWindow::on_Raw_keyPressed);
     ui->MF_keyWidget->installEventFilter(resizeEventFilter);
     connect(resizeEventFilter, &MyEventFilter::eventHappened, this, &MainWindow::on_MF_keyWidget_resized);
+    ui->Raw_outputEdit->installEventFilter(keyEventFilter);
 
     connectStatusBar = new QLabel(this);
     programStatusBar = new QLabel(this);
@@ -994,6 +1002,7 @@ void MainWindow::uiInit()
     ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
 
     on_Raw_CMDHistoryBox_stateChanged(Qt::Unchecked);
+
 }
 
 void MainWindow::signalInit()
