@@ -273,7 +273,8 @@ void MainWindow::on_Raw_keyPressed(QObject* obj_addr, QEvent& event)
         }
         else if(obj_addr == ui->Raw_outputEdit)
         {
-            ui->Raw_CMDEdit->setFocus();
+            if(keyEvent.key() == Qt::Key_Up || keyEvent.key() == Qt::Key_Down)
+                ui->Raw_CMDEdit->setFocus();
         }
     }
 }
