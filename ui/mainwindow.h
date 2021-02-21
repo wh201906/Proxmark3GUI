@@ -23,6 +23,7 @@
 #include <QProcessEnvironment>
 #include <QScrollBar>
 #include <QTimer>
+#include <QDateTime>
 
 #include "common/myeventfilter.h"
 #include "common/pm3process.h"
@@ -175,6 +176,8 @@ private slots:
 
     void on_Set_Client_saveWorkingDirButton_clicked();
 
+    void on_Set_Client_keepClientActiveBox_stateChanged(int arg1);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;
@@ -197,6 +200,7 @@ private:
     PM3Process* pm3;
     bool pm3state;
     bool keepButtonsEnabled;
+    bool keepClientActive;
     QThread* pm3Thread;
     QTimer* portSearchTimer;
     QStringList portList;
@@ -214,9 +218,10 @@ private:
     void setState(bool st);
     void saveClientPath(const QString& path);
 signals:
-    void connectPM3(const QString& path, const QString& port, const QStringList args);
+    void connectPM3(const QString& path, const QStringList args);
     void reconnectPM3();
     void killPM3();
+    void setSerialListener(bool state);
     void setSerialListener(const QString& name, bool state);
     void setProcEnv(const QStringList *env);
     void setWorkingDir(const QString& dir);

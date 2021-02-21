@@ -1341,3 +1341,10 @@ QList<quint8> Mifare::data_getACBits(const QString& text) //return empty QList i
     return result;
 }
 
+QString Mifare::data_getUID()
+{
+    if(data_isDataValid(dataList->at(0)))
+        return dataList->at(0).left(8);
+    else
+        return "";
+}

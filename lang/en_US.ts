@@ -377,13 +377,13 @@ It could make the whole sector blocked irreversibly!</source>
     <message>
         <location filename="../ui/mainwindow.ui" line="473"/>
         <location filename="../ui/mainwindow.ui" line="1179"/>
-        <location filename="../ui/mainwindow.ui" line="1602"/>
+        <location filename="../ui/mainwindow.ui" line="1599"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="493"/>
-        <location filename="../ui/mainwindow.cpp" line="932"/>
+        <location filename="../ui/mainwindow.cpp" line="959"/>
         <source>Data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -479,7 +479,7 @@ It could make the whole sector blocked irreversibly!</source>
     </message>
     <message>
         <location filename="../ui/mainwindow.ui" line="878"/>
-        <location filename="../ui/mainwindow.cpp" line="760"/>
+        <location filename="../ui/mainwindow.cpp" line="786"/>
         <source>About UID Card</source>
         <translation type="unfinished"></translation>
     </message>
@@ -658,76 +658,76 @@ It could make the whole sector blocked irreversibly!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1471"/>
-        <location filename="../ui/mainwindow.cpp" line="204"/>
+        <location filename="../ui/mainwindow.ui" line="1468"/>
+        <location filename="../ui/mainwindow.cpp" line="218"/>
         <source>History:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1503"/>
+        <location filename="../ui/mainwindow.ui" line="1500"/>
         <source>ClearHistory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1522"/>
+        <location filename="../ui/mainwindow.ui" line="1519"/>
         <source>Send</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1529"/>
+        <location filename="../ui/mainwindow.ui" line="1526"/>
         <source>ClearOutput</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1539"/>
+        <location filename="../ui/mainwindow.ui" line="1536"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1547"/>
+        <location filename="../ui/mainwindow.ui" line="1544"/>
         <source>Client</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1553"/>
+        <location filename="../ui/mainwindow.ui" line="1550"/>
         <source>Preload script path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1567"/>
+        <location filename="../ui/mainwindow.ui" line="1564"/>
         <source>Note:
 If the client requires some enviroment variables, you can make a script file(*.bat on Windows or *.sh on Linux) to configure them,
 then put the path of the script there</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1586"/>
+        <location filename="../ui/mainwindow.ui" line="1583"/>
         <source>Client working directory:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1595"/>
+        <location filename="../ui/mainwindow.ui" line="1592"/>
         <source>../data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1611"/>
+        <location filename="../ui/mainwindow.ui" line="1608"/>
         <source>Note:
 On Windows, the client working directory should not be identical to the path of GUI, otherwise the client will use the wrong .dll file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1629"/>
+        <location filename="../ui/mainwindow.ui" line="1626"/>
         <source>Start arguments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1636"/>
+        <location filename="../ui/mainwindow.ui" line="1633"/>
         <source>&lt;port&gt; -f</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1643"/>
+        <location filename="../ui/mainwindow.ui" line="1640"/>
         <source>Note: 
 -f is necessary because the GUI need to handle the output in time
 In some cases the arguments should be set to &quot;-p /dev/&lt;port&gt; -f&quot;
@@ -735,75 +735,80 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1690"/>
+        <location filename="../ui/mainwindow.ui" line="1687"/>
         <source>Keep buttons enabled even the client is running or disconnected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1712"/>
+        <location filename="../ui/mainwindow.ui" line="1733"/>
+        <source>Keep te client active even the PM3 hardware is disconnected.(Experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/mainwindow.ui" line="1748"/>
         <source>GUI</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1720"/>
+        <location filename="../ui/mainwindow.ui" line="1756"/>
         <source>Language: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1727"/>
+        <location filename="../ui/mainwindow.ui" line="1763"/>
         <source>Choose Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.ui" line="1734"/>
+        <location filename="../ui/mainwindow.ui" line="1770"/>
         <source>(Restart this app to use new language)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="93"/>
-        <location filename="../ui/mainwindow.cpp" line="299"/>
-        <location filename="../ui/mainwindow.cpp" line="525"/>
-        <location filename="../ui/mainwindow.cpp" line="545"/>
-        <location filename="../ui/mainwindow.cpp" line="558"/>
-        <location filename="../ui/mainwindow.cpp" line="577"/>
-        <location filename="../ui/mainwindow.cpp" line="590"/>
-        <location filename="../ui/mainwindow.cpp" line="613"/>
-        <location filename="../ui/mainwindow.cpp" line="626"/>
-        <location filename="../ui/mainwindow.cpp" line="817"/>
-        <location filename="../ui/mainwindow.cpp" line="836"/>
+        <location filename="../ui/mainwindow.cpp" line="97"/>
+        <location filename="../ui/mainwindow.cpp" line="321"/>
+        <location filename="../ui/mainwindow.cpp" line="547"/>
+        <location filename="../ui/mainwindow.cpp" line="567"/>
+        <location filename="../ui/mainwindow.cpp" line="580"/>
+        <location filename="../ui/mainwindow.cpp" line="599"/>
+        <location filename="../ui/mainwindow.cpp" line="612"/>
+        <location filename="../ui/mainwindow.cpp" line="639"/>
+        <location filename="../ui/mainwindow.cpp" line="652"/>
+        <location filename="../ui/mainwindow.cpp" line="843"/>
+        <location filename="../ui/mainwindow.cpp" line="862"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="93"/>
+        <location filename="../ui/mainwindow.cpp" line="97"/>
         <source>Plz choose a port first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="139"/>
+        <location filename="../ui/mainwindow.cpp" line="152"/>
         <source>Connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="145"/>
-        <location filename="../ui/mainwindow.cpp" line="920"/>
+        <location filename="../ui/mainwindow.cpp" line="158"/>
+        <location filename="../ui/mainwindow.cpp" line="947"/>
         <source>Not Connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="571"/>
+        <location filename="../ui/mainwindow.cpp" line="593"/>
         <source>Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml);;All Files(*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="577"/>
-        <location filename="../ui/mainwindow.cpp" line="590"/>
-        <location filename="../ui/mainwindow.cpp" line="817"/>
+        <location filename="../ui/mainwindow.cpp" line="599"/>
+        <location filename="../ui/mainwindow.cpp" line="612"/>
+        <location filename="../ui/mainwindow.cpp" line="843"/>
         <source>Failed to open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="299"/>
+        <location filename="../ui/mainwindow.cpp" line="321"/>
         <source>Continue?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -813,222 +818,222 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="299"/>
+        <location filename="../ui/mainwindow.cpp" line="321"/>
         <source>Some of the data and key will be cleared.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="412"/>
+        <location filename="../ui/mainwindow.cpp" line="434"/>
         <source>Plz select the font of data widget and key widget</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="525"/>
+        <location filename="../ui/mainwindow.cpp" line="547"/>
         <source>Data must consists of 32 Hex symbols(Whitespace is allowed)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="545"/>
-        <location filename="../ui/mainwindow.cpp" line="558"/>
+        <location filename="../ui/mainwindow.cpp" line="567"/>
+        <location filename="../ui/mainwindow.cpp" line="580"/>
         <source>Key must consists of 12 Hex symbols(Whitespace is allowed)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="570"/>
+        <location filename="../ui/mainwindow.cpp" line="592"/>
         <source>Plz select the data file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="583"/>
+        <location filename="../ui/mainwindow.cpp" line="605"/>
         <source>Plz select the key file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="584"/>
+        <location filename="../ui/mainwindow.cpp" line="606"/>
         <source>Binary Key Files(*.bin *.dump);;Binary Data Files(*.bin *.dump);;All Files(*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="606"/>
+        <location filename="../ui/mainwindow.cpp" line="632"/>
         <source>Plz select the location to save data file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="607"/>
+        <location filename="../ui/mainwindow.cpp" line="633"/>
         <source>Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="613"/>
-        <location filename="../ui/mainwindow.cpp" line="626"/>
-        <location filename="../ui/mainwindow.cpp" line="836"/>
+        <location filename="../ui/mainwindow.cpp" line="639"/>
+        <location filename="../ui/mainwindow.cpp" line="652"/>
+        <location filename="../ui/mainwindow.cpp" line="862"/>
         <source>Failed to save to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="619"/>
+        <location filename="../ui/mainwindow.cpp" line="645"/>
         <source>Plz select the location to save key file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="620"/>
+        <location filename="../ui/mainwindow.cpp" line="646"/>
         <source>Binary Key Files(*.bin *.dump)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="745"/>
+        <location filename="../ui/mainwindow.cpp" line="771"/>
         <source>    Normally, the Block 0 of a typical Mifare card, which contains the UID, is locked during the manufacture. Users cannot write anything to Block 0 or set a new UID to a normal Mifare card.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="746"/>
+        <location filename="../ui/mainwindow.cpp" line="772"/>
         <source>    Chinese Magic Cards(aka UID Cards) are some special cards whose Block 0 are writeable. And you can change UID by writing to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="748"/>
+        <location filename="../ui/mainwindow.cpp" line="774"/>
         <source>There are two versions of Chinese Magic Cards, the Gen1 and the Gen2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="749"/>
+        <location filename="../ui/mainwindow.cpp" line="775"/>
         <source>    Gen1:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="749"/>
+        <location filename="../ui/mainwindow.cpp" line="775"/>
         <source>    also called UID card in China. It responses to some backdoor commands so you can access any blocks without password. The Proxmark3 has a bunch of related commands(csetblk, cgetblk, ...) to deal with this type of card, and my GUI also support these commands.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="750"/>
+        <location filename="../ui/mainwindow.cpp" line="776"/>
         <source>    Gen2:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="750"/>
+        <location filename="../ui/mainwindow.cpp" line="776"/>
         <source>    doesn&apos;t response to the backdoor commands, which means that a reader cannot detect whether it is a Chinese Magic Card or not by sending backdoor commands.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="752"/>
+        <location filename="../ui/mainwindow.cpp" line="778"/>
         <source>There are some types of Chinese Magic Card Gen2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="753"/>
+        <location filename="../ui/mainwindow.cpp" line="779"/>
         <source>    CUID Card:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="753"/>
+        <location filename="../ui/mainwindow.cpp" line="779"/>
         <source>    the Block 0 is writeable, you can write to this block repeatedly by normal wrbl command.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="754"/>
+        <location filename="../ui/mainwindow.cpp" line="780"/>
         <source>    (hf mf wrbl 0 A FFFFFFFFFFFF &lt;the data you want to write&gt;)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="755"/>
+        <location filename="../ui/mainwindow.cpp" line="781"/>
         <source>    FUID Card:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="755"/>
+        <location filename="../ui/mainwindow.cpp" line="781"/>
         <source>    you can only write to Block 0 once. After that, it seems like a typical Mifare card(Block 0 cannot be written to).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="756"/>
+        <location filename="../ui/mainwindow.cpp" line="782"/>
         <source>    (some readers might try changing the Block 0, which could detect the CUID Card. In that case, you should use FUID card.)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="757"/>
+        <location filename="../ui/mainwindow.cpp" line="783"/>
         <source>    UFUID Card:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="757"/>
+        <location filename="../ui/mainwindow.cpp" line="783"/>
         <source>    It behaves like a CUID card(or UID card? I&apos;m not sure) before you send some special command to lock it. Once it is locked, you cannot change its Block 0(just like a typical Mifare card).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="759"/>
+        <location filename="../ui/mainwindow.cpp" line="785"/>
         <source>    Seemingly, these Chinese Magic Cards are more easily to be compromised by Nested Attack(it takes little time to get an unknown key).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="804"/>
+        <location filename="../ui/mainwindow.cpp" line="830"/>
         <source>Plz select the trace file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="805"/>
+        <location filename="../ui/mainwindow.cpp" line="831"/>
         <source>Trace Files(*.trc);;All Files(*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="827"/>
+        <location filename="../ui/mainwindow.cpp" line="853"/>
         <source>Plz select the location to save trace file:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="828"/>
+        <location filename="../ui/mainwindow.cpp" line="854"/>
         <source>Trace Files(*.trc)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="921"/>
-        <location filename="../ui/mainwindow.cpp" line="1092"/>
+        <location filename="../ui/mainwindow.cpp" line="948"/>
+        <location filename="../ui/mainwindow.cpp" line="1127"/>
         <source>Idle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="923"/>
+        <location filename="../ui/mainwindow.cpp" line="950"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="930"/>
-        <location filename="../ui/mainwindow.cpp" line="937"/>
+        <location filename="../ui/mainwindow.cpp" line="957"/>
+        <location filename="../ui/mainwindow.cpp" line="964"/>
         <source>Sec</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="931"/>
+        <location filename="../ui/mainwindow.cpp" line="958"/>
         <source>Blk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="938"/>
+        <location filename="../ui/mainwindow.cpp" line="965"/>
         <source>KeyA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="939"/>
+        <location filename="../ui/mainwindow.cpp" line="966"/>
         <source>KeyB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1029"/>
+        <location filename="../ui/mainwindow.cpp" line="1064"/>
         <source>HW Version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1031"/>
+        <location filename="../ui/mainwindow.cpp" line="1066"/>
         <source>PM3:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1033"/>
+        <location filename="../ui/mainwindow.cpp" line="1068"/>
         <source>State:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1088"/>
+        <location filename="../ui/mainwindow.cpp" line="1123"/>
         <source>Running</source>
         <translation type="unfinished"></translation>
     </message>

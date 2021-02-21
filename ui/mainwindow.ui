@@ -1535,7 +1535,7 @@
        <attribute name="title">
         <string>Settings</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_18">
+       <layout class="QHBoxLayout" name="horizontalLayout_19">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_12">
           <item>
@@ -1699,6 +1699,45 @@ or &quot;-p &lt;port&gt; -f&quot;</string>
                 <enum>Qt::Horizontal</enum>
                </property>
               </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_18">
+               <item>
+                <widget class="QCheckBox" name="Set_Client_keepClientActiveBox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_21">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Keep te client active even the PM3 hardware is disconnected.(Experimental)</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>

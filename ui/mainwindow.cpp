@@ -89,43 +89,56 @@ void MainWindow::on_PM3_connectButton_clicked()
     qDebug() << "Main:" << QThread::currentThread();
 
     QString port = ui->PM3_portBox->currentText();
-    if(port == "")
-        QMessageBox::information(NULL, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
-    else
+    QString startArgs = ui->Set_Client_startArgsEdit->text();
+
+    // on RRG repo, if no port is specified, the client will search the available port
+    if(port == "" && startArgs.contains("<port>")) // has <port>, no port
     {
-        QStringList args = ui->Set_Client_startArgsEdit->text().replace("<port>", port).split(' ');
-        saveClientPath(ui->PM3_pathEdit->text());
-
-        QProcess envSetProcess;
-        QFileInfo envScriptPath(ui->Set_Client_envScriptEdit->text());
-        if(envScriptPath.exists())
-        {
-            qDebug() << envScriptPath.absoluteFilePath();
-#ifdef Q_OS_WIN
-            // cmd /c "<path>">>nul && set
-            envSetProcess.start("cmd /c \"" + envScriptPath.absoluteFilePath() + "\">>nul && set");
-#else
-            // sh -c '. "<path>">>/dev/null && env'
-            envSetProcess.start("sh -c \' . \"" + envScriptPath.absoluteFilePath() + "\">>/dev/null && env");
-#endif
-            envSetProcess.waitForReadyRead(10000);
-            clientEnv = QString(envSetProcess.readAll()).split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-//            qDebug() << "Get Env List" << clientEnv;
-        }
-        else
-            clientEnv.clear();
-        emit setProcEnv(&clientEnv);
-
-        clientWorkingDir->setPath(QApplication::applicationDirPath());
-        qDebug() << clientWorkingDir->absolutePath();
-        clientWorkingDir->mkpath(ui->Set_Client_workingDirEdit->text());
-        qDebug() << clientWorkingDir->absolutePath();
-        clientWorkingDir->cd(ui->Set_Client_workingDirEdit->text());
-        qDebug() << clientWorkingDir->absolutePath();
-        emit setWorkingDir(clientWorkingDir->absolutePath());
-
-        emit connectPM3(ui->PM3_pathEdit->text(), port, args);
+        QMessageBox::information(NULL, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
+        return;
     }
+
+    if(!startArgs.contains("<port>")) // no <port>
+        port = ""; // a symbol
+
+    QStringList args = startArgs.replace("<port>", port).split(' ');
+    saveClientPath(ui->PM3_pathEdit->text());
+
+    QProcess envSetProcess;
+    QFileInfo envScriptPath(ui->Set_Client_envScriptEdit->text());
+    if(envScriptPath.exists())
+    {
+        qDebug() << envScriptPath.absoluteFilePath();
+#ifdef Q_OS_WIN
+        // cmd /c "<path>">>nul && set
+        envSetProcess.start("cmd /c \"" + envScriptPath.absoluteFilePath() + "\">>nul && set");
+#else
+        // sh -c '. "<path>">>/dev/null && env'
+        envSetProcess.start("sh -c \' . \"" + envScriptPath.absoluteFilePath() + "\">>/dev/null && env");
+#endif
+        envSetProcess.waitForReadyRead(10000);
+        clientEnv = QString(envSetProcess.readAll()).split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+//      qDebug() << "Get Env List" << clientEnv;
+    }
+    else
+        clientEnv.clear();
+    emit setProcEnv(&clientEnv);
+
+    clientWorkingDir->setPath(QApplication::applicationDirPath());
+    qDebug() << clientWorkingDir->absolutePath();
+    clientWorkingDir->mkpath(ui->Set_Client_workingDirEdit->text());
+    qDebug() << clientWorkingDir->absolutePath();
+    clientWorkingDir->cd(ui->Set_Client_workingDirEdit->text());
+    qDebug() << clientWorkingDir->absolutePath();
+    emit setWorkingDir(clientWorkingDir->absolutePath());
+
+    emit connectPM3(ui->PM3_pathEdit->text(), args);
+    if(port != "" && !keepClientActive)
+        emit setSerialListener(port, true);
+    else if(!keepClientActive)
+        emit setSerialListener(false);
+
+
 }
 
 void MainWindow::onPM3StateChanged(bool st, const QString& info)
@@ -149,7 +162,7 @@ void MainWindow::onPM3StateChanged(bool st, const QString& info)
 void MainWindow::on_PM3_disconnectButton_clicked()
 {
     emit killPM3();
-    emit setSerialListener("", false);
+    emit setSerialListener(false);
 }
 
 void MainWindow::refreshOutput(const QString& output)
@@ -173,6 +186,7 @@ void MainWindow::on_stopButton_clicked()
                 break;
         }
         emit reconnectPM3();
+        emit setSerialListener(!keepClientActive);
     }
 }
 // *********************************************************
@@ -608,11 +622,15 @@ void MainWindow::on_MF_File_saveButton_clicked()
     QString title = "";
     QString filename = "";
     QString selectedType = "";
+    QString defaultName = mifare->data_getUID();
+    if(defaultName != "")
+        defaultName += "_";
+    defaultName += QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
 
     if(ui->MF_File_dataBox->isChecked())
     {
         title = tr("Plz select the location to save data file:");
-        filename = QFileDialog::getSaveFileName(this, title, "./", tr("Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml)"), &selectedType);
+        filename = QFileDialog::getSaveFileName(this, title, "./data_" + defaultName, tr("Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml)"), &selectedType);
         qDebug() << filename;
         if(filename != "")
         {
@@ -625,7 +643,7 @@ void MainWindow::on_MF_File_saveButton_clicked()
     else if(ui->MF_File_keyBox->isChecked())
     {
         title = tr("Plz select the location to save key file:");
-        filename = QFileDialog::getSaveFileName(this, title, "./", tr("Binary Key Files(*.bin *.dump)"), &selectedType);
+        filename = QFileDialog::getSaveFileName(this, title, "./key_" + defaultName, tr("Binary Key Files(*.bin *.dump)"), &selectedType);
         qDebug() << filename;
         if(filename != "")
         {
@@ -994,6 +1012,11 @@ void MainWindow::uiInit()
     ui->Set_Client_forceEnabledBox->setChecked(keepButtonsEnabled);
     settings->endGroup();
 
+    settings->beginGroup("Client_keepClientActive");
+    keepClientActive = settings->value("state", false).toBool();
+    ui->Set_Client_keepClientActiveBox->setChecked(keepClientActive);
+    settings->endGroup();
+
     settings->beginGroup("Client_Env");
     ui->Set_Client_envScriptEdit->setText(settings->value("scriptPath").toString());
     ui->Set_Client_workingDirEdit->setText(settings->value("workingDir", "../data").toString());
@@ -1019,6 +1042,8 @@ void MainWindow::signalInit()
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
     connect(this, &MainWindow::setProcEnv, pm3, &PM3Process::setProcEnv);
     connect(this, &MainWindow::setWorkingDir, pm3, &PM3Process::setWorkingDir);
+    connect(this, QOverload<bool>::of(&MainWindow::setSerialListener), pm3, QOverload<bool>::of(&PM3Process::setSerialListener));
+    connect(this, QOverload<const QString&, bool>::of(&MainWindow::setSerialListener), pm3, QOverload<const QString&, bool>::of(&PM3Process::setSerialListener));
 
     connect(util, &Util::write, pm3, &PM3Process::write);
 
@@ -1189,4 +1214,13 @@ void MainWindow::on_Set_Client_saveWorkingDirButton_clicked()
     settings->beginGroup("Client_Env");
     settings->setValue("workingDir", ui->Set_Client_workingDirEdit->text());
     settings->endGroup();
+}
+
+void MainWindow::on_Set_Client_keepClientActiveBox_stateChanged(int arg1)
+{
+    settings->beginGroup("Client_keepClientActive");
+    keepClientActive = (arg1 == Qt::Checked);
+    settings->setValue("state", keepClientActive);
+    settings->endGroup();
+    emit setSerialListener(!keepClientActive);
 }

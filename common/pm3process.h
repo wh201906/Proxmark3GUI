@@ -23,8 +23,9 @@ public:
     void testThread();
 
 public slots:
-    void connectPM3(const QString& path, const QString& port, const QStringList args);
+    void connectPM3(const QString& path, const QStringList args);
     void setSerialListener(const QString& name, bool state);
+    void setSerialListener(bool state);
     qint64 write(QString data);
     void reconnectPM3();
     void setProcEnv(const QStringList* env);
@@ -39,7 +40,7 @@ private:
     QTimer* serialListener;
     QSerialPortInfo* portInfo;
     QString currPath;
-    QString currPort;
+    QString currPort = "";
     QStringList currArgs;
 
 signals:

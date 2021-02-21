@@ -12,9 +12,10 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
     serialListener->setTimerType(Qt::VeryCoarseTimer);
     connect(serialListener, &QTimer::timeout, this, &PM3Process::onTimeout);
     connect(this, &PM3Process::readyRead, this, &PM3Process::onReadyRead);
+    portInfo = nullptr;
 }
 
-void PM3Process::connectPM3(const QString& path, const QString& port, const QStringList args)
+void PM3Process::connectPM3(const QString& path, const QStringList args)
 {
     QString result;
     Util::ClientType clientType;
@@ -22,7 +23,6 @@ void PM3Process::connectPM3(const QString& path, const QString& port, const QStr
 
     // stash for reconnect
     currPath = path;
-    currPort = port;
     currArgs = args;
 
     // using "-f" option to make the client output flushed after every print.
@@ -55,11 +55,6 @@ void PM3Process::connectPM3(const QString& path, const QString& port, const QStr
             result = result.left(result.indexOf("\r\n"));
             result = result.mid(3, result.lastIndexOf(" ") - 3);
             emit PM3StatedChanged(true, result);
-
-            // if the arguments don't contain <port>, then disable the port listener
-            // useful when using offline sniff
-            if(args.indexOf(port) != -1)
-                setSerialListener(port, true);
         }
         else
             kill();
@@ -68,7 +63,7 @@ void PM3Process::connectPM3(const QString& path, const QString& port, const QStr
 
 void PM3Process::reconnectPM3()
 {
-    connectPM3(currPath, currPort, currArgs);
+    connectPM3(currPath, currArgs);
 }
 
 void PM3Process::setRequiringOutput(bool st)
@@ -87,6 +82,7 @@ void PM3Process::setSerialListener(const QString& name, bool state)
 {
     if(state)
     {
+        currPort = name;
         portInfo = new QSerialPortInfo(name);
         serialListener->start();
         qDebug() << serialListener->thread();
@@ -94,8 +90,17 @@ void PM3Process::setSerialListener(const QString& name, bool state)
     else
     {
         serialListener->stop();
-        delete portInfo;
+        if(portInfo != nullptr)
+        {
+            delete portInfo;
+            portInfo = nullptr;
+        }
     }
+}
+
+void PM3Process::setSerialListener(bool state)
+{
+    setSerialListener(currPort, state);
 }
 
 void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly terminated or the PM3 hardware is removed, the isBusy() will return false(only tested on Windows);
@@ -105,7 +110,7 @@ void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly termina
     {
         kill();
         emit PM3StatedChanged(false);
-        setSerialListener("", false);
+        setSerialListener(false);
     }
 }
 

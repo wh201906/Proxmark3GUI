@@ -111,6 +111,7 @@ public:
     static QList<quint8> data_getACBits(const QString& text);
     static int data_b2s(int block);
     static bool data_isACBitsValid(const QString& text, QList<quint8> *returnHalfBytes = nullptr);
+    QString data_getUID();
 public slots:
 signals:
 
