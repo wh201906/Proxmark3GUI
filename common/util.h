@@ -13,6 +13,9 @@
 #include <QSettings>
 #include <QMainWindow>
 #include <QInputDialog>
+#include <QDockWidget>
+
+#include "ui_mainwindow.h"
 
 class Util : public QObject
 {
@@ -53,19 +56,23 @@ public:
     QString execCMDWithOutput(const QString& cmd, ReturnTrigger trigger = 10000);
     void delay(unsigned int msec);
     static ClientType getClientType();
-    static const int rawTabIndex = 2;
+    static int rawTabIndex;
+    static QDockWidget* rawDockPtr;
     static bool chooseLanguage(QSettings *guiSettings, QMainWindow *window);
 public slots:
     void processOutput(const QString& output);
     static void setClientType(Util::ClientType clientType);
     void setRunningState(bool st);
-
+    static void gotoRawTab();
+    static void setUI(Ui::MainWindow *ui);
+    static void setRawTab(QDockWidget* dockPtr, int tabIndex);
 private:
     bool isRequiringOutput;
     bool isRunning;
     QString* requiredOutput;
     QTime timeStamp;
     static ClientType clientType;
+    static Ui::MainWindow *ui;
 signals:
     void refreshOutput(const QString& output);
     void write(QString data); // connected to PM3Process::write(QString data);

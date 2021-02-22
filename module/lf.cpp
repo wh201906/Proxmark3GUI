@@ -14,7 +14,7 @@ void LF::read()
         util->execCMD("lf read");
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
         util->execCMD("lf read -v");
-    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
+    Util::gotoRawTab();
     util->execCMD("data plot");
 }
 
@@ -24,7 +24,7 @@ void LF::sniff()
         util->execCMD("lf snoop");
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
         util->execCMD("lf sniff -v");
-    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
+    Util::gotoRawTab();
     util->execCMD("data plot");
 }
 
@@ -34,7 +34,7 @@ void LF::search()
         util->execCMD("lf search u");
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
         util->execCMD("lf search -u");
-    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
+    Util::gotoRawTab();
 }
 
 void LF::tune()
@@ -43,5 +43,5 @@ void LF::tune()
         util->execCMD("hw tune l");
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
         util->execCMD("lf tune"); // TODO: if freq is set, append it as a parameter
-    ui->funcTab->setCurrentIndex(Util::rawTabIndex);
+    Util::gotoRawTab();
 }

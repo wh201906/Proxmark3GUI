@@ -2,6 +2,11 @@
 
 Util::ClientType Util::clientType = CLIENTTYPE_OFFICIAL;
 
+int Util::rawTabIndex = 0;
+QDockWidget* Util::rawDockPtr = nullptr;
+Ui::MainWindow* Util::ui = nullptr;
+
+
 Util::Util(QObject *parent) : QObject(parent)
 {
     isRequiringOutput = false;
@@ -9,6 +14,7 @@ Util::Util(QObject *parent) : QObject(parent)
     timeStamp = QTime::currentTime();
     qRegisterMetaType<Util::ClientType>("Util::ClientType");
 }
+
 
 void Util::processOutput(const QString& output)
 {
@@ -119,4 +125,23 @@ bool Util::chooseLanguage(QSettings* guiSettings, QMainWindow* window)
         guiSettings->sync();
     }
     return isOk;
+}
+
+void Util::gotoRawTab()
+{
+    Util::ui->funcTab->setCurrentIndex(Util::rawTabIndex);
+    Util::rawDockPtr->setVisible(true);
+    Util::rawDockPtr->raise();
+}
+
+void Util::setUI(Ui::MainWindow *ui)
+{
+    Util::ui = ui;
+}
+
+
+void Util::setRawTab(QDockWidget *dockPtr, int tabIndex)
+{
+    Util::rawDockPtr = dockPtr;
+    Util::rawTabIndex = tabIndex;
 }

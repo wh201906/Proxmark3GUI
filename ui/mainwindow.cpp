@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent):
     clientWorkingDir = new QDir;
 
     util = new Util(this);
+    Util::setUI(ui);
     mifare = new Mifare(ui, util, this);
     lf = new LF(ui, util, this);
 
@@ -64,6 +65,7 @@ void MainWindow::initUI() // will be called by main.app
     uiInit();
     signalInit();
     setState(false);
+    dockInit();
 }
 
 // ******************** basic functions ********************
@@ -1287,4 +1289,31 @@ void MainWindow::on_LF_Op_sniffButton_clicked()
     setState(false);
     lf->sniff();
     setState(true);
+}
+
+void MainWindow::dockInit()
+{
+    setDockNestingEnabled(true);
+    QDockWidget* dock;
+    QWidget* widget;
+    int count = ui->funcTab->count();
+    qDebug() << "dock count" << count;
+    for(int i = 0; i < count; i++)
+    {
+        dock = new QDockWidget(ui->funcTab->tabText(0), this);
+        qDebug() << "dock name" << ui->funcTab->tabText(0);
+        dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);// movable is necessary, otherwise the dock cannot be dragged
+        dock->setAllowedAreas(Qt::BottomDockWidgetArea);
+        widget = ui->funcTab->widget(0);
+        dock->setWidget(widget);
+        if(widget->objectName() == "rawTab")
+            Util::setRawTab(dock, i);
+        addDockWidget(Qt::BottomDockWidgetArea, dock);
+        if(!dockList.isEmpty())
+            tabifyDockWidget(dockList[0], dock);
+        dockList.append(dock);
+    }
+    ui->funcTab->setVisible(false);
+    dockList[0]->setVisible(true);
+    dockList[0]->raise();
 }

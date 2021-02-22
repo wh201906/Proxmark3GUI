@@ -24,6 +24,7 @@
 #include <QScrollBar>
 #include <QTimer>
 #include <QDateTime>
+#include <QDockWidget>
 
 #include "common/myeventfilter.h"
 #include "common/pm3process.h"
@@ -228,6 +229,8 @@ private:
     LF* lf;
     Util* util;
 
+    QList<QDockWidget*> dockList;
+
     MF_trailerDecoderDialog* decDialog;
 
     void signalInit();
@@ -236,6 +239,7 @@ private:
     void setState(bool st);
     void saveClientPath(const QString& path);
     void onLFfreqConfChanged(int value, bool isCustomized);
+    void dockInit();
 signals:
     void connectPM3(const QString& path, const QStringList args);
     void reconnectPM3();
