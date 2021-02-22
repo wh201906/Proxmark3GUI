@@ -25,6 +25,7 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QDockWidget>
+#include <QMenu>
 
 #include "common/myeventfilter.h"
 #include "common/pm3process.h"
@@ -203,6 +204,7 @@ private:
     QLabel* programStatusBar;
     QLabel* PM3VersionBar;
     QPushButton* stopButton;
+    QAction* dockAllWindows;
     QAction* myInfo;
     QAction* currVersion;
     QAction* checkUpdate;
@@ -230,6 +232,7 @@ private:
     Util* util;
 
     QList<QDockWidget*> dockList;
+    QMenu* contextMenu;
 
     MF_trailerDecoderDialog* decDialog;
 
@@ -240,6 +243,8 @@ private:
     void saveClientPath(const QString& path);
     void onLFfreqConfChanged(int value, bool isCustomized);
     void dockInit();
+protected:
+    void contextMenuEvent(QContextMenuEvent *event) override;
 signals:
     void connectPM3(const QString& path, const QStringList args);
     void reconnectPM3();

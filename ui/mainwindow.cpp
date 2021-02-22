@@ -6,9 +6,15 @@ MainWindow::MainWindow(QWidget *parent):
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    dockAllWindows = new QAction(tr("Dock all windows"), this);
     myInfo = new QAction("wh201906", this);
-    currVersion = new QAction("Ver: " + QApplication::applicationVersion().section('.', 0, -2), this); // ignore the 4th version number
+    currVersion = new QAction(tr("Ver: ") + QApplication::applicationVersion().section('.', 0, -2), this); // ignore the 4th version number
     checkUpdate = new QAction(tr("Check Update"), this);
+    connect(dockAllWindows, &QAction::triggered, [ = ]()
+    {
+        for(int i = 0; i < dockList.size(); i++)
+            dockList[i]->setFloating(false);
+    });
     connect(myInfo, &QAction::triggered, [ = ]()
     {
         QDesktopServices::openUrl(QUrl("https://github.com/wh201906"));
@@ -17,9 +23,6 @@ MainWindow::MainWindow(QWidget *parent):
     {
         QDesktopServices::openUrl(QUrl("https://github.com/wh201906/Proxmark3GUI/releases"));
     });
-    this->addAction(myInfo);
-    this->addAction(currVersion);
-    this->addAction(checkUpdate);
 
     settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
     settings->setIniCodec("UTF-8");
@@ -46,6 +49,14 @@ MainWindow::MainWindow(QWidget *parent):
     portSearchTimer->setInterval(2000);
     connect(portSearchTimer, &QTimer::timeout, this, &MainWindow::on_portSearchTimer_timeout);
     portSearchTimer->start();
+
+    contextMenu = new QMenu();
+    contextMenu->addAction(dockAllWindows);
+    contextMenu->addSeparator();
+    contextMenu->addAction(myInfo);
+    currVersion->setEnabled(false);
+    contextMenu->addAction(currVersion);
+    contextMenu->addAction(checkUpdate);
 
 }
 
@@ -1304,6 +1315,7 @@ void MainWindow::dockInit()
         qDebug() << "dock name" << ui->funcTab->tabText(0);
         dock->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);// movable is necessary, otherwise the dock cannot be dragged
         dock->setAllowedAreas(Qt::BottomDockWidgetArea);
+        dock->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         widget = ui->funcTab->widget(0);
         dock->setWidget(widget);
         if(widget->objectName() == "rawTab")
@@ -1316,4 +1328,9 @@ void MainWindow::dockInit()
     ui->funcTab->setVisible(false);
     dockList[0]->setVisible(true);
     dockList[0]->raise();
+}
+
+void MainWindow::contextMenuEvent(QContextMenuEvent *event)
+{
+    contextMenu->exec(event->globalPos());
 }
