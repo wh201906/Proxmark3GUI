@@ -1039,7 +1039,7 @@ void MainWindow::signalInit()
     connect(this, &MainWindow::reconnectPM3, pm3, &PM3Process::reconnectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
     connect(pm3, &PM3Process::PM3StatedChanged, util, &Util::setRunningState);
-    connect(this, &MainWindow::killPM3, pm3, &PM3Process::kill);
+    connect(this, &MainWindow::killPM3, pm3, &PM3Process::killPM3);
     connect(this, &MainWindow::setProcEnv, pm3, &PM3Process::setProcEnv);
     connect(this, &MainWindow::setWorkingDir, pm3, &PM3Process::setWorkingDir);
     connect(this, QOverload<bool>::of(&MainWindow::setSerialListener), pm3, QOverload<bool>::of(&PM3Process::setSerialListener));

@@ -108,9 +108,7 @@ void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly termina
 //    qDebug()<<portInfo->isBusy();
     if(!portInfo->isBusy())
     {
-        kill();
-        emit PM3StatedChanged(false);
-        setSerialListener(false);
+        killPM3();
     }
 }
 
@@ -148,4 +146,11 @@ void PM3Process::setWorkingDir(const QString& dir)
 {
     // the working directory cannot be the default, or the client will failed to load the dll
     this->setWorkingDirectory(dir);
+}
+
+void PM3Process::killPM3()
+{
+    kill();
+    emit PM3StatedChanged(false);
+    setSerialListener(false);
 }

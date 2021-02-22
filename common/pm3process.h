@@ -30,6 +30,7 @@ public slots:
     void reconnectPM3();
     void setProcEnv(const QStringList* env);
     void setWorkingDir(const QString& dir);
+    void killPM3();
 private slots:
     void onTimeout();
     void onReadyRead();
