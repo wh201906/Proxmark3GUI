@@ -53,7 +53,7 @@ public:
     QString execCMDWithOutput(const QString& cmd, ReturnTrigger trigger = 10000);
     void delay(unsigned int msec);
     static ClientType getClientType();
-    static const int rawTabIndex = 1;
+    static const int rawTabIndex = 2;
     static bool chooseLanguage(QSettings *guiSettings, QMainWindow *window);
 public slots:
     void processOutput(const QString& output);

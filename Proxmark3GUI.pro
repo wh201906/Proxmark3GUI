@@ -20,6 +20,7 @@ SOURCES += \
     main.cpp \
     common/pm3process.cpp \
     common/util.cpp \
+    module/lf.cpp \
     module/mifare.cpp \
     ui/mf_trailerdecoderdialog.cpp \
     ui/mf_sim_simdialog.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     common/myeventfilter.h \
     common/pm3process.h \
     common/util.h \
+    module/lf.h \
     module/mifare.h \
     ui/mf_trailerdecoderdialog.h \
     ui/mf_sim_simdialog.h \

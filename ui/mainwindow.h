@@ -28,6 +28,7 @@
 #include "common/myeventfilter.h"
 #include "common/pm3process.h"
 #include "module/mifare.h"
+#include "module/lf.h"
 #include "common/util.h"
 #include "ui/mf_trailerdecoderdialog.h"
 
@@ -178,6 +179,22 @@ private slots:
 
     void on_Set_Client_keepClientActiveBox_stateChanged(int arg1);
 
+    void on_LF_Conf_freqSlider_valueChanged(int value);
+
+    void on_LF_Conf_freqDivisorBox_valueChanged(int arg1);
+
+    void on_LF_Conf_freq125kButton_clicked();
+
+    void on_LF_Conf_freq134kButton_clicked();
+
+    void on_LF_Op_searchButton_clicked();
+
+    void on_LF_Op_readButton_clicked();
+
+    void on_LF_Op_tuneButton_clicked();
+
+    void on_LF_Op_sniffButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;
@@ -208,6 +225,7 @@ private:
     QDir* clientWorkingDir;
 
     Mifare* mifare;
+    LF* lf;
     Util* util;
 
     MF_trailerDecoderDialog* decDialog;
@@ -217,6 +235,7 @@ private:
     void setTableItem(QTableWidget *widget, int row, int column, const QString& text);
     void setState(bool st);
     void saveClientPath(const QString& path);
+    void onLFfreqConfChanged(int value, bool isCustomized);
 signals:
     void connectPM3(const QString& path, const QStringList args);
     void reconnectPM3();

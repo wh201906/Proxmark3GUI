@@ -32,13 +32,14 @@ MainWindow::MainWindow(QWidget *parent):
 
     util = new Util(this);
     mifare = new Mifare(ui, util, this);
+    lf = new LF(ui, util, this);
 
     keyEventFilter = new MyEventFilter(QEvent::KeyPress);
     resizeEventFilter = new MyEventFilter(QEvent::Resize);
 
     // hide unused tabs
-    ui->funcTab->removeTab(1);
-    ui->funcTab->removeTab(1);
+//    ui->funcTab->removeTab(1);
+    ui->funcTab->removeTab(2);
 
     portSearchTimer = new QTimer(this);
     portSearchTimer->setInterval(2000);
@@ -1223,4 +1224,67 @@ void MainWindow::on_Set_Client_keepClientActiveBox_stateChanged(int arg1)
     settings->setValue("state", keepClientActive);
     settings->endGroup();
     emit setSerialListener(!keepClientActive);
+}
+
+void MainWindow::on_LF_Conf_freqSlider_valueChanged(int value)
+{
+    onLFfreqConfChanged(value, true);
+}
+
+void MainWindow::onLFfreqConfChanged(int value, bool isCustomized)
+{
+    ui->LF_Conf_freqDivisorBox->blockSignals(true);
+    ui->LF_Conf_freqSlider->blockSignals(true);
+
+    if(isCustomized)
+        ui->LF_Conf_freqOtherButton->setChecked(true);
+    ui->LF_Conf_freqLabel->setText(QString("Actural Freq: %1kHz").arg(12000.0 / (value + 1.0), 0, 'f', 3));
+    ui->LF_Conf_freqDivisorBox->setValue(value);
+    ui->LF_Conf_freqSlider->setValue(value);
+
+    ui->LF_Conf_freqDivisorBox->blockSignals(false);
+    ui->LF_Conf_freqSlider->blockSignals(false);
+}
+
+void MainWindow::on_LF_Conf_freqDivisorBox_valueChanged(int arg1)
+{
+    onLFfreqConfChanged(arg1, true);
+}
+
+void MainWindow::on_LF_Conf_freq125kButton_clicked()
+{
+    onLFfreqConfChanged(95, false);
+}
+
+void MainWindow::on_LF_Conf_freq134kButton_clicked()
+{
+    onLFfreqConfChanged(88, false);
+}
+
+void MainWindow::on_LF_Op_searchButton_clicked()
+{
+    setState(false);
+    lf->search();
+    setState(true);
+}
+
+void MainWindow::on_LF_Op_readButton_clicked()
+{
+    setState(false);
+    lf->read();
+    setState(true);
+}
+
+void MainWindow::on_LF_Op_tuneButton_clicked()
+{
+    setState(false);
+    lf->tune();
+    setState(true);
+}
+
+void MainWindow::on_LF_Op_sniffButton_clicked()
+{
+    setState(false);
+    lf->sniff();
+    setState(true);
 }
