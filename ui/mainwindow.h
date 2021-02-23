@@ -199,6 +199,10 @@ private slots:
 
     void on_LF_Conf_getButton_clicked();
 
+    void on_LF_Conf_setButton_clicked();
+
+    void on_LF_Conf_resetButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;

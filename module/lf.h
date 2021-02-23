@@ -22,14 +22,26 @@ public:
         uint16_t samplesToSkip;
     };
 
+    static constexpr Config defaultConfig =
+    {
+        95,
+        8,
+        1,
+        true,
+        0,
+        0
+    };
+
     void read();
     void sniff();
     void search();
     void tune();
     void getConfig();
-    void setConfig();
+    void setConfig(LF::Config config);
+    void resetConfig();
     static float divisor2Freq(uint8_t divisor);
     static uint8_t freq2Divisor(float freq);
+
 private:
     QWidget* parent;
     Ui::MainWindow *ui;

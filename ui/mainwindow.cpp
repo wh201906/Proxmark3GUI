@@ -1337,5 +1337,29 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 
 void MainWindow::on_LF_Conf_getButton_clicked()
 {
+    setState(false);
     lf->getConfig();
+    setState(true);
+}
+
+void MainWindow::on_LF_Conf_setButton_clicked()
+{
+    LF::Config config;
+    setState(false);
+    config.divisor = ui->LF_Conf_freqDivisorBox->value();
+    config.bitPerSample = ui->LF_Conf_bitPerSampleBox->value();
+    config.decimation = ui->LF_Conf_decimationBox->value();
+    config.averaging = ui->LF_Conf_averagingBox->isChecked();
+    config.triggerThreshold = ui->LF_Conf_thresholdBox->value();
+    config.samplesToSkip = ui->LF_Conf_skipsBox->value();
+    lf->setConfig(config);
+    Util::gotoRawTab();
+    setState(true);
+}
+
+void MainWindow::on_LF_Conf_resetButton_clicked()
+{
+    setState(false);
+    lf->resetConfig();
+    setState(true);
 }

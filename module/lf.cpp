@@ -1,5 +1,7 @@
 ﻿#include "lf.h"
 
+const LF::Config LF::defaultConfig;
+
 LF::LF(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
 {
     this->parent = parent;
@@ -7,6 +9,7 @@ LF::LF(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
     this->ui = ui;
 
     configPattern = new QRegularExpression("(\\d+)|Yes|No");
+    currConfig = defaultConfig;
 }
 
 void LF::read()
@@ -43,7 +46,7 @@ void LF::tune()
     if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
         util->execCMD("hw tune l");
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("lf tune"); // TODO: if freq is set, append it as a parameter
+        util->execCMD("lf tune --divisor " + QString::number(currConfig.divisor));
     Util::gotoRawTab();
 }
 
@@ -108,9 +111,39 @@ void LF::getConfig()
     syncWithUI();
 }
 
-void LF::setConfig()
+void LF::setConfig(LF::Config config)
 {
+    currConfig = config;
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    {
+        util->execCMDWithOutput(QString("lf config")
+                                + " q " + QString::number(currConfig.divisor)
+                                + " b " + QString::number(currConfig.bitPerSample)
+                                + " d " + QString::number(currConfig.decimation)
+                                + " a " + QString(currConfig.averaging ? "1" : "0")
+                                + " t " + QString::number(currConfig.triggerThreshold)
+                                + " s " + QString::number(currConfig.samplesToSkip),
+                                500);
+        util->execCMDWithOutput("hw setlfdivisor " + QString::number(currConfig.divisor), 500);
+    }
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    {
+        util->execCMDWithOutput(QString("lf config")
+                                + " -a " + QString(currConfig.averaging ? "1" : "0")
+                                + " -b " + QString::number(currConfig.bitPerSample)
+                                + " --dec " + QString::number(currConfig.decimation)
+                                + " --divisor " + QString::number(currConfig.divisor)
+                                + " -s " + QString::number(currConfig.samplesToSkip)
+                                + " -t " + QString::number(currConfig.triggerThreshold),
+                                500);
+        util->execCMDWithOutput("hw setlfdivisor -d " + QString::number(currConfig.divisor), 500);
+    }
+}
 
+void LF::resetConfig()
+{
+    setConfig(defaultConfig);
+    getConfig();
 }
 
 float LF::divisor2Freq(uint8_t divisor)
@@ -125,7 +158,7 @@ uint8_t LF::freq2Divisor(float freq)
 
 void LF::syncWithUI()
 {
-    ui->LF_Conf_freqDivisorBox->setValue(currConfig.divisor);
+    ui->LF_Conf_freqDivisorBox->setValue(currConfig.divisor); // will trigger valueChanged()
     ui->LF_Conf_bitPerSampleBox->setValue(currConfig.bitPerSample);
     ui->LF_Conf_decimationBox->setValue(currConfig.decimation);
     ui->LF_Conf_averagingBox->setChecked(currConfig.averaging);
