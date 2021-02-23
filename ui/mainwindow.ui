@@ -136,7 +136,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -1442,10 +1442,14 @@ You might need a modified LF antenna if the freq is not 125k/134k.</string>
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="QSpinBox" name="LF_Conf_skipsBox"/>
+              <widget class="QSpinBox" name="LF_Conf_skipsBox">
+               <property name="maximum">
+                <number>65535</number>
+               </property>
+              </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QSpinBox" name="LF_Conf_bitRateBox">
+              <widget class="QSpinBox" name="LF_Conf_bitPerSampleBox">
                <property name="minimum">
                 <number>1</number>
                </property>
@@ -1689,7 +1693,7 @@ On Iceman/RRG repo, press the button on PM3 to stop measuring</string>
          <item>
           <widget class="QLabel" name="label_27">
            <property name="text">
-            <string>Sniff low frequency signal wit LF field OFF.
+            <string>Sniff low frequency signal with LF field OFF.
 Use this to get raw data from a reader 
 or the communication between a tag and a reader.</string>
            </property>

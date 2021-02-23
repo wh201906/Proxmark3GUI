@@ -1251,7 +1251,7 @@ void MainWindow::onLFfreqConfChanged(int value, bool isCustomized)
 
     if(isCustomized)
         ui->LF_Conf_freqOtherButton->setChecked(true);
-    ui->LF_Conf_freqLabel->setText(QString("Actural Freq: %1kHz").arg(12000.0 / (value + 1.0), 0, 'f', 3));
+    ui->LF_Conf_freqLabel->setText(QString("Actural Freq: %1kHz").arg(LF::divisor2Freq(value), 0, 'f', 3));
     ui->LF_Conf_freqDivisorBox->setValue(value);
     ui->LF_Conf_freqSlider->setValue(value);
 
@@ -1333,4 +1333,9 @@ void MainWindow::dockInit()
 void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 {
     contextMenu->exec(event->globalPos());
+}
+
+void MainWindow::on_LF_Conf_getButton_clicked()
+{
+    lf->getConfig();
 }

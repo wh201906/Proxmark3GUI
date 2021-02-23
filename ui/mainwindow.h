@@ -197,6 +197,8 @@ private slots:
 
     void on_LF_Op_sniffButton_clicked();
 
+    void on_LF_Conf_getButton_clicked();
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;

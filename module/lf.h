@@ -12,15 +12,31 @@ class LF : public QObject
 public:
     explicit LF(Ui::MainWindow *ui, Util *addr, QWidget *parent = nullptr);
 
+    struct Config
+    {
+        uint8_t divisor;
+        uint8_t bitPerSample;
+        uint8_t decimation;
+        bool averaging;
+        uint8_t triggerThreshold;
+        uint16_t samplesToSkip;
+    };
+
     void read();
     void sniff();
     void search();
     void tune();
+    void getConfig();
+    void setConfig();
+    static float divisor2Freq(uint8_t divisor);
+    static uint8_t freq2Divisor(float freq);
 private:
     QWidget* parent;
     Ui::MainWindow *ui;
     Util* util;
-
+    Config currConfig;
+    QRegularExpression* configPattern;
+    void syncWithUI();
 signals:
 
 };
