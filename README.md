@@ -3,7 +3,7 @@
 
 A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 
-[中文](README/doc/README_zh_CN.md)
+[中文介绍](README/doc/README_zh_CN.md)
 
 ***
 
@@ -19,6 +19,7 @@ A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) clie
     + Support binary(.bin .dump) files and text(.eml) files
     + Analyze Access Bits
     + Support Chinese Magic Card
++ Have basic support for LF commands
 + Customize UI  
 + ...  
 
@@ -40,7 +41,7 @@ This GUI is compatible with Iceman/RRG repo(tested on v4.9237)
 
 ## About Compiled Windows clients
 
-A cool guy [Gator96100](https://github.com/Gator96100) creates [ProxSpace](https://github.com/Gator96100/ProxSpace) and makes it possible to compile both the firmware and client on Windows.  
+A cool guy [Gator96100](https://github.com/Gator96100) creates [ProxSpace](https://github.com/Gator96100/ProxSpace) and makes it possible to compile both the firmware and the client on Windows.  
 Also, he makes the [pre-compiled Windows client](https://www.proxmarkbuilds.org/) so you can download it and run your PM3 client on Windows instantly.  
 I included his compiled client in my releases so you can use the GUI on the fly, and you can also use the GUI with your prefered client.  
 Great thanks to him.  
@@ -63,6 +64,11 @@ Great thanks to him.
 ***
 
 ## Update Log:
+
+### V0.2
++ Use Dock widget for more flexible layout  
++ Support basic LF commands  
++ Fix a bug in RawCommand tab  
 
 ### V0.1.4
 + Optimize performance  

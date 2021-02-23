@@ -1121,7 +1121,7 @@ or &quot;-p &lt;port&gt; -f&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1254"/>
+        <location filename="../ui/mainwindow.cpp" line="1256"/>
         <source>Actural Freq: </source>
         <translation type="unfinished"></translation>
     </message>

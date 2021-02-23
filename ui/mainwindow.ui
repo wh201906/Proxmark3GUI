@@ -1567,7 +1567,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="groupBox">
+           <widget class="QGroupBox" name="LF_operationGroupBox">
             <property name="title">
              <string>LF Operation</string>
             </property>

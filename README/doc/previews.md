@@ -14,3 +14,7 @@ Mifare Edit File:
 
 Mifare Trailer Decoder:  
 ![mf_trailer](../img/mf_trailer.gif)
+
+Dock Widget:  
+![dock1](../img/dock1.png)  
+![dock2](../img/dock2.png)  

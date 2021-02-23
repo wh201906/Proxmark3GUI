@@ -1152,6 +1152,8 @@ void MainWindow::setButtonsEnabled(bool st)
     ui->MF_sniffGroupBox->setEnabled(st);
     ui->Raw_CMDEdit->setEnabled(st);
     ui->Raw_sendCMDButton->setEnabled(st);
+    ui->LF_configGroupBox->setEnabled(st);
+    ui->LF_operationGroupBox->setEnabled(st);
 }
 
 void MainWindow::on_GroupBox_clicked(bool checked)

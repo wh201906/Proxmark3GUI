@@ -1137,7 +1137,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</sou
         <translation>正在运行</translation>
     </message>
     <message>
-        <location filename="../ui/mainwindow.cpp" line="1254"/>
+        <location filename="../ui/mainwindow.cpp" line="1256"/>
         <source>Actural Freq: </source>
         <translation>实际频率： </translation>
     </message>
