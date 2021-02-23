@@ -136,7 +136,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -1334,6 +1334,12 @@
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                    </spacer>
                   </item>
                  </layout>
@@ -1512,7 +1518,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                   </size>
                  </property>
                  <property name="text">
-                  <string>Get</string>
+                  <string>Get Config</string>
                  </property>
                 </widget>
                </item>
@@ -1531,7 +1537,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                   </size>
                  </property>
                  <property name="text">
-                  <string>Set</string>
+                  <string>Set Config</string>
                  </property>
                 </widget>
                </item>
@@ -1600,6 +1606,12 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                    <property name="sizeType">
                     <enum>QSizePolicy::Expanding</enum>
                    </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                   </spacer>
                  </item>
                 </layout>
@@ -1650,6 +1662,12 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                    </property>
                    <property name="sizeType">
                     <enum>QSizePolicy::Expanding</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
                    </property>
                   </spacer>
                  </item>
@@ -1703,6 +1721,12 @@ Use this to get raw data from a tag.</string>
                    <property name="sizeType">
                     <enum>QSizePolicy::Expanding</enum>
                    </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
                   </spacer>
                  </item>
                 </layout>
@@ -1755,6 +1779,12 @@ On Iceman/RRG repo, press the button on PM3 to stop measuring</string>
                    </property>
                    <property name="sizeType">
                     <enum>QSizePolicy::Expanding</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
                    </property>
                   </spacer>
                  </item>
@@ -2194,6 +2224,12 @@ or &quot;-p &lt;port&gt; -f&quot;</string>
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                 </spacer>
                </item>
               </layout>
@@ -2206,6 +2242,12 @@ or &quot;-p &lt;port&gt; -f&quot;</string>
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
            </spacer>
           </item>
          </layout>
@@ -2214,6 +2256,12 @@ or &quot;-p &lt;port&gt; -f&quot;</string>
          <spacer name="horizontalSpacer_10">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
           </property>
          </spacer>
         </item>
