@@ -136,7 +136,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -1853,15 +1853,640 @@ or the communication between a tag and a reader.</string>
        <attribute name="title">
         <string>T55xx</string>
        </attribute>
-       <widget class="QTableWidget" name="T55_dataWidget">
+       <widget class="QGroupBox" name="groupBox">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>10</y>
-          <width>256</width>
-          <height>192</height>
+          <x>360</x>
+          <y>20</y>
+          <width>281</width>
+          <height>511</height>
          </rect>
         </property>
+        <property name="title">
+         <string>Basic Configuration(Page 0 Block 0)</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_21">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QFormLayout" name="formLayout_4">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_43">
+             <property name="text">
+              <string>Hex:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_44">
+             <property name="text">
+              <string>Bin:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEdit_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>4</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_23">
+           <item>
+            <spacer name="horizontalSpacer_15">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string>Get from Data</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="text">
+              <string>Set to Data</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_14">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QFormLayout" name="formLayout_2">
+           <property name="horizontalSpacing">
+            <number>5</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>5</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_28">
+             <property name="text">
+              <string>Locked:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="checkBox"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_29">
+             <property name="text">
+              <string>Master Key:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_30">
+             <property name="text">
+              <string>Data Bit Rate:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="comboBox"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_31">
+             <property name="text">
+              <string>eXtended Mode:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_32">
+             <property name="text">
+              <string>Modulation:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_33">
+             <property name="text">
+              <string>PSK Clock Freq:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_34">
+             <property name="text">
+              <string>Answer on Request:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QCheckBox" name="checkBox_2"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QComboBox" name="comboBox_2"/>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_35">
+             <property name="text">
+              <string>One Time Pad:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>Max Block:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_37">
+             <property name="text">
+              <string>Password:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
+            <widget class="QLabel" name="label_38">
+             <property name="text">
+              <string>Seq. Terminator:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="0">
+            <widget class="QLabel" name="label_39">
+             <property name="text">
+              <string>Seq. Start Marker:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="0">
+            <widget class="QLabel" name="label_40">
+             <property name="text">
+              <string>Fast Downlink:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="0">
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>Inverse Data:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="0">
+            <widget class="QLabel" name="label_42">
+             <property name="text">
+              <string>Init-Delay:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="1">
+            <widget class="QCheckBox" name="checkBox_3"/>
+           </item>
+           <item row="13" column="1">
+            <widget class="QCheckBox" name="checkBox_4"/>
+           </item>
+           <item row="12" column="1">
+            <widget class="QCheckBox" name="checkBox_5"/>
+           </item>
+           <item row="11" column="1">
+            <widget class="QCheckBox" name="checkBox_6"/>
+           </item>
+           <item row="10" column="1">
+            <widget class="QCheckBox" name="checkBox_7"/>
+           </item>
+           <item row="9" column="1">
+            <widget class="QCheckBox" name="checkBox_8"/>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="spinBox"/>
+           </item>
+           <item row="5" column="1">
+            <widget class="QComboBox" name="comboBox_3"/>
+           </item>
+           <item row="6" column="1">
+            <widget class="QCheckBox" name="checkBox_9"/>
+           </item>
+           <item row="7" column="1">
+            <widget class="QCheckBox" name="checkBox_10"/>
+           </item>
+           <item row="8" column="1">
+            <widget class="QSpinBox" name="spinBox_2"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="geometry">
+         <rect>
+          <x>670</x>
+          <y>20</y>
+          <width>311</width>
+          <height>511</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Analog Front-End Option(Page 1 Block 3)</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_22">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <layout class="QFormLayout" name="formLayout_5">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_45">
+             <property name="text">
+              <string>Hex:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_46">
+             <property name="text">
+              <string>Bin:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEdit_5">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>4</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_6">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_24">
+           <item>
+            <spacer name="horizontalSpacer_16">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_3">
+             <property name="text">
+              <string>Get from Data</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_4">
+             <property name="text">
+              <string>Set to Data</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_20">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QFormLayout" name="formLayout_6">
+           <property name="rowWrapPolicy">
+            <enum>QFormLayout::WrapLongRows</enum>
+           </property>
+           <property name="horizontalSpacing">
+            <number>5</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>5</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_47">
+             <property name="text">
+              <string>Locked:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="checkBox_11"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_48">
+             <property name="text">
+              <string>Option Key:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSpinBox" name="spinBox_3"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_49">
+             <property name="text">
+              <string>Soft Modulation:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="comboBox_4"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_50">
+             <property name="text">
+              <string>Clamp Voltage:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QComboBox" name="comboBox_7"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_51">
+             <property name="text">
+              <string>Modulation Voltage:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QComboBox" name="comboBox_5"/>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_52">
+             <property name="text">
+              <string>Clock Detection Threshold:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QComboBox" name="comboBox_6"/>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_53">
+             <property name="text">
+              <string>Gap Detection Threshold:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QComboBox" name="comboBox_8"/>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_54">
+             <property name="text">
+              <string>Write Dampling:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="label_55">
+             <property name="text">
+              <string>Demod Delay:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_56">
+             <property name="text">
+              <string>Downlink Protocol:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QComboBox" name="comboBox_9"/>
+           </item>
+           <item row="8" column="1">
+            <widget class="QComboBox" name="comboBox_10"/>
+           </item>
+           <item row="9" column="1">
+            <widget class="QComboBox" name="comboBox_11"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="verticalLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>150</y>
+          <width>221</width>
+          <height>201</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_19">
+         <item>
+          <widget class="QLabel" name="label_57">
+           <property name="text">
+            <string>Data:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTableWidget" name="T55_dataWidget"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>370</y>
+          <width>194</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>T55xx Read Config</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_20">
+         <item>
+          <layout class="QFormLayout" name="formLayout_7">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_58">
+             <property name="text">
+              <string>Modulation:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_59">
+             <property name="text">
+              <string>Bit Rate:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_60">
+             <property name="text">
+              <string>Seq. Term.</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_61">
+             <property name="text">
+              <string>Offset:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_62">
+             <property name="text">
+              <string>Inverted:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="comboBox_12"/>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="comboBox_13"/>
+           </item>
+           <item row="2" column="1">
+            <widget class="QCheckBox" name="checkBox_12">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QSpinBox" name="spinBox_4"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QCheckBox" name="checkBox_13">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_28">
+           <item>
+            <widget class="QRadioButton" name="radioButton">
+             <property name="text">
+              <string>T5577</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton_2">
+             <property name="text">
+              <string>T5555</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_12">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QWidget" name="rawTab">
