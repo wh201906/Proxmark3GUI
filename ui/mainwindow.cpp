@@ -123,15 +123,24 @@ void MainWindow::on_PM3_connectButton_clicked()
     if(envScriptPath.exists())
     {
         qDebug() << envScriptPath.absoluteFilePath();
+        // use the shell session to keep the environment then read it
 #ifdef Q_OS_WIN
         // cmd /c "<path>">>nul && set
-        envSetProcess.start("cmd /c \"" + envScriptPath.absoluteFilePath() + "\">>nul && set");
+        envSetProcess.start("cmd");
+        envSetProcess.write(QString("\"" + envScriptPath.absoluteFilePath() + "\">>nul\r\n").toLatin1());
+        envSetProcess.waitForReadyRead(10000);
+        envSetProcess.readAll();
+        envSetProcess.write("set\r\n");
 #else
+        // need implementation(or test if space works)
         // sh -c '. "<path>">>/dev/null && env'
         envSetProcess.start("sh -c \' . \"" + envScriptPath.absoluteFilePath() + "\">>/dev/null && env");
 #endif
         envSetProcess.waitForReadyRead(10000);
-        clientEnv = QString(envSetProcess.readAll()).split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+        QString test = QString(envSetProcess.readAll());
+        clientEnv = test.split(QRegExp("[\r\n]{1,2}"), QString::SkipEmptyParts);
+        clientEnv.removeFirst();
+        qDebug() << clientEnv;
 //      qDebug() << "Get Env List" << clientEnv;
     }
     else
@@ -152,7 +161,7 @@ void MainWindow::on_PM3_connectButton_clicked()
     else if(!keepClientActive)
         emit setSerialListener(false);
 
-
+    envSetProcess.kill();
 }
 
 void MainWindow::onPM3StateChanged(bool st, const QString& info)
