@@ -139,13 +139,17 @@ void MainWindow::on_PM3_connectButton_clicked()
         envSetProcess.waitForReadyRead(10000);
         QString test = QString(envSetProcess.readAll());
         clientEnv = test.split(QRegExp("[\r\n]{1,2}"), QString::SkipEmptyParts);
-        clientEnv.removeFirst();
+        if(clientEnv.size() > 2) // the first element is "set" and the last element is the current path
+        {
+            clientEnv.removeFirst();
+            clientEnv.removeLast();
+            emit setProcEnv(&clientEnv);
+        }
         qDebug() << clientEnv;
 //      qDebug() << "Get Env List" << clientEnv;
     }
     else
         clientEnv.clear();
-    emit setProcEnv(&clientEnv);
 
     clientWorkingDir->setPath(QApplication::applicationDirPath());
     qDebug() << clientWorkingDir->absolutePath();
