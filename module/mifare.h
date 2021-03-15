@@ -112,6 +112,7 @@ public:
     static int data_b2s(int block);
     static bool data_isACBitsValid(const QString& text, QList<quint8> *returnHalfBytes = nullptr);
     QString data_getUID();
+    quint16 getTrailerBlockId(quint8 sectorId, qint8 cardTypeId = -1); // -1: use current cardtype
 public slots:
 signals:
 
