@@ -980,17 +980,9 @@ void MainWindow::uiInit()
     ui->statusbar->addPermanentWidget(programStatusBar, 1);
     ui->statusbar->addPermanentWidget(stopButton);
 
-    ui->MF_dataWidget->setColumnCount(3);
-    ui->MF_dataWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
-    ui->MF_dataWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Blk")));
-    ui->MF_dataWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Data")));
     ui->MF_dataWidget->setColumnWidth(0, 55);
     ui->MF_dataWidget->setColumnWidth(1, 55);
 
-    ui->MF_keyWidget->setColumnCount(3);
-    ui->MF_keyWidget->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("Sec")));
-    ui->MF_keyWidget->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("KeyA")));
-    ui->MF_keyWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("KeyB")));
     ui->MF_keyWidget->setColumnWidth(0, 45);
 
     MF_widgetReset();

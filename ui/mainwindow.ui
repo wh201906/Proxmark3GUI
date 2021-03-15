@@ -198,6 +198,21 @@
             <attribute name="verticalHeaderDefaultSectionSize">
              <number>20</number>
             </attribute>
+            <column>
+             <property name="text">
+              <string>Sec</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Blk</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Data</string>
+             </property>
+            </column>
            </widget>
           </item>
           <item>
@@ -360,6 +375,21 @@
             <attribute name="verticalHeaderDefaultSectionSize">
              <number>20</number>
             </attribute>
+            <column>
+             <property name="text">
+              <string>Sec</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>KeyA</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>KeyB</string>
+             </property>
+            </column>
            </widget>
           </item>
          </layout>
