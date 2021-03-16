@@ -137,15 +137,14 @@ void MainWindow::on_PM3_connectButton_clicked()
         envSetProcess.start("sh -c \' . \"" + envScriptPath.absoluteFilePath() + "\">>/dev/null && env");
 #endif
         envSetProcess.waitForReadyRead(10000);
-        QString test = QString(envSetProcess.readAll());
-        clientEnv = test.split(QRegExp("[\r\n]{1,2}"), QString::SkipEmptyParts);
+        QString envSetResult = QString(envSetProcess.readAll());
+        clientEnv = envSetResult.split(QRegExp("[\r\n]{1,2}"), QString::SkipEmptyParts);
         if(clientEnv.size() > 2) // the first element is "set" and the last element is the current path
         {
             clientEnv.removeFirst();
             clientEnv.removeLast();
             emit setProcEnv(&clientEnv);
         }
-        qDebug() << clientEnv;
 //      qDebug() << "Get Env List" << clientEnv;
     }
     else

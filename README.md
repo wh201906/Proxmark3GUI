@@ -65,6 +65,11 @@ Great thanks to him.
 
 ## Update Log:
 
+### V0.2.1
++ Optimize MIFARE Classic reading logic
++ Fix bug #16
++ Fix bug #15 partially (the path can contain spaces now)
+
 ### V0.2
 + Use Dock widget for more flexible layout  
 + Support basic LF commands  
