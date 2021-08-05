@@ -5,11 +5,13 @@
 #include <QTranslator>
 #include <QMessageBox>
 #include <QTextCodec>
+#include <QDir>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+    QDir *langPath = new QDir();
     QApplication a(argc, argv);
     MainWindow w;
 
@@ -29,14 +31,10 @@ int main(int argc, char *argv[])
         else
             currLang = "en_US";
     }
-    currLang = "lang/" + currLang;
-#ifdef Q_OS_WIN
     currLang += ".qm";
-#else
-    currLang += ".ts";;
-#endif
+    langPath->cd("lang");
     QTranslator* translator = new QTranslator(&w);
-    if(translator->load(currLang))
+    if(translator->load(currLang, langPath->absolutePath()))
     {
         a.installTranslator(translator);
     }
@@ -45,6 +43,7 @@ int main(int argc, char *argv[])
         QMessageBox::information(&w, "Error", "Can't load " + currLang + " as translation file.");
     }
     delete settings;
+    delete langPath;
     w.initUI();
     w.show();
     return a.exec();
