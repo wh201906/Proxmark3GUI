@@ -1142,7 +1142,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</sou
     <message>
         <location filename="../ui/mainwindow.cpp" line="632"/>
         <source>Binary Key Files(*.bin *.dump);;Binary Data Files(*.bin *.dump);;All Files(*.*)</source>
-        <translation>二进制密钥文件(*.bin *.dump)二进制密钥文件(*.bin *.dump);所有文件(*.*)</translation>
+        <translation type="unfinished">二进制密钥文件(*.bin *.dump);;二进制密钥文件(*.bin *.dump);;所有文件(*.*)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="658"/>
@@ -1152,7 +1152,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</sou
     <message>
         <location filename="../ui/mainwindow.cpp" line="659"/>
         <source>Binary Data Files(*.bin *.dump);;Text Data Files(*.txt *.eml)</source>
-        <translation>二进制数据文件(*.bin *.dump);文本数据文件(*.txt *.eml)</translation>
+        <translation type="unfinished">二进制数据文件(*.bin *.dump);;文本数据文件(*.txt *.eml)</translation>
     </message>
     <message>
         <location filename="../ui/mainwindow.cpp" line="665"/>
