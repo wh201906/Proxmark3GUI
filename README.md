@@ -51,7 +51,9 @@ Great thanks to him.
 ## Build on Linux
 
     cd ~
-    git clone https://github.com/wh201906/Proxmark3GUI.git
+    sudo apt-get update
+    sudo apt-get install qt5-default libqt5serialport5 libqt5serialport5-dev 
+    git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
     cd Proxmark3GUI
     mkdir build
     cd build
