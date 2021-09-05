@@ -31,7 +31,7 @@ void Util::execCMD(const QString& cmd)
 {
     qDebug() << "executing: " << cmd;
     if(isRunning)
-        emit write(cmd + "\r\n");
+        emit write(cmd + "\n");
 }
 
 QString Util::execCMDWithOutput(const QString& cmd, ReturnTrigger trigger)

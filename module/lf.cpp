@@ -70,10 +70,10 @@ void LF::getConfig()
     result = util->execCMDWithOutput("hw status", 400); // not all output from "hw status will be processed".
     result = result.right(result.length() - result.indexOf("LF Sampling config"));
     offset = result.indexOf("samples to skip");
-    offset = result.indexOf("\r\n", offset);
+    offset = result.indexOf("\n", offset);
     result = result.mid(0, offset + 2);
     qDebug() << "LF CONFIG GET\n" << result;
-    resultList = result.split("\r\n");
+    resultList = result.split("\n");
     for(int i = 0; i < resultList.length(); i++)
     {
         for(int j = 0; j < symbolList.length(); j++)

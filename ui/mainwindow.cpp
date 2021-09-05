@@ -126,11 +126,11 @@ void MainWindow::on_PM3_connectButton_clicked()
         // use the shell session to keep the environment then read it
 #ifdef Q_OS_WIN
         // cmd /c "<path>">>nul && set
-        envSetProcess.start("cmd");
-        envSetProcess.write(QString("\"" + envScriptPath.absoluteFilePath() + "\">>nul\r\n").toLatin1());
+        envSetProcess.start("cmd", {}, QProcess::Unbuffered | QProcess::ReadWrite | QProcess::Text);
+        envSetProcess.write(QString("\"" + envScriptPath.absoluteFilePath() + "\">>nul\n").toLatin1());
         envSetProcess.waitForReadyRead(10000);
         envSetProcess.readAll();
-        envSetProcess.write("set\r\n");
+        envSetProcess.write("set\n");
 #else
         // need implementation(or test if space works)
         // sh -c '. "<path>">>/dev/null && env'
@@ -138,7 +138,7 @@ void MainWindow::on_PM3_connectButton_clicked()
 #endif
         envSetProcess.waitForReadyRead(10000);
         QString envSetResult = QString(envSetProcess.readAll());
-        clientEnv = envSetResult.split(QRegExp("[\r\n]{1,2}"), QString::SkipEmptyParts);
+        clientEnv = envSetResult.split("\n", QString::SkipEmptyParts);
         if(clientEnv.size() > 2) // the first element is "set" and the last element is the current path
         {
             clientEnv.removeFirst();

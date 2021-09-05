@@ -794,7 +794,7 @@ void Mifare::setParameterC()
         QMessageBox::information(parent, tr("Info"), tr("Failed to read card."));
     else
     {
-        result.replace("\r\n", "");
+        result.replace("\n", "");
         result.replace(QRegularExpression("\\[.\\]"), "");
         result.replace("UID", "");
         result.replace("ATQA", "");
@@ -1071,7 +1071,7 @@ bool Mifare::data_loadDataFile(const QString& filename)
         else
         {
             QString tmp = buff.left(cardType.block_size * 34);
-            QStringList tmpList = tmp.split("\r\n");
+            QStringList tmpList = tmp.split("\n");
             for(int i = 0; i < cardType.block_size; i++)
             {
                 dataList->replace(i, tmpList[i].toUpper());
@@ -1174,7 +1174,7 @@ bool Mifare::data_saveDataFile(const QString& filename, bool isBin)
             for(int i = 0; i < cardType.block_size; i++)
             {
                 buff += dataList->at(i);
-                buff += "\r\n";
+                buff += "\n";
             }
         }
         bool ret = file.write(buff) != -1;

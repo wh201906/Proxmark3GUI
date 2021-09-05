@@ -26,7 +26,7 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
     currArgs = args;
 
     // using "-f" option to make the client output flushed after every print.
-    start(path, args, QProcess::Unbuffered | QProcess::ReadWrite);
+    start(path, args, QProcess::Unbuffered | QProcess::ReadWrite | QProcess::Text);
     if(waitForStarted(10000))
     {
         waitForReadyRead(10000);
@@ -36,11 +36,13 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
         {
             clientType = Util::CLIENTTYPE_ICEMAN;
             setRequiringOutput(true);
-            write("hw version\r\n");
-            for(int i = 0; i < 10; i++)
+            write("hw version\n");
+            for(int i = 0; i < 50; i++)
             {
                 waitForReadyRead(200);
                 result += *requiredOutput;
+                if(result.indexOf("os: ") != -1)
+                    break;
             }
             setRequiringOutput(false);
         }
@@ -52,8 +54,8 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
         {
             emit changeClientType(clientType);
             result = result.mid(result.indexOf("os: "));
-            result = result.left(result.indexOf("\r\n"));
-            result = result.mid(3, result.lastIndexOf(" ") - 3);
+            result = result.left(result.indexOf("\n"));
+            result = result.mid(4, result.indexOf(" ", 4) - 4);
             emit PM3StatedChanged(true, result);
         }
         else
@@ -105,11 +107,15 @@ void PM3Process::setSerialListener(bool state)
 
 void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly terminated or the PM3 hardware is removed, the isBusy() will return false(only tested on Windows);
 {
+//    isBusy() is a deprecated function.
+//    It will always return false on Raspbian.
+//    SerialListener need to be removed.
+//
 //    qDebug()<<portInfo->isBusy();
-    if(!portInfo->isBusy())
-    {
-        killPM3();
-    }
+//    if(!portInfo->isBusy())
+//    {
+//        killPM3();
+//    }
 }
 
 void PM3Process::testThread()
