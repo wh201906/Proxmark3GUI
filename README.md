@@ -59,6 +59,7 @@ Great thanks to him.
     make
     make clean
     cp -r ../lang ./
+    cp ../configs.json ./
     ./Proxmark3GUI
 
 ***

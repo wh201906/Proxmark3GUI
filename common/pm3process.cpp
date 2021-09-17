@@ -109,7 +109,7 @@ void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly termina
 {
 //    isBusy() is a deprecated function.
 //    It will always return false on Raspbian.
-//    SerialListener need to be removed.
+//    SerialListener needs to be removed.
 //
 //    qDebug()<<portInfo->isBusy();
 //    if(!portInfo->isBusy())

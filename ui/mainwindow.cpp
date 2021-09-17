@@ -1,6 +1,8 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QJsonDocument>
+
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -37,6 +39,16 @@ MainWindow::MainWindow(QWidget *parent):
     Util::setUI(ui);
     mifare = new Mifare(ui, util, this);
     lf = new LF(ui, util, this);
+
+    QFile configList("configs.json");
+    if(!configList.open(QFile::ReadOnly | QFile::Text))
+    {
+        ;
+    }
+
+    QByteArray configData = configList.readAll();
+    QJsonDocument configJson(QJsonDocument::fromJson(configData));
+    mifare->setConfigMap(configJson.object()["mifare classic"].toObject().toVariantMap());
 
     keyEventFilter = new MyEventFilter(QEvent::KeyPress);
     resizeEventFilter = new MyEventFilter(QEvent::Resize);

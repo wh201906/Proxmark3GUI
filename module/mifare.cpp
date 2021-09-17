@@ -87,31 +87,37 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
     keyPattern = new QRegularExpression("\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|");
 }
 
+void Mifare::setConfigMap(const QVariantMap& configMap)
+{
+    this->configMap = configMap;
+    qDebug() << configMap;
+}
+
+// TODO: change result type QString->QMap
 QString Mifare::info(bool isRequiringOutput)
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    QVariantMap config = configMap["info"].toMap();
+    if(isRequiringOutput)
     {
-        if(isRequiringOutput)
+        QString result = util->execCMDWithOutput(config["cmd"].toString(), 500);
+        int begin, end;
+        begin = result.indexOf("UID");
+        if(begin != -1)
         {
-            QString result = util->execCMDWithOutput("hf 14a info", 500);
-            int begin, end;
-            begin = result.indexOf("UID");
-            if(begin != -1)
-            {
-                end = result.indexOf("SAK", begin);
-                end = result.indexOf("\n", end);
-                return result.mid(begin, end - begin + 1);
-            }
+            end = result.indexOf("SAK", begin);
+            end = result.indexOf("\n", end);
+            return result.mid(begin, end - begin + 1);
         }
-        else
-        {
-            util->execCMD("hf 14a info");
-            Util::gotoRawTab();
-        }
+    }
+    else
+    {
+        util->execCMD(config["cmd"].toString());
+        Util::gotoRawTab();
     }
     return "";
 }
 
+// TODO: Remove ClientType() detect, detect valid key by [0-9A-Fa-f]
 void Mifare::chk()
 {
     QRegularExpressionMatch reMatch;
@@ -148,14 +154,18 @@ void Mifare::chk()
     }
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
+        QVariantMap config = configMap["chk"].toMap();
+        QString cmd = config["cmd"].toString();
+        QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString());
+        cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
+
         result = util->execCMDWithOutput(
-                     "hf mf chk --"
-                     + cardType.typeText,
-                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern_res->pattern()}));
+                     cmd,
+                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern.pattern()}));
         qDebug() << "mf_chk_iceman_result" << result;
         for(int i = 0; i < cardType.sector_size; i++)
         {
-            reMatch = keyPattern_res->match(result, offset);
+            reMatch = keyPattern.match(result, offset);
             offset = reMatch.capturedStart();
             if(reMatch.hasMatch())
             {
@@ -179,6 +189,9 @@ void Mifare::chk()
 
 void Mifare::nested()
 {
+    QVariantMap config = configMap["nested"].toMap();
+    QString cmd = config["cmd"].toString();
+    QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString());
     QRegularExpressionMatch reMatch;
     QString result;
     int offset = 0;
@@ -193,32 +206,33 @@ void Mifare::nested()
     }
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
-        QString knownKeyInfo = "";
+        QString knownKey, knownKeyType;
+        int knownKeySector = -1;
         for(int i = 0; i < cardType.sector_size; i++)
         {
             if(data_isKeyValid(keyAList->at(i)))
             {
-                knownKeyInfo = " --blk " + QString::number(i * 4) + " -a -k " + keyAList->at(i);
+                knownKeyType = "A";
+                knownKey = keyAList->at(i);
+                knownKeySector = i;
+                break;
+            }
+            else if(data_isKeyValid(keyBList->at(i)))
+            {
+                knownKeyType = "B";
+                knownKey = keyBList->at(i);
+                knownKeySector = i;
                 break;
             }
         }
-        if(knownKeyInfo == "")
+        if(knownKeySector != -1)
         {
-            for(int i = 0; i < cardType.sector_size; i++)
-            {
-                if(data_isKeyValid(keyBList->at(i)))
-                {
-                    knownKeyInfo = " --blk " + QString::number(i * 4) + " -b -k " + keyBList->at(i);
-                    break;
-                }
-            }
-        }
-        if(knownKeyInfo != "")
-        {
+            cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
+            cmd.replace("<block>", QString::number(cardType.blks[knownKeySector]));
+            cmd.replace("<key type>", config["key type"].toMap()[knownKeyType].toString());
+            cmd.replace("<key>", knownKey);
             result = util->execCMDWithOutput(
-                         "hf mf nested --"
-                         + cardType.typeText
-                         + knownKeyInfo,
+                         cmd,
                          Util::ReturnTrigger(15000, {"Can't authenticate", keyPattern_res->pattern()}));
         }
         else
@@ -229,7 +243,7 @@ void Mifare::nested()
     }
     for(int i = 0; i < cardType.sector_size; i++)
     {
-        reMatch = keyPattern_res->match(result, offset);
+        reMatch = keyPattern.match(result, offset);
         offset = reMatch.capturedStart();
         if(reMatch.hasMatch())
         {
@@ -270,30 +284,33 @@ void Mifare::darkside()
 
 void Mifare::sniff()
 {
+    QVariantMap config = configMap["sniff"].toMap();
     if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
         util->execCMD("hf mf sniff");
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("hf sniff");
+        util->execCMD(config["cmd"].toString());
 
     Util::gotoRawTab();
 }
 
 void Mifare::sniff14a()
 {
+    QVariantMap config = configMap["sniff 14a"].toMap();
     if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
         util->execCMD("hf 14a snoop");
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("hf 14a sniff");
+        util->execCMD(config["cmd"].toString());
 
     Util::gotoRawTab();
 }
 
 void Mifare::list()
 {
+    QVariantMap config = configMap["sniff 14a"].toMap();
     if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
         util->execCMD("hf list mf");
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("trace list -t mf");
+        util->execCMD(config["cmd"].toString());
 
     Util::gotoRawTab();
 }
@@ -759,15 +776,15 @@ void Mifare::writeSelected(TargetType targetType)
 
 void Mifare::dump()
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("hf mf dump");
+    QVariantMap config = configMap["dump"].toMap();
+    util->execCMD(config["cmd"].toString());
     Util::gotoRawTab();
 }
 
 void Mifare::restore()
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("hf mf restore");
+    QVariantMap config = configMap["restore"].toMap();
+    util->execCMD(config["cmd"].toString());
     Util::gotoRawTab();
 }
 
@@ -782,7 +799,8 @@ void Mifare::wipeC()
     }
     else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
     {
-        util->execCMD("hf mf cwipe");
+        QVariantMap config = configMap["wipe Magic Card"].toMap();
+        util->execCMD(config["cmd"].toString());
     }
     Util::gotoRawTab();
 }
@@ -833,8 +851,8 @@ void Mifare::lockC()
 
 void Mifare::wipeE()
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("hf mf eclr");
+    QVariantMap config = configMap["wipe emulator"].toMap();
+    util->execCMD(config["cmd"].toString());
 }
 
 void Mifare::simulate()
