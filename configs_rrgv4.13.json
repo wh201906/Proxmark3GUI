@@ -1,18 +1,21 @@
 {
     "mifare classic": {
-        "nested":{
-            "cmd":"hf mf nested --<card type> --blk <block> -<key type> -k <key>",
+        "nested": {
+            "cmd": "hf mf nested --<card type> --blk <block> -<key type> -k <key>",
+            "static cmd": "hf mf staticnested --<card type> --blk <block> -<key type> -k <key>",
             "card type": {
                 "mini": "mini",
                 "1k": "1k",
                 "2k": "2k",
                 "4k": "4k"
             },
-            "key type":{
+            "key type": {
                 "A": "a",
                 "B": "b"
             },
-            "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|"
+            "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|",
+            "key A index": 2,
+            "key B index": 4
         },
         "chk": {
             "cmd": "hf mf chk --<card type>",
@@ -22,7 +25,9 @@
                 "2k": "2k",
                 "4k": "4k"
             },
-            "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|"
+            "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|",
+            "key A index": 2,
+            "key B index": 4
         },
         "info": {
             "cmd": "hf 14a info"

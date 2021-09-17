@@ -34,7 +34,7 @@ void Util::execCMD(const QString& cmd)
         emit write(cmd + "\n");
 }
 
-QString Util::execCMDWithOutput(const QString& cmd, ReturnTrigger trigger)
+QString Util::execCMDWithOutput(const QString& cmd, ReturnTrigger trigger, bool rawOutput)
 {
     // if the trigger is empty, this function will wait trigger.waitTime then return all outputs during the wait time.
     // otherwise, this function will return empty string if no trigger is detected, or return outputs if any trigger is detected.
@@ -78,7 +78,7 @@ QString Util::execCMDWithOutput(const QString& cmd, ReturnTrigger trigger)
         }
     }
     isRequiringOutput = false;
-    return (isResultFound || trigger.expectedOutputs.isEmpty() ? *requiredOutput : "");
+    return (isResultFound || trigger.expectedOutputs.isEmpty() || rawOutput ? *requiredOutput : "");
 }
 
 void Util::delay(unsigned int msec)

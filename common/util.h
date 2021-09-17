@@ -53,7 +53,7 @@ public:
     explicit Util(QObject *parent = nullptr);
 
     void execCMD(const QString& cmd);
-    QString execCMDWithOutput(const QString& cmd, ReturnTrigger trigger = 10000);
+    QString execCMDWithOutput(const QString& cmd, ReturnTrigger trigger = 10000, bool rawOutput = false);
     void delay(unsigned int msec);
     static ClientType getClientType();
     static int rawTabIndex;

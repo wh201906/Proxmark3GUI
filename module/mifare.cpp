@@ -93,20 +93,23 @@ void Mifare::setConfigMap(const QVariantMap& configMap)
     qDebug() << configMap;
 }
 
-// TODO: change result type QString->QMap
-QString Mifare::info(bool isRequiringOutput)
+QMap<QString, QString> Mifare::info(bool isRequiringOutput)
 {
+    QMap<QString, QString> map;
     QVariantMap config = configMap["info"].toMap();
     if(isRequiringOutput)
     {
         QString result = util->execCMDWithOutput(config["cmd"].toString(), 500);
-        int begin, end;
-        begin = result.indexOf("UID");
-        if(begin != -1)
+        QStringList lineList = result.split("\n");
+
+        for(auto line = lineList.begin(); line != lineList.end(); line++)
         {
-            end = result.indexOf("SAK", begin);
-            end = result.indexOf("\n", end);
-            return result.mid(begin, end - begin + 1);
+            if(line->contains("UID"))
+                map["UID"] = line->replace("UID", "").replace(QRegularExpression("[^0-9a-fA-F]"), "").trimmed();
+            else if(line->contains("ATQA"))
+                map["ATQA"] = line->replace("ATQA", "").replace(QRegularExpression("[^0-9a-fA-F]"), "").trimmed();
+            else if(line->contains("SAK"))
+                map["SAK"] = line->replace("SAK", "").replace(QRegularExpression("\\[.+?\\]"), "").replace(QRegularExpression("[^0-9a-fA-F]"), "").trimmed();
         }
     }
     else
@@ -114,97 +117,66 @@ QString Mifare::info(bool isRequiringOutput)
         util->execCMD(config["cmd"].toString());
         Util::gotoRawTab();
     }
-    return "";
+    return map;
 }
 
-// TODO: Remove ClientType() detect, detect valid key by [0-9A-Fa-f]
 void Mifare::chk()
 {
     QRegularExpressionMatch reMatch;
     QString result;
     int offset = 0;
     QString data;
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    QVariantMap config = configMap["chk"].toMap();
+    QString cmd = config["cmd"].toString();
+    int keyAindex = config["key A index"].toInt();
+    int keyBindex = config["key B index"].toInt();
+    QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString());
+    cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
+
+    result = util->execCMDWithOutput(
+                 cmd,
+                 Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern.pattern()}));
+    for(int i = 0; i < cardType.sector_size; i++)
     {
-        result = util->execCMDWithOutput(
-                     "hf mf chk *"
-                     + QString::number(cardType.type)
-                     + " ?",
-                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern->pattern()}));
-        qDebug() << result;
-        for(int i = 0; i < cardType.sector_size; i++)
+        reMatch = keyPattern.match(result, offset);
+        offset = reMatch.capturedStart();
+        if(reMatch.hasMatch())
         {
-            reMatch = keyPattern->match(result, offset);
-            offset = reMatch.capturedStart();
-            if(reMatch.hasMatch())
+            data = reMatch.captured().toUpper();
+            offset += data.length();
+            QStringList cells = data.remove(" ").split("|");
+            if(!cells[keyAindex].contains(QRegularExpression("[^0-9a-fA-F]")))
             {
-                data = reMatch.captured().toUpper();
-                offset += data.length();
-                QStringList cells = data.remove(" ").split("|");
-                if(!cells[2].contains("?"))
-                {
-                    keyAList->replace(i, cells[2]);
-                }
-                if(!cells[3].contains("?"))
-                {
-                    keyBList->replace(i, cells[3]);
-                }
+                keyAList->replace(i, cells[keyAindex]);
+            }
+            if(!cells[keyBindex].contains(QRegularExpression("[^0-9a-fA-F]")))
+            {
+                keyBList->replace(i, cells[keyBindex]);
             }
         }
     }
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-    {
-        QVariantMap config = configMap["chk"].toMap();
-        QString cmd = config["cmd"].toString();
-        QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString());
-        cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
 
-        result = util->execCMDWithOutput(
-                     cmd,
-                     Util::ReturnTrigger(1000 + cardType.sector_size * 200, {"No valid", keyPattern.pattern()}));
-        qDebug() << "mf_chk_iceman_result" << result;
-        for(int i = 0; i < cardType.sector_size; i++)
-        {
-            reMatch = keyPattern.match(result, offset);
-            offset = reMatch.capturedStart();
-            if(reMatch.hasMatch())
-            {
-                data = reMatch.captured().toUpper();
-                offset += data.length();
-                QStringList cells = data.remove(" ").split("|");
-                if(cells[3] == "1")
-                {
-                    keyAList->replace(i, cells[2]);
-                }
-                if(cells[5] == "1")
-                {
-                    keyBList->replace(i, cells[4]);
-                }
-            }
-        }
-
-    }
     data_syncWithKeyWidget();
 }
 
-void Mifare::nested()
+void Mifare::nested(bool isStaticNested)
 {
     QVariantMap config = configMap["nested"].toMap();
-    QString cmd = config["cmd"].toString();
+    QString cmd;
+    if(isStaticNested)
+        cmd = config["static cmd"].toString();
+    else
+        cmd = config["cmd"].toString();
+    int keyAindex = config["key A index"].toInt();
+    int keyBindex = config["key B index"].toInt();
     QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString());
     QRegularExpressionMatch reMatch;
     QString result;
     int offset = 0;
     QString data;
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
-    {
-        result = util->execCMDWithOutput(
-                     "hf mf nested "
-                     + QString::number(cardType.type)
-                     + " *",
-                     Util::ReturnTrigger(15000, {"Can't found", "\\|000\\|"}));
-    }
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+
+    cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
+    if(cmd.contains(QRegularExpression("<.+>"))) // need at least one section key
     {
         QString knownKey, knownKeyType;
         int knownKeySector = -1;
@@ -227,20 +199,28 @@ void Mifare::nested()
         }
         if(knownKeySector != -1)
         {
-            cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
             cmd.replace("<block>", QString::number(cardType.blks[knownKeySector]));
             cmd.replace("<key type>", config["key type"].toMap()[knownKeyType].toString());
             cmd.replace("<key>", knownKey);
-            result = util->execCMDWithOutput(
-                         cmd,
-                         Util::ReturnTrigger(15000, {"Can't authenticate", keyPattern_res->pattern()}));
         }
         else
         {
             QMessageBox::information(parent, tr("Info"), tr("Plz provide at least one known key"));
+            return;
         }
 
     }
+    result = util->execCMDWithOutput(
+                 cmd,
+                 Util::ReturnTrigger(15000, {"Can't found", "Can't authenticate", keyPattern_res->pattern()}),
+                 true);
+
+    if(result.contains("static") && !isStaticNested)
+    {
+        nested(true);
+        return;
+    }
+
     for(int i = 0; i < cardType.sector_size; i++)
     {
         reMatch = keyPattern.match(result, offset);
@@ -250,13 +230,13 @@ void Mifare::nested()
             data = reMatch.captured().toUpper();
             offset += data.length();
             QStringList cells = data.remove(" ").split("|");
-            if(cells[3] == "1")
+            if(!cells[keyAindex].contains(QRegularExpression("[^0-9a-fA-F]")))
             {
-                keyAList->replace(i, cells[2]);
+                keyAList->replace(i, cells[keyAindex]);
             }
-            if(cells[5] == "1")
+            if(!cells[keyBindex].contains(QRegularExpression("[^0-9a-fA-F]")))
             {
-                keyBList->replace(i, cells[4]);
+                keyBList->replace(i, cells[keyBindex]);
             }
         }
     }
@@ -285,10 +265,7 @@ void Mifare::darkside()
 void Mifare::sniff()
 {
     QVariantMap config = configMap["sniff"].toMap();
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
-        util->execCMD("hf mf sniff");
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD(config["cmd"].toString());
+    util->execCMD(config["cmd"].toString());
 
     Util::gotoRawTab();
 }
@@ -296,10 +273,7 @@ void Mifare::sniff()
 void Mifare::sniff14a()
 {
     QVariantMap config = configMap["sniff 14a"].toMap();
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
-        util->execCMD("hf 14a snoop");
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD(config["cmd"].toString());
+    util->execCMD(config["cmd"].toString());
 
     Util::gotoRawTab();
 }
@@ -307,10 +281,7 @@ void Mifare::sniff14a()
 void Mifare::list()
 {
     QVariantMap config = configMap["sniff 14a"].toMap();
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
-        util->execCMD("hf list mf");
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD(config["cmd"].toString());
+    util->execCMD(config["cmd"].toString());
 
     Util::gotoRawTab();
 }
@@ -790,37 +761,25 @@ void Mifare::restore()
 
 void Mifare::wipeC()
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
-    {
-        util->execCMD(
-            "hf mf cwipe "
-            + QString::number(cardType.type)
-            + " f");
-    }
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-    {
-        QVariantMap config = configMap["wipe Magic Card"].toMap();
-        util->execCMD(config["cmd"].toString());
-    }
+    QVariantMap config = configMap["wipe Magic Card"].toMap();
+    QString cmd = config["cmd"].toString();
+    if(cmd.contains("<card type>"))
+        cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
+    util->execCMD(cmd);
     Util::gotoRawTab();
 }
 
 void Mifare::setParameterC()
 {
-    QString result = info(true);
-    if(result == "")
+    QMap<QString, QString> result = info(true);
+    if(result.isEmpty())
+    {
         QMessageBox::information(parent, tr("Info"), tr("Failed to read card."));
+        return;
+    }
     else
     {
-        result.replace("\n", "");
-        result.replace(QRegularExpression("\\[.\\]"), "");
-        result.replace("UID", "");
-        result.replace("ATQA", "");
-        result.replace("SAK", "");
-        result.replace(" ", "");
-        QStringList lis = result.split(':');
-        qDebug() << lis;
-        MF_UID_parameterDialog dialog(lis[1].toUpper(), lis[2].toUpper(), lis[3].toUpper());
+        MF_UID_parameterDialog dialog(result["UID"].toUpper(), result["ATQA"].toUpper(), result["SAK"].toUpper());
         connect(&dialog, &MF_UID_parameterDialog::sendCMD, util, &Util::execCMD);
         if(dialog.exec() == QDialog::Accepted)
             Util::gotoRawTab();

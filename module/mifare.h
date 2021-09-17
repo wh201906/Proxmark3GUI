@@ -65,9 +65,9 @@ public:
     static const AccessType trailerReadCondition[8][3];
     static const AccessType trailerWriteCondition[8][3];
 
-    QString info(bool isRequiringOutput = false);
+    QMap<QString, QString> info(bool isRequiringOutput = false);
     void chk();
-    void nested();
+    void nested(bool isStaticNested = false);
     void darkside();
     void hardnested();
     void sniff();
