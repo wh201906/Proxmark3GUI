@@ -866,15 +866,16 @@ void MainWindow::on_MF_Sniff_loadButton_clicked() // use a tmp file to support c
     QString filename = "";
 
     title = tr("Plz select the trace file:");
-    filename = QFileDialog::getOpenFileName(this, title, "./", tr("Trace Files(*.trc);;All Files(*.*)"));
+    filename = QFileDialog::getOpenFileName(this, title, clientWorkingDir->absolutePath(), tr("Trace Files(*.trc);;All Files(*.*)"));
     qDebug() << filename;
     if(filename != "")
     {
         QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
-        if(QFile::copy(filename, "./" + tmpFile))
+        if(QFile::copy(filename, clientWorkingDir->absolutePath() + "/" + tmpFile))
         {
             mifare->loadSniff(tmpFile);
-            QFile::remove("./" + tmpFile);
+            util->delay(3000);
+            QFile::remove(clientWorkingDir->absolutePath() + "/" + tmpFile);
         }
         else
         {
@@ -889,17 +890,23 @@ void MainWindow::on_MF_Sniff_saveButton_clicked()
     QString filename = "";
 
     title = tr("Plz select the location to save trace file:");
-    filename = QFileDialog::getSaveFileName(this, title, "./", tr("Trace Files(*.trc)"));
+    filename = QFileDialog::getSaveFileName(this, title, clientWorkingDir->absolutePath(), tr("Trace Files(*.trc)"));
     qDebug() << filename;
     if(filename != "")
     {
         QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
         mifare->saveSniff(tmpFile);
-        if(!QFile::copy("./" + tmpFile, filename))
+        for(int i = 0; i < 100; i++)
+        {
+            util->delay(100);
+            if(QFile::exists(clientWorkingDir->absolutePath() + "/" + tmpFile))
+                break;
+        }
+        if(!QFile::copy(clientWorkingDir->absolutePath() + "/" + tmpFile, filename))
         {
             QMessageBox::information(this, tr("Info"), tr("Failed to save to") + "\n" + filename);
         }
-        QFile::remove("./" + tmpFile);
+        QFile::remove(clientWorkingDir->absolutePath() + "/" + tmpFile);
     }
 
 }

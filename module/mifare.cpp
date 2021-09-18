@@ -126,7 +126,7 @@ void Mifare::chk()
     QString result;
     int offset = 0;
     QString data;
-    QVariantMap config = configMap["chk"].toMap();
+    QVariantMap config = configMap["check"].toMap();
     QString cmd = config["cmd"].toString();
     int keyAindex = config["key A index"].toInt();
     int keyBindex = config["key B index"].toInt();
@@ -254,10 +254,8 @@ void Mifare::hardnested()
 
 void Mifare::darkside()
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
-        util->execCMD("hf mf mifare");
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("hf mf darkside");
+    QVariantMap config = configMap["darkside"].toMap();
+    util->execCMD(config["cmd"].toString());
 
     Util::gotoRawTab();
 }
@@ -280,7 +278,7 @@ void Mifare::sniff14a()
 
 void Mifare::list()
 {
-    QVariantMap config = configMap["sniff 14a"].toMap();
+    QVariantMap config = configMap["list"].toMap();
     util->execCMD(config["cmd"].toString());
 
     Util::gotoRawTab();
@@ -293,88 +291,73 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
     QRegularExpressionMatch currMatch;
     bool isTrailerBlock = (blockId < 128 && ((blockId + 1) % 4 == 0)) || ((blockId + 1) % 16 == 0);
 
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(targetType == TARGET_MIFARE)
     {
-        if(targetType == TARGET_MIFARE)
+        if(!data_isKeyValid(key))
         {
-            if(!data_isKeyValid(key))
+            return "";
+        }
+        QVariantMap config = configMap["normal read block"].toMap();
+        QString cmd = config["cmd"].toString();
+        QRegularExpression dataPattern = QRegularExpression(config["data pattern"].toString());
+        cmd.replace("<block>", QString::number(blockId));
+        cmd.replace("<key type>", config["key type"].toMap()[QString((char)keyType)].toString());
+        cmd.replace("<key>", key);
+        // use the given key type to read the target block
+        result = util->execCMDWithOutput(cmd, waitTime);
+
+        currMatch = dataPattern.match(result);
+        if(currMatch.hasMatch())
+        {
+            data = currMatch.captured().toUpper();
+            data.remove(" ");
+            // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
+            // if the given key type is KeyB, it will never get the KeyA from the key block
+            if(isTrailerBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
             {
-                return "";
-            }
-            // use the given key type to read the target block
-            result = util->execCMDWithOutput(
-                         "hf mf rdbl "
-                         + QString::number(blockId)
-                         + " "
-                         + (char)keyType
-                         + " "
-                         + key,
-                         waitTime);
-            currMatch = dataPattern->match(result);
-            if(currMatch.hasMatch())
-            {
-                data = currMatch.captured().toUpper();
-                data.remove(" ");
-                // when the target block is a key block and the given key type is KeyA, try to check whether the KeyB is valid(by Access Bits)
-                // if the given key type is KeyB, it will never get the KeyA from the key block
-                if(isTrailerBlock && keyType == KEY_A) // in this case, the Access Bits is always accessible
+                data.replace(0, 12, key);
+                QList<quint8> ACBits = data_getACBits(data.mid(12, 8));
+                if(ACBits[3] == 2 || ACBits[3] == 3 || ACBits[3] == 5 || ACBits[3] == 6 || ACBits[3] == 7) // in these cases, the KeyB cannot be read by KeyA
                 {
-                    data.replace(0, 12, key);
-                    QList<quint8> ACBits = data_getACBits(data.mid(12, 8));
-                    if(ACBits[3] == 2 || ACBits[3] == 3 || ACBits[3] == 5 || ACBits[3] == 6 || ACBits[3] == 7) // in these cases, the KeyB cannot be read by KeyA
-                    {
-                        data.replace(20, 12, "????????????");
-                    }
-                }
-                else if(isTrailerBlock && keyType == KEY_B)
-                {
-                    data.replace(20, 12, key);;
-                    data.replace(0, 12, "????????????"); // fill the keyA part with ?
+                    data.replace(20, 12, "????????????");
                 }
             }
-            else
-                data = "";
-        }
-        else if(targetType == TARGET_UID)
-        {
-            result = util->execCMDWithOutput(
-                         "hf mf cgetblk "
-                         + QString::number(blockId),
-                         waitTime);
-            currMatch = dataPattern->match(result);
-            if(currMatch.hasMatch())
+            else if(isTrailerBlock && keyType == KEY_B)
             {
-                data = currMatch.captured().toUpper();
-                data.remove(" ");
+                data.replace(20, 12, key);;
+                data.replace(0, 12, "????????????"); // fill the keyA part with ?
             }
-            else
-                data = "";
         }
+        else
+            data = "";
     }
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    else if(targetType == TARGET_UID)
     {
-        if(targetType == TARGET_EMULATOR)
+        QVariantMap config = configMap["Magic Card read block"].toMap();
+        QString cmd = config["cmd"].toString();
+        QRegularExpression dataPattern = QRegularExpression(config["data pattern"].toString());
+        cmd.replace("<block>", QString::number(blockId));
+        result = util->execCMDWithOutput(cmd, waitTime);
+        currMatch = dataPattern.match(result);
+        if(currMatch.hasMatch())
         {
-            result = util->execCMDWithOutput(
-                         "hf mf eget "
-                         + QString::number(blockId),
-                         150);
-            data = dataPattern->match(result).captured().toUpper();
+            data = currMatch.captured().toUpper();
             data.remove(" ");
         }
+        else
+            data = "";
     }
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    else if(targetType == TARGET_EMULATOR)
     {
-        if(targetType == TARGET_EMULATOR)
-        {
-            result = util->execCMDWithOutput(
-                         "hf mf egetblk "
-                         + QString::number(blockId),
-                         150);
-            data = dataPattern->match(result).captured().toUpper();
-            data.remove(" ");
-        }
+        QVariantMap config = configMap["emulator read block"].toMap();
+        QString cmd = config["cmd"].toString();
+        QRegularExpression dataPattern = QRegularExpression(config["data pattern"].toString());
+        cmd.replace("<block>", QString::number(blockId));
+        result = util->execCMDWithOutput(cmd, 150);
+        data = dataPattern.match(result).captured().toUpper();
+        data.remove(" ");
     }
+
     return data;
 }
 
@@ -761,7 +744,7 @@ void Mifare::restore()
 
 void Mifare::wipeC()
 {
-    QVariantMap config = configMap["wipe Magic Card"].toMap();
+    QVariantMap config = configMap["Magic Card wipe"].toMap();
     QString cmd = config["cmd"].toString();
     if(cmd.contains("<card type>"))
         cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
@@ -810,7 +793,7 @@ void Mifare::lockC()
 
 void Mifare::wipeE()
 {
-    QVariantMap config = configMap["wipe emulator"].toMap();
+    QVariantMap config = configMap["emulator wipe"].toMap();
     util->execCMD(config["cmd"].toString());
 }
 
@@ -824,12 +807,17 @@ void Mifare::simulate()
 
 void Mifare::loadSniff(const QString& file)
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
-        util->execCMD("hf list mf -l " + file);
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    QVariantMap config = configMap["load sniff"].toMap();
+    QString cmd = config["cmd"].toString();
+    cmd.replace("<filename>", file);
+    if(config.contains("show cmd"))
     {
-        if(util->execCMDWithOutput("trace load -f " + file, Util::ReturnTrigger({"loaded"})) != "")
-            util->execCMD("trace list -t mf");
+        if(util->execCMDWithOutput(cmd, Util::ReturnTrigger({"loaded"})) != "")
+            util->execCMD(config["show cmd"].toString());
+    }
+    else
+    {
+        util->execCMD(cmd);
     }
 
     Util::gotoRawTab();
@@ -837,10 +825,10 @@ void Mifare::loadSniff(const QString& file)
 
 void Mifare::saveSniff(const QString& file)
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
-        util->execCMD("hf list mf -s " + file);
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-        util->execCMD("trace save -f " + file);
+    QVariantMap config = configMap["save sniff"].toMap();
+    QString cmd = config["cmd"].toString();
+    cmd.replace("<filename>", file);
+    util->execCMD(cmd);
 
     Util::gotoRawTab();
 }

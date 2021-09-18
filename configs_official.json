@@ -8,15 +8,11 @@
                 "2k": "2",
                 "4k": "4"
             },
-            "key type": {
-                "A": "A",
-                "B": "B"
-            },
             "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|",
             "key A index": 2,
             "key B index": 4
         },
-        "chk": {
+        "check": {
             "cmd": "hf mf chk *<card type> ?",
             "card type": {
                 "mini": "0",
@@ -46,10 +42,10 @@
         "restore": {
             "cmd": "hf mf restore"
         },
-        "wipe emulator": {
+        "emulator wipe": {
             "cmd": "hf mf eclr"
         },
-        "wipe Magic Card": {
+        "Magic Card wipe": {
             "cmd": "hf mf cwipe <card type> f",
             "card type": {
                 "mini": "0",
@@ -57,6 +53,31 @@
                 "2k": "2",
                 "4k": "4"
             }
+        },
+        "emulator read block": {
+            "cmd": "hf mf eget <block>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "Magic Card read block": {
+            "cmd": "hf mf cgetblk <block>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "normal read block": {
+            "cmd": "hf mf rdbl <block> <key type> <key>",
+            "key type": {
+                "A": "A",
+                "B": "B"
+            },
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "darkside": {
+            "cmd": "hf mf mifare"
+        },
+        "save sniff": {
+            "cmd": "hf list mf -s <filename>"
+        },
+        "load sniff": {
+            "cmd": "hf list mf -l <filename>"
         }
     }
 }

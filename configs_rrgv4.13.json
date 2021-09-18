@@ -17,7 +17,7 @@
             "key A index": 2,
             "key B index": 4
         },
-        "chk": {
+        "check": {
             "cmd": "hf mf chk --<card type>",
             "card type": {
                 "mini": "mini",
@@ -47,11 +47,37 @@
         "restore": {
             "cmd": "hf mf restore"
         },
-        "wipe emulator": {
+        "emulator wipe": {
             "cmd": "hf mf eclr"
         },
-        "wipe Magic Card": {
+        "Magic Card wipe": {
             "cmd": "hf mf cwipe"
+        },
+        "emulator read block": {
+            "cmd": "hf mf egetblk --blk <block>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "Magic Card read block": {
+            "cmd": "hf mf cgetblk --blk <block>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "normal read block": {
+            "cmd": "hf mf rdbl --blk <block> -<key type> -k <key>",
+            "key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "darkside": {
+            "cmd": "hf mf darkside"
+        },
+        "save sniff": {
+            "cmd": "trace save -f <filename>"
+        },
+        "load sniff": {
+            "cmd": "trace load -f <filename>",
+            "show cmd": "trace list --buffer -t mf"
         }
     }
 }
