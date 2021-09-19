@@ -31,7 +31,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="knownKeySectorBox">
+      <widget class="QComboBox" name="knownKeyBlockBox">
        <property name="minimumSize">
         <size>
          <width>60</width>
@@ -106,7 +106,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="targetKeySectorBox">
+      <widget class="QComboBox" name="targetKeyBlockBox">
        <property name="minimumSize">
         <size>
          <width>60</width>

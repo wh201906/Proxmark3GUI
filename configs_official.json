@@ -78,6 +78,62 @@
         },
         "load sniff": {
             "cmd": "hf list mf -l <filename>"
+        },
+        "hardnested": {
+            "cmd": "hf mf hardnested <known key block> <known key type> <known key> <target key block> <target key type>",
+            "known key type": {
+                "A": "A",
+                "B": "B"
+            },
+            "target key type": {
+                "A": "A",
+                "B": "B"
+            }
+        },
+        "normal read sector": {
+            "cmd": "hf mf rdsc <sector> <key type> <key>",
+            "key type": {
+                "A": "A",
+                "B": "B"
+            },
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "Magic Card read sector": {
+            "cmd": "hf mf cgetsc <sector>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "normal write block": {
+            "cmd": "hf mf wrbl <block> <key type> <key> <data>",
+            "key type": {
+                "A": "A",
+                "B": "B"
+            },
+            "failed flag": [
+                "isOk:00"
+            ]
+        },
+        "Magic Card write block": {
+            "cmd": "hf mf csetblk <block> <data>",
+            "failed flag": [
+                "No chinese magic"
+            ]
+        },
+        "emulator write block": {
+            "cmd": "hf mf eset <block> <data>"
+        },
+        "Magic Card lock": {
+            "cmd": "hf 14a raw ",
+            "sequence": [
+                "-pa -b7 40",
+                "-pa 43",
+                "-pa E0 00 39 F7",
+                "-pa E1 00 E1 EE",
+                "-pa 85 00 00 00 00 00 00 00 00 00 00 00 00 00 00 08 18 47",
+                "-a 52"
+            ]
+        },
+        "Magic Card set parameter": {
+            "cmd": "hf mf csetuid <uid> <atqa> <sak>"
         }
     }
 }

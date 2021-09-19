@@ -78,6 +78,64 @@
         "load sniff": {
             "cmd": "trace load -f <filename>",
             "show cmd": "trace list --buffer -t mf"
+        },
+        "hardnested": {
+            "cmd": "hf mf hardnested --blk <known key block> -<known key type> -k <known key> --tblk <target key block> --t<target key type>",
+            "known key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "target key type": {
+                "A": "a",
+                "B": "b"
+            }
+        },
+        "normal read sector": {
+            "cmd": "hf mf rdsc --sec <sector> -<key type> -k <key>",
+            "key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "Magic Card read sector": {
+            "cmd": "hf mf cgetsc --sec <sector>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "normal write block": {
+            "cmd": "hf mf wrbl --blk <block> -<key type> -k <key> -d <data>",
+            "key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "failed flag": [
+                "fail",
+                "error"
+            ]
+        },
+        "Magic Card write block": {
+            "cmd": "hf mf csetblk --blk <block> -d <data>",
+            "failed flag": [
+                "fail",
+                "error"
+            ]
+        },
+        "emulator write block": {
+            "cmd": "hf mf esetblk --blk <block> -d <data>"
+        },
+        "Magic Card lock": {
+            "cmd": "hf 14a raw ",
+            "sequence": [
+                "-ak -b 7 40",
+                "-ak 43",
+                "-ak E0 00 39 F7",
+                "-ak E1 00 E1 EE",
+                "-ak 85 00 00 00 00 00 00 00 00 00 00 00 00 00 00 08 18 47",
+                "-a 52"
+            ]
+        },
+        "Magic Card set parameter": {
+            "cmd": "hf mf csetuid --uid <uid> --atqa <atqa> --sak <sak>"
         }
     }
 }

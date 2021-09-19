@@ -1,4 +1,5 @@
 ﻿#include "mifare.h"
+#include <QJsonArray>
 
 const Mifare::CardType Mifare::card_mini =
 {
@@ -246,7 +247,8 @@ void Mifare::nested(bool isStaticNested)
 
 void Mifare::hardnested()
 {
-    MF_Attack_hardnestedDialog dialog(cardType.block_size);
+    QVariantMap config = configMap["hardnested"].toMap();
+    MF_Attack_hardnestedDialog dialog(cardType.block_size, config);
     connect(&dialog, &MF_Attack_hardnestedDialog::sendCMD, util, &Util::execCMD);
     if(dialog.exec() == QDialog::Accepted)
         Util::gotoRawTab();
@@ -363,6 +365,7 @@ QString Mifare::_readblk(int blockId, KeyType keyType, const QString& key, Targe
 
 QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, TargetType targetType, int waitTime)
 {
+    QVariantMap config;
     QStringList data;
     QString result, tmp;
     QRegularExpressionMatch reMatch;
@@ -373,83 +376,81 @@ QStringList Mifare::_readsec(int sectorId, KeyType keyType, const QString& key, 
         data.append("");
     }
 
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    // try to read all blocks together
+    if(targetType == TARGET_MIFARE)
     {
-        // try to read all blocks together
-        if(targetType == TARGET_MIFARE)
+        if(!data_isKeyValid(key))
         {
-            if(!data_isKeyValid(key))
-            {
-                return data;
-            }
-            result = util->execCMDWithOutput(
-                         "hf mf rdsc "
-                         + QString::number(sectorId)
-                         + " "
-                         + (char)keyType
-                         + " "
-                         + key,
-                         waitTime);
-        }
-        else if(targetType == TARGET_UID)
-        {
-            result = util->execCMDWithOutput(
-                         "hf mf cgetsc "
-                         + QString::number(sectorId),
-                         waitTime);
-        }
-        else if(targetType == TARGET_EMULATOR)
-        {
-            for(int i = 0; i < cardType.blk[sectorId]; i++)
-                data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, targetType, waitTime);
             return data;
         }
+        config = configMap["normal read sector"].toMap();
+        QString cmd = config["cmd"].toString();
+        cmd.replace("<sector>", QString::number(sectorId));
+        cmd.replace("<key type>", config["key type"].toMap()[QString((char)keyType)].toString());
+        cmd.replace("<key>", key);
+        result = util->execCMDWithOutput(cmd, waitTime);
+    }
+    else if(targetType == TARGET_UID)
+    {
+        config = configMap["Magic Card read sector"].toMap();
+        QString cmd = config["cmd"].toString();
+        cmd.replace("<sector>", QString::number(sectorId));
+        result = util->execCMDWithOutput(cmd, waitTime);
+    }
+    else if(targetType == TARGET_EMULATOR)
+    {
+        for(int i = 0; i < cardType.blk[sectorId]; i++)
+            data[i] = _readblk(cardType.blks[sectorId] + i, keyType, key, targetType, waitTime);
+        return data;
+    }
 
-        // for TARGET_MIFARE and TARGET_UID
-        reMatch = dataPattern->match(result);
-        offset = reMatch.capturedStart();
-        if(reMatch.hasMatch()) // read successful
+    // for TARGET_MIFARE and TARGET_UID
+    // if targetType == TARGET_EMULATOR, this function has returned
+    QRegularExpression dataPattern = QRegularExpression(config["data pattern"].toString());
+    reMatch = dataPattern.match(result);
+    offset = reMatch.capturedStart();
+    if(reMatch.hasMatch()) // read successful
+    {
+        for(int i = 0; i < cardType.blk[sectorId]; i++)
         {
-            for(int i = 0; i < cardType.blk[sectorId]; i++)
+            reMatch = dataPattern.match(result, offset);
+            offset = reMatch.capturedStart();
+            if(reMatch.hasMatch())
             {
-                reMatch = dataPattern->match(result, offset);
-                offset = reMatch.capturedStart();
-                if(reMatch.hasMatch())
-                {
-                    tmp = reMatch.captured().toUpper();
-                    offset += tmp.length();
-                    tmp.remove(" ");
-                    data[i] = tmp;
-                }
+                tmp = reMatch.captured().toUpper();
+                offset += tmp.length();
+                tmp.remove(" ");
+                data[i] = tmp;
             }
-        }
-        // when one of the block cannot be read, the rdsc will return nothing, so you need to read the rest of blocks manually
-        // the following rdbl operation is not handled there, for better speed(rdsc_A->rdsc_B->rdbl0~3)
-        else if(targetType == TARGET_UID) // treat as MIFARE
-            data = _readsec(sectorId, keyType, key, TARGET_MIFARE, waitTime);
-
-
-        //process trailer(like _readblk())
-        QString trailer = data[cardType.blk[sectorId] - 1];
-        if(trailer != "" && targetType == TARGET_MIFARE)
-        {
-            if(keyType == KEY_A) // in this case, the Access Bits is always accessible
-            {
-                trailer.replace(0, 12, key);
-                QList<quint8> ACBits = data_getACBits(trailer.mid(12, 8));
-                if(ACBits[3] == 2 || ACBits[3] == 3 || ACBits[3] == 5 || ACBits[3] == 6 || ACBits[3] == 7) // in these cases, the KeyB cannot be read by KeyA
-                {
-                    trailer.replace(20, 12, "????????????");
-                }
-            }
-            else if(keyType == KEY_B)
-            {
-                trailer.replace(20, 12, key);;
-                trailer.replace(0, 12, "????????????"); // fill the keyA part with ?
-            }
-            data[cardType.blk[sectorId] - 1] = trailer;
         }
     }
+    // when one of the block cannot be read, the rdsc will return nothing, so you need to read the rest of blocks manually
+    // the following rdbl operation is not handled there, for better speed(rdsc_A->rdsc_B->rdbl0~3)
+    else if(targetType == TARGET_UID) // treat as MIFARE
+        data = _readsec(sectorId, keyType, key, TARGET_MIFARE, waitTime);
+
+
+    //process trailer(like _readblk())
+    QString trailer = data[cardType.blk[sectorId] - 1];
+    if(trailer != "" && targetType == TARGET_MIFARE)
+    {
+        if(keyType == KEY_A) // in this case, the Access Bits is always accessible
+        {
+            trailer.replace(0, 12, key);
+            QList<quint8> ACBits = data_getACBits(trailer.mid(12, 8));
+            if(ACBits[3] == 2 || ACBits[3] == 3 || ACBits[3] == 5 || ACBits[3] == 6 || ACBits[3] == 7) // in these cases, the KeyB cannot be read by KeyA
+            {
+                trailer.replace(20, 12, "????????????");
+            }
+        }
+        else if(keyType == KEY_B)
+        {
+            trailer.replace(20, 12, key);;
+            trailer.replace(0, 12, "????????????"); // fill the keyA part with ?
+        }
+        data[cardType.blk[sectorId] - 1] = trailer;
+    }
+
     return data;
 }
 
@@ -578,45 +579,57 @@ bool Mifare::_writeblk(int blockId, KeyType keyType, const QString& key, const Q
     if(data_isDataValid(input) != DATA_NOSPACE)
         return false;
 
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL || Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+    if(targetType == TARGET_MIFARE)
     {
-        if(targetType == TARGET_MIFARE)
+        if(!data_isKeyValid(key))
+            return false;
+        QVariantMap config = configMap["normal write block"].toMap();
+        QString cmd = config["cmd"].toString();
+        cmd.replace("<block>", QString::number(blockId));
+        cmd.replace("<key type>", config["key type"].toMap()[QString((char)keyType)].toString());
+        cmd.replace("<key>", key);
+        cmd.replace("<data>", input);
+        result = util->execCMDWithOutput(cmd, waitTime);
+        if(result.isEmpty())
+            return false;
+
+        QVariantList failedFlag = config["failed flag"].toJsonArray().toVariantList();
+        for(auto flag = failedFlag.begin(); flag != failedFlag.end(); flag++)
         {
-            if(!data_isKeyValid(key))
+            if(result.contains(flag->toString()))
                 return false;
-            result = util->execCMDWithOutput(
-                         "hf mf wrbl "
-                         + QString::number(blockId)
-                         + " "
-                         + (char)keyType
-                         + " "
-                         + key
-                         + " "
-                         + input,
-                         waitTime);
-            return (result.indexOf("isOk:01") != -1);
         }
-        else if(targetType == TARGET_UID)
-        {
-            result = util->execCMDWithOutput(
-                         "hf mf csetblk "
-                         + QString::number(blockId)
-                         + " "
-                         + input,
-                         waitTime);
-            return (result.indexOf("error") == -1); // failed flag
-        }
-        else if(targetType == TARGET_EMULATOR)
-        {
-            util->execCMD(
-                "hf mf eset "
-                + QString::number(blockId)
-                + " "
-                + input);
-            util->delay(5);
-            return true;
-        }
+        return true;
     }
+    else if(targetType == TARGET_UID)
+    {
+        QVariantMap config = configMap["Magic Card write block"].toMap();
+        QString cmd = config["cmd"].toString();
+        cmd.replace("<block>", QString::number(blockId));
+        cmd.replace("<data>", input);
+        result = util->execCMDWithOutput(cmd, waitTime);
+        if(result.isEmpty())
+            return false;
+
+        QVariantList failedFlag = config["failed flag"].toJsonArray().toVariantList();
+        for(auto flag = failedFlag.begin(); flag != failedFlag.end(); flag++)
+        {
+            if(result.contains(flag->toString()))
+                return false;
+        }
+        return true;
+    }
+    else if(targetType == TARGET_EMULATOR)
+    {
+        QVariantMap config = configMap["emulator write block"].toMap();
+        QString cmd = config["cmd"].toString();
+        cmd.replace("<block>", QString::number(blockId));
+        cmd.replace("<data>", input);
+        util->execCMD(cmd);
+        util->delay(5);
+        return true;
+    }
+
     return false;
 }
 
@@ -754,6 +767,7 @@ void Mifare::wipeC()
 
 void Mifare::setParameterC()
 {
+    QVariantMap config = configMap["Magic Card set parameter"].toMap();
     QMap<QString, QString> result = info(true);
     if(result.isEmpty())
     {
@@ -762,7 +776,7 @@ void Mifare::setParameterC()
     }
     else
     {
-        MF_UID_parameterDialog dialog(result["UID"].toUpper(), result["ATQA"].toUpper(), result["SAK"].toUpper());
+        MF_UID_parameterDialog dialog(result["UID"].toUpper(), result["ATQA"].toUpper(), result["SAK"].toUpper(), config);
         connect(&dialog, &MF_UID_parameterDialog::sendCMD, util, &Util::execCMD);
         if(dialog.exec() == QDialog::Accepted)
             Util::gotoRawTab();
@@ -771,23 +785,13 @@ void Mifare::setParameterC()
 
 void Mifare::lockC()
 {
-    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+    QVariantMap config = configMap["Magic Card lock"].toMap();
+    QString cmd = config["cmd"].toString();
+    QVariantList list = config["sequence"].toJsonArray().toVariantList();
+    for(auto item = list.begin(); item != list.end(); item++)
     {
-        util->execCMD("hf 14a raw -pa -b7 40");
-        util->execCMD("hf 14a raw -pa 43");
-        util->execCMD("hf 14a raw -pa E0 00 39 F7");
-        util->execCMD("hf 14a raw -pa E1 00 E1 EE");
-        util->execCMD("hf 14a raw -pa 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
-        util->execCMD("hf 14a raw -a 52");
-    }
-    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
-    {
-        util->execCMD("hf 14a raw -ak -b 7 40");
-        util->execCMD("hf 14a raw -ak 43");
-        util->execCMD("hf 14a raw -ak E0 00 39 F7");
-        util->execCMD("hf 14a raw -ak E1 00 E1 EE");
-        util->execCMD("hf 14a raw -ak 85  00  00  00  00  00  00  00  00  00  00  00  00  00  00  08  18  47");
-        util->execCMD("hf 14a raw -a 52");
+        qDebug() << cmd + item->toString();
+        util->execCMD(cmd + item->toString());
     }
 }
 
@@ -844,11 +848,11 @@ void Mifare::data_syncWithDataWidget(bool syncAll, int block)
             tmp = "";
             if(dataList->at(i) != "")
             {
-                tmp += dataList->at(i).mid(0, 2);
+                tmp += dataList->at(i).midRef(0, 2);
                 for(int j = 1; j < 16; j++)
                 {
                     tmp += " ";
-                    tmp += dataList->at(i).mid(j * 2, 2);
+                    tmp += dataList->at(i).midRef(j * 2, 2);
                 }
             }
             ui->MF_dataWidget->item(i, 2)->setText(tmp);
@@ -859,11 +863,11 @@ void Mifare::data_syncWithDataWidget(bool syncAll, int block)
         tmp = "";
         if(dataList->at(block) != "")
         {
-            tmp += dataList->at(block).mid(0, 2);
+            tmp += dataList->at(block).midRef(0, 2);
             for(int j = 1; j < 16; j++)
             {
                 tmp += " ";
-                tmp += dataList->at(block).mid(j * 2, 2);
+                tmp += dataList->at(block).midRef(j * 2, 2);
             }
         }
         ui->MF_dataWidget->item(block, 2)->setText(tmp);
@@ -1217,7 +1221,7 @@ void Mifare::data_key2Data()
         if(dataList->at(getTrailerBlockId(i)) == "")
             tmp += "FF078069"; // default control bytes
         else
-            tmp += dataList->at(getTrailerBlockId(i)).mid(12, 8);
+            tmp += dataList->at(getTrailerBlockId(i)).midRef(12, 8);
 
         if(data_isKeyValid(keyBList->at(i)))
             tmp += keyBList->at(i);
@@ -1332,6 +1336,7 @@ QString Mifare::data_getUID()
     else
         return "";
 }
+
 quint16 Mifare::getTrailerBlockId(quint8 sectorId, qint8 cardTypeId)
 {
     if(cardTypeId == 0)
