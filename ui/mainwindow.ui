@@ -2833,7 +2833,7 @@ or &quot;-p &lt;port&gt; -f&quot;</string>
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Keep te client active even the PM3 hardware is disconnected.(Experimental)</string>
+                  <string>Keep the client active even the PM3 hardware is disconnected.(Experimental)</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
