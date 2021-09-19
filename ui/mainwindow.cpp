@@ -40,16 +40,6 @@ MainWindow::MainWindow(QWidget *parent):
     mifare = new Mifare(ui, util, this);
     lf = new LF(ui, util, this);
 
-    QFile configList("configs.json");
-    if(!configList.open(QFile::ReadOnly | QFile::Text))
-    {
-        ;
-    }
-
-    QByteArray configData = configList.readAll();
-    QJsonDocument configJson(QJsonDocument::fromJson(configData));
-    mifare->setConfigMap(configJson.object()["mifare classic"].toObject().toVariantMap());
-
     keyEventFilter = new MyEventFilter(QEvent::KeyPress);
     resizeEventFilter = new MyEventFilter(QEvent::Resize);
 
@@ -80,6 +70,21 @@ MainWindow::~MainWindow()
     pm3Thread->wait(5000);
     delete pm3;
     delete pm3Thread;
+}
+
+void MainWindow::loadConfig()
+{
+    QFile configList(ui->Set_Client_configPathEdit->text());
+    if(!configList.open(QFile::ReadOnly | QFile::Text))
+    {
+        QMessageBox::information(this, tr("Info"), tr("Failed to load config file"));
+        return;
+    }
+
+    QByteArray configData = configList.readAll();
+    QJsonDocument configJson(QJsonDocument::fromJson(configData));
+    mifare->setConfigMap(configJson.object()["mifare classic"].toObject().toVariantMap());
+
 }
 
 void MainWindow::initUI() // will be called by main.app
@@ -120,7 +125,7 @@ void MainWindow::on_PM3_connectButton_clicked()
     // on RRG repo, if no port is specified, the client will search the available port
     if(port == "" && startArgs.contains("<port>")) // has <port>, no port
     {
-        QMessageBox::information(NULL, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
+        QMessageBox::information(this, tr("Info"), tr("Plz choose a port first"), QMessageBox::Ok);
         return;
     }
 
@@ -170,6 +175,7 @@ void MainWindow::on_PM3_connectButton_clicked()
     qDebug() << clientWorkingDir->absolutePath();
     emit setWorkingDir(clientWorkingDir->absolutePath());
 
+    loadConfig();
     emit connectPM3(ui->PM3_pathEdit->text(), args);
     if(port != "" && !keepClientActive)
         emit setSerialListener(port, true);
@@ -1057,6 +1063,7 @@ void MainWindow::uiInit()
     settings->beginGroup("Client_Env");
     ui->Set_Client_envScriptEdit->setText(settings->value("scriptPath").toString());
     ui->Set_Client_workingDirEdit->setText(settings->value("workingDir", "../data").toString());
+    ui->Set_Client_configPathEdit->setText(settings->value("configPath", "config.json").toString());
     settings->endGroup();
 
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
@@ -1248,10 +1255,18 @@ void MainWindow::on_Set_Client_envScriptEdit_editingFinished()
     settings->endGroup();
 }
 
-void MainWindow::on_Set_Client_saveWorkingDirButton_clicked()
+void MainWindow::on_Set_Client_workingDirEdit_editingFinished()
 {
     settings->beginGroup("Client_Env");
     settings->setValue("workingDir", ui->Set_Client_workingDirEdit->text());
+    settings->endGroup();
+}
+
+
+void MainWindow::on_Set_Client_configPathEdit_editingFinished()
+{
+    settings->beginGroup("Client_Env");
+    settings->setValue("configPath", ui->Set_Client_configPathEdit->text());
     settings->endGroup();
 }
 
@@ -1388,3 +1403,4 @@ void MainWindow::on_LF_Conf_resetButton_clicked()
     lf->resetConfig();
     setState(true);
 }
+

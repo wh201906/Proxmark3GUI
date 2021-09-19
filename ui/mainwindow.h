@@ -177,8 +177,6 @@ private slots:
 
     void on_Set_Client_envScriptEdit_editingFinished();
 
-    void on_Set_Client_saveWorkingDirButton_clicked();
-
     void on_Set_Client_keepClientActiveBox_stateChanged(int arg1);
 
     void on_LF_Conf_freqSlider_valueChanged(int value);
@@ -202,6 +200,10 @@ private slots:
     void on_LF_Conf_setButton_clicked();
 
     void on_LF_Conf_resetButton_clicked();
+
+    void on_Set_Client_workingDirEdit_editingFinished();
+
+    void on_Set_Client_configPathEdit_editingFinished();
 
 private:
     Ui::MainWindow* ui;
@@ -249,6 +251,7 @@ private:
     void saveClientPath(const QString& path);
     void onLFfreqConfChanged(int value, bool isCustomized);
     void dockInit();
+    void loadConfig();
 protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
 signals:

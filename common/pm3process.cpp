@@ -108,7 +108,7 @@ void PM3Process::setSerialListener(bool state)
 void PM3Process::onTimeout() //when the proxmark3 client is unexpectedly terminated or the PM3 hardware is removed, the isBusy() will return false(only tested on Windows);
 {
 //    isBusy() is a deprecated function because it will block the serial port when the port is not in use.
-//    However, the PM3 client is supposed to use the serial port exclusively, so it should be fine
+//    However, the PM3 client is supposed to use the target serial port exclusively, so it should be fine
 //    isBusy() will always return false on Raspbian, in this case, check "Keep the client active" in the Settings panel.
 //
 //    qDebug()<<portInfo->isBusy();
