@@ -84,6 +84,7 @@ void MainWindow::loadConfig()
     QByteArray configData = configList.readAll();
     QJsonDocument configJson(QJsonDocument::fromJson(configData));
     mifare->setConfigMap(configJson.object()["mifare classic"].toObject().toVariantMap());
+    lf->setConfigMap(configJson.object()["lf"].toObject().toVariantMap());
 
 }
 
@@ -1182,7 +1183,7 @@ void MainWindow::setButtonsEnabled(bool st)
     ui->MF_sniffGroupBox->setEnabled(st);
     ui->Raw_CMDEdit->setEnabled(st);
     ui->Raw_sendCMDButton->setEnabled(st);
-    ui->LF_configGroupBox->setEnabled(st);
+    ui->LF_LFconfigGroupBox->setEnabled(st);
     ui->LF_operationGroupBox->setEnabled(st);
 }
 
@@ -1279,37 +1280,37 @@ void MainWindow::on_Set_Client_keepClientActiveBox_stateChanged(int arg1)
     emit setSerialListener(!keepClientActive);
 }
 
-void MainWindow::on_LF_Conf_freqSlider_valueChanged(int value)
+void MainWindow::on_LF_LFConf_freqSlider_valueChanged(int value)
 {
     onLFfreqConfChanged(value, true);
 }
 
 void MainWindow::onLFfreqConfChanged(int value, bool isCustomized)
 {
-    ui->LF_Conf_freqDivisorBox->blockSignals(true);
-    ui->LF_Conf_freqSlider->blockSignals(true);
+    ui->LF_LFConf_freqDivisorBox->blockSignals(true);
+    ui->LF_LFConf_freqSlider->blockSignals(true);
 
     if(isCustomized)
-        ui->LF_Conf_freqOtherButton->setChecked(true);
-    ui->LF_Conf_freqLabel->setText(tr("Actural Freq: ") + QString("%1kHz").arg(LF::divisor2Freq(value), 0, 'f', 3));
-    ui->LF_Conf_freqDivisorBox->setValue(value);
-    ui->LF_Conf_freqSlider->setValue(value);
+        ui->LF_LFConf_freqOtherButton->setChecked(true);
+    ui->LF_LFConf_freqLabel->setText(tr("Actural Freq: ") + QString("%1kHz").arg(LF::divisor2Freq(value), 0, 'f', 3));
+    ui->LF_LFConf_freqDivisorBox->setValue(value);
+    ui->LF_LFConf_freqSlider->setValue(value);
 
-    ui->LF_Conf_freqDivisorBox->blockSignals(false);
-    ui->LF_Conf_freqSlider->blockSignals(false);
+    ui->LF_LFConf_freqDivisorBox->blockSignals(false);
+    ui->LF_LFConf_freqSlider->blockSignals(false);
 }
 
-void MainWindow::on_LF_Conf_freqDivisorBox_valueChanged(int arg1)
+void MainWindow::on_LF_LFConf_freqDivisorBox_valueChanged(int arg1)
 {
     onLFfreqConfChanged(arg1, true);
 }
 
-void MainWindow::on_LF_Conf_freq125kButton_clicked()
+void MainWindow::on_LF_LFConf_freq125kButton_clicked()
 {
     onLFfreqConfChanged(95, false);
 }
 
-void MainWindow::on_LF_Conf_freq134kButton_clicked()
+void MainWindow::on_LF_LFConf_freq134kButton_clicked()
 {
     onLFfreqConfChanged(88, false);
 }
@@ -1375,32 +1376,32 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
     contextMenu->exec(event->globalPos());
 }
 
-void MainWindow::on_LF_Conf_getButton_clicked()
+void MainWindow::on_LF_LFConf_getButton_clicked()
 {
     setState(false);
-    lf->getConfig();
+    lf->getLFConfig();
     setState(true);
 }
 
-void MainWindow::on_LF_Conf_setButton_clicked()
+void MainWindow::on_LF_LFConf_setButton_clicked()
 {
-    LF::Config config;
+    LF::LFConfig config;
     setState(false);
-    config.divisor = ui->LF_Conf_freqDivisorBox->value();
-    config.bitPerSample = ui->LF_Conf_bitPerSampleBox->value();
-    config.decimation = ui->LF_Conf_decimationBox->value();
-    config.averaging = ui->LF_Conf_averagingBox->isChecked();
-    config.triggerThreshold = ui->LF_Conf_thresholdBox->value();
-    config.samplesToSkip = ui->LF_Conf_skipsBox->value();
-    lf->setConfig(config);
+    config.divisor = ui->LF_LFConf_freqDivisorBox->value();
+    config.bitsPerSample = ui->LF_LFConf_bitsPerSampleBox->value();
+    config.decimation = ui->LF_LFConf_decimationBox->value();
+    config.averaging = ui->LF_LFConf_averagingBox->isChecked();
+    config.triggerThreshold = ui->LF_LFConf_thresholdBox->value();
+    config.samplesToSkip = ui->LF_LFConf_skipsBox->value();
+    lf->setLFConfig(config);
     Util::gotoRawTab();
     setState(true);
 }
 
-void MainWindow::on_LF_Conf_resetButton_clicked()
+void MainWindow::on_LF_LFConf_resetButton_clicked()
 {
     setState(false);
-    lf->resetConfig();
+    lf->resetLFConfig();
     setState(true);
 }
 

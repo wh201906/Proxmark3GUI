@@ -179,13 +179,13 @@ private slots:
 
     void on_Set_Client_keepClientActiveBox_stateChanged(int arg1);
 
-    void on_LF_Conf_freqSlider_valueChanged(int value);
+    void on_LF_LFConf_freqSlider_valueChanged(int value);
 
-    void on_LF_Conf_freqDivisorBox_valueChanged(int arg1);
+    void on_LF_LFConf_freqDivisorBox_valueChanged(int arg1);
 
-    void on_LF_Conf_freq125kButton_clicked();
+    void on_LF_LFConf_freq125kButton_clicked();
 
-    void on_LF_Conf_freq134kButton_clicked();
+    void on_LF_LFConf_freq134kButton_clicked();
 
     void on_LF_Op_searchButton_clicked();
 
@@ -195,11 +195,11 @@ private slots:
 
     void on_LF_Op_sniffButton_clicked();
 
-    void on_LF_Conf_getButton_clicked();
+    void on_LF_LFConf_getButton_clicked();
 
-    void on_LF_Conf_setButton_clicked();
+    void on_LF_LFConf_setButton_clicked();
 
-    void on_LF_Conf_resetButton_clicked();
+    void on_LF_LFConf_resetButton_clicked();
 
     void on_Set_Client_workingDirEdit_editingFinished();
 

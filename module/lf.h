@@ -12,17 +12,17 @@ class LF : public QObject
 public:
     explicit LF(Ui::MainWindow *ui, Util *addr, QWidget *parent = nullptr);
 
-    struct Config
+    struct LFConfig
     {
         uint8_t divisor;
-        uint8_t bitPerSample;
+        uint8_t bitsPerSample;
         uint8_t decimation;
         bool averaging;
         uint8_t triggerThreshold;
         uint16_t samplesToSkip;
     };
 
-    static constexpr Config defaultConfig =
+    static constexpr LFConfig defaultLFConfig =
     {
         95,
         8,
@@ -36,19 +36,22 @@ public:
     void sniff();
     void search();
     void tune();
-    void getConfig();
-    void setConfig(LF::Config config);
-    void resetConfig();
+    void getLFConfig();
+    void setLFConfig(LF::LFConfig lfconfig);
+    void resetLFConfig();
     static float divisor2Freq(uint8_t divisor);
     static uint8_t freq2Divisor(float freq);
 
+    void setConfigMap(const QVariantMap &configMap);
 private:
     QWidget* parent;
     Ui::MainWindow *ui;
     Util* util;
-    Config currConfig;
-    QRegularExpression* configPattern;
+    LFConfig currLFConfig;
+    QRegularExpression* LFconfigPattern;
+    QVariantMap configMap;
     void syncWithUI();
+    bool getLFConfig_helper(const QVariantMap& map, QString& str, int* result);
 signals:
 
 };

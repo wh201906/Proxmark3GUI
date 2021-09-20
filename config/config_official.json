@@ -1,4 +1,6 @@
 {
+    "//": "Based on Proxmark3 official repo v3.1.0, commit 6116334",
+    "//": "You can change this file if the command format of client changes",
     "mifare classic": {
         "nested": {
             "cmd": "hf mf nested <card type> *",
@@ -102,6 +104,7 @@
             "cmd": "hf mf cgetsc <sector>",
             "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
         },
+        "//": "When writing a block, if the result is not empty and doesn't contain the failed flag, the function will return true",
         "normal write block": {
             "cmd": "hf mf wrbl <block> <key type> <key> <data>",
             "key type": {
@@ -134,6 +137,59 @@
         },
         "Magic Card set parameter": {
             "cmd": "hf mf csetuid <uid> <atqa> <sak>"
+        }
+    },
+    "lf": {
+        "read": {
+            "cmd": "lf read",
+            "show cmd": "data plot"
+        },
+        "sniff": {
+            "cmd": "lf snoop",
+            "show cmd": "data plot"
+        },
+        "search": {
+            "cmd": "lf search u"
+        },
+        "tune": {
+            "cmd": "hw tune l"
+        },
+        "get config": {
+            "cmd": "hw status",
+            "field start": "LF Sampling config:",
+            "field end": "USB Speed:",
+            "divisor": {
+                "flag": "divisor:",
+                "pattern": "\\d+"
+            },
+            "bits per sample": {
+                "flag": "bps:",
+                "pattern": "\\d+"
+            },
+            "decimation": {
+                "flag": "decimation:",
+                "pattern": "\\d+"
+            },
+            "averaging": {
+                "flag": "averaging:",
+                "pattern": "\\d+"
+            },
+            "trigger threshold": {
+                "flag": "trigger threshold:",
+                "pattern": "\\d+"
+            },
+            "samples to skip": {
+                "flag": "samples to skip:",
+                "pattern": "\\d+"
+            },
+            "//": "execute 'cmd' then find parameters between 'field stard' and 'field end'",
+            "//": "for each line, if the line doesn't have any flag, skip",
+            "//": "otherwise, delete characters before 'flag' and 'flag' itself, then use 'pattern' to get the parameter",
+            "//": "If 'replace' dict exists, replace all keys with respective values before getting parameters"
+        },
+        "set config": {
+            "cmd": "lf config q <divisor> b <bits per sample> d <decimation> a <averaging> t <trigger threshold> s <samples to skip>",
+            "divisor cmd": "hw setlfdivisor <divisor>"
         }
     }
 }

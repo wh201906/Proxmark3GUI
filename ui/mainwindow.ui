@@ -1247,7 +1247,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_14">
           <item>
-           <widget class="QGroupBox" name="LF_configGroupBox">
+           <widget class="QGroupBox" name="LF_LFconfigGroupBox">
             <property name="title">
              <string>LF Config</string>
             </property>
@@ -1268,7 +1268,7 @@
               <number>2</number>
              </property>
              <item>
-              <widget class="QGroupBox" name="LF_Conf_freqGroupBox">
+              <widget class="QGroupBox" name="LF_LFConf_freqGroupBox">
                <property name="title">
                 <string>Frequency</string>
                </property>
@@ -1291,7 +1291,7 @@
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_13">
                   <item>
-                   <widget class="QRadioButton" name="LF_Conf_freq125kButton">
+                   <widget class="QRadioButton" name="LF_LFConf_freq125kButton">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -1307,7 +1307,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="LF_Conf_freq134kButton">
+                   <widget class="QRadioButton" name="LF_LFConf_freq134kButton">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -1320,7 +1320,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="LF_Conf_freqOtherButton">
+                   <widget class="QRadioButton" name="LF_LFConf_freqOtherButton">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                       <horstretch>0</horstretch>
@@ -1340,7 +1340,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="LF_Conf_freqDivisorBox">
+                   <widget class="QSpinBox" name="LF_LFConf_freqDivisorBox">
                     <property name="minimum">
                      <number>19</number>
                     </property>
@@ -1353,7 +1353,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="LF_Conf_freqLabel">
+                   <widget class="QLabel" name="LF_LFConf_freqLabel">
                     <property name="text">
                      <string>Actural Freq: 125.000kHz</string>
                     </property>
@@ -1375,7 +1375,7 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="QSlider" name="LF_Conf_freqSlider">
+                 <widget class="QSlider" name="LF_LFConf_freqSlider">
                   <property name="minimum">
                    <number>19</number>
                   </property>
@@ -1393,8 +1393,7 @@
                 <item>
                  <widget class="QLabel" name="label_22">
                   <property name="text">
-                   <string>Note:
-You might need a modified LF antenna if the freq is not 125k/134k.
+                   <string>You might need a modified LF antenna if the freq is not 125k/134k.
 When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</string>
                   </property>
                   <property name="wordWrap">
@@ -1425,7 +1424,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_6">
                    <property name="text">
-                    <string>Bit per sample:</string>
+                    <string>Bits per sample:</string>
                    </property>
                   </widget>
                  </item>
@@ -1437,7 +1436,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="QSpinBox" name="LF_Conf_decimationBox">
+                  <widget class="QSpinBox" name="LF_LFConf_decimationBox">
                    <property name="minimum">
                     <number>1</number>
                    </property>
@@ -1454,7 +1453,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QCheckBox" name="LF_Conf_averagingBox">
+                  <widget class="QCheckBox" name="LF_LFConf_averagingBox">
                    <property name="text">
                     <string/>
                    </property>
@@ -1468,7 +1467,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                   </widget>
                  </item>
                  <item row="3" column="1">
-                  <widget class="QSpinBox" name="LF_Conf_thresholdBox">
+                  <widget class="QSpinBox" name="LF_LFConf_thresholdBox">
                    <property name="maximum">
                     <number>128</number>
                    </property>
@@ -1482,14 +1481,14 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                   </widget>
                  </item>
                  <item row="4" column="1">
-                  <widget class="QSpinBox" name="LF_Conf_skipsBox">
+                  <widget class="QSpinBox" name="LF_LFConf_skipsBox">
                    <property name="maximum">
                     <number>65535</number>
                    </property>
                   </widget>
                  </item>
                  <item row="0" column="1">
-                  <widget class="QSpinBox" name="LF_Conf_bitPerSampleBox">
+                  <widget class="QSpinBox" name="LF_LFConf_bitsPerSampleBox">
                    <property name="minimum">
                     <number>1</number>
                    </property>
@@ -1534,7 +1533,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                 </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="LF_Conf_getButton">
+                <widget class="QPushButton" name="LF_LFConf_getButton">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1553,7 +1552,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="LF_Conf_setButton">
+                <widget class="QPushButton" name="LF_LFConf_setButton">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1572,7 +1571,7 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="LF_Conf_resetButton">
+                <widget class="QPushButton" name="LF_LFConf_resetButton">
                  <property name="text">
                   <string>Reset</string>
                  </property>

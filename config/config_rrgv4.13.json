@@ -1,4 +1,6 @@
 {
+    "//": "Based on Proxmark3 rrg repo v4.13441, commit 35ddebc",
+    "//": "You can change this file if the command format of client changes",
     "mifare classic": {
         "nested": {
             "cmd": "hf mf nested --<card type> --blk <block> -<key type> -k <key>",
@@ -102,6 +104,7 @@
             "cmd": "hf mf cgetsc --sec <sector>",
             "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
         },
+        "//": "When writing a block, if the result is not empty and doesn't contain the failed flag, the function will return true",
         "normal write block": {
             "cmd": "hf mf wrbl --blk <block> -<key type> -k <key> -d <data>",
             "key type": {
@@ -136,6 +139,65 @@
         },
         "Magic Card set parameter": {
             "cmd": "hf mf csetuid --uid <uid> --atqa <atqa> --sak <sak>"
+        }
+    },
+    "lf": {
+        "read": {
+            "cmd": "lf read -v",
+            "show cmd": "data plot"
+        },
+        "sniff": {
+            "cmd": "lf sniff -v",
+            "show cmd": "data plot"
+        },
+        "search": {
+            "cmd": "lf search -u"
+        },
+        "tune": {
+            "cmd": "lf tune --divisor <divisor>"
+        },
+        "get config": {
+            "cmd": "hw status",
+            "field start": "LF Sampling config",
+            "field end": "LF Sampling Stack",
+            "divisor": {
+                "flag": "divisor",
+                "pattern": "\\d+"
+            },
+            "bits per sample": {
+                "flag": "bits per sample",
+                "pattern": "\\d+"
+            },
+            "decimation": {
+                "flag": "decimation",
+                "pattern": "\\d+"
+            },
+            "averaging": {
+                "flag": "averaging",
+                "pattern": "\\d+",
+                "replace": {
+                    "yes": "1",
+                    "no": "0",
+                    "Yes": "1",
+                    "No": "0"
+                }
+            },
+            "trigger threshold": {
+                "flag": "trigger threshold",
+                "pattern": "\\d+"
+            },
+            "samples to skip": {
+                "flag": "samples to skip",
+                "pattern": "\\d+"
+            },
+            "//": "execute 'cmd' then find parameters between 'field stard' and 'field end'",
+            "//": "for each line, if the line doesn't have any flag, skip",
+            "//": "otherwise, delete characters before 'flag' and 'flag' itself, then use 'pattern' to get the parameter",
+            "//": "If 'replace' dict exists, replace all keys with respective values before getting parameters"
+        },
+        "set config": {
+            "cmd": "lf config --divisor <divisor> --bps <bits per sample> --dec <decimation> --avg <averaging> --trig <trigger threshold> --skip <samples to skip>",
+            "divisor cmd": "hw setlfdivisor -d <divisor>"
         }
     }
 }
