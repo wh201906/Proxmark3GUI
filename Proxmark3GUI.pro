@@ -56,7 +56,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-VERSION = 0.2.1
+VERSION = 0.2.2
 QMAKE_TARGET_PRODUCT = "Proxmark3GUI"
 QMAKE_TARGET_DESCRIPTION = "Proxmark3GUI"
 QMAKE_TARGET_COMPANY = "wh201906"

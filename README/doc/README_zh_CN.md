@@ -34,7 +34,7 @@
 
  ## 关于冰人版
  [冰人版](https://github.com/RfidResearchGroup/proxmark3)(Iceman/RRG)的客户端和固件更新更为激进，相比官方版具有更多的功能  
- 此GUI所有功能均兼容冰人版（在v4.9237上测试通过）  
+ 此GUI所有功能均兼容冰人版（在v4.13441上测试通过）  
 
 ***
 
@@ -50,7 +50,9 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
 ## 在Linux系统下编译
 
     cd ~
-    git clone https://github.com/wh201906/Proxmark3GUI.git
+    sudo apt-get update
+    sudo apt-get install qt5-default libqt5serialport5 libqt5serialport5-dev 
+    git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
     cd Proxmark3GUI
     mkdir build
     cd build
@@ -58,16 +60,22 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
     make
     make clean
     cp -r ../lang ./
+    cp -r ../config ./
     ./Proxmark3GUI
 
 ***
 
 ## 更新日志:
 
+### V0.2.2
++ 从外部文件加载客户端命令格式  
++ 修复 [#20](https://github.com/wh201906/Proxmark3GUI/issues/20), [#21](https://github.com/wh201906/Proxmark3GUI/issues/21), [#22](https://github.com/wh201906/Proxmark3GUI/issues/22)  
++ 兼容冰人版客户端 v4.13441
+
 ### V0.2.1
 + 优化MIFARE Classic读卡逻辑
-+ 修复 #16 （配合新版RRG固件时无法读取扇区数据）
-+ 修复 #15 （路径中支持空格）
++ 修复 [#16](https://github.com/wh201906/Proxmark3GUI/issues/16) （配合新版RRG固件时无法读取扇区数据）
++ 修复 [#15](https://github.com/wh201906/Proxmark3GUI/issues/15) （路径中支持空格）
 
 ### V0.2
 + 使用浮动窗口，界面配置更加灵活  

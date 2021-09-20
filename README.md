@@ -34,8 +34,8 @@ A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) clie
 
 ## About Iceman fork/repo
 
-The [Iceman fork/repo](https://github.com/RfidResearchGroup/proxmark3) has more powerful functions like offline sniff. These guys even developed a new hardware called Proxmark3 RDV4 with smart card support. But the official repo and the Iceman repo is not fully compatible.  
-This GUI is compatible with Iceman/RRG repo(tested on v4.9237)  
+The [Iceman fork/repo](https://github.com/RfidResearchGroup/proxmark3) has more powerful functions. These guys even developed a new hardware called Proxmark3 RDV4 with smart card support. But the official repo and the Iceman repo is not fully compatible.  
+This GUI is compatible with Iceman/RRG repo(tested on v4.13441)  
 
 ***
 
@@ -68,10 +68,15 @@ Great thanks to him.
 
 ## Update Log:
 
+### V0.2.2
++ Load command format from external json file  
++ Fix bug [#20](https://github.com/wh201906/Proxmark3GUI/issues/20), [#21](https://github.com/wh201906/Proxmark3GUI/issues/21), [#22](https://github.com/wh201906/Proxmark3GUI/issues/22)  
++ Support Iceman/RRG repo v4.13441
+
 ### V0.2.1
-+ Optimize MIFARE Classic reading logic
-+ Fix bug #16
-+ Fix bug #15 partially (the path can contain spaces now)
++ Optimize MIFARE Classic reading logic  
++ Fix bug [#16](https://github.com/wh201906/Proxmark3GUI/issues/16)  
++ Fix bug [#15](https://github.com/wh201906/Proxmark3GUI/issues/15) partially (the path can contain spaces now)  
 
 ### V0.2
 + Use Dock widget for more flexible layout  
