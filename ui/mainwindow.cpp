@@ -156,7 +156,11 @@ void MainWindow::on_PM3_connectButton_clicked()
 #endif
         envSetProcess.waitForReadyRead(10000);
         QString envSetResult = QString(envSetProcess.readAll());
+#if (QT_VERSION <= QT_VERSION_CHECK(5,14,0))
         clientEnv = envSetResult.split("\n", QString::SkipEmptyParts);
+#else
+        clientEnv = envSetResult.split("\n", Qt::SkipEmptyParts);
+#endif
         if(clientEnv.size() > 2) // the first element is "set" and the last element is the current path
         {
             clientEnv.removeFirst();

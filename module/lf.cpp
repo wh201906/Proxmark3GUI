@@ -84,7 +84,11 @@ void LF::getLFConfig()
     start = result.indexOf(config["field start"].toString());
     end = result.indexOf(config["field end"].toString());
     result = result.mid(start, end - start);
+#if (QT_VERSION <= QT_VERSION_CHECK(5,14,0))
+    resultList = result.split("\n", QString::SkipEmptyParts);
+#else
     resultList = result.split("\n", Qt::SkipEmptyParts);
+#endif
     qDebug() << "LF CONFIG GET\n" << resultList;
     for(auto it = resultList.begin(); it != resultList.end(); it++)
     {
