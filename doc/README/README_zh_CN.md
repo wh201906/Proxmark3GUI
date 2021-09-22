@@ -26,9 +26,9 @@
 ***
 
 ## 预览图
-![preview](../img/preview_zh_CN.png)  
+![preview](preview_zh_CN.png)  
 
- [更多预览](../doc/previews.md)  
+ [更多预览](../preview/previews.md)  
 
 ***
 
@@ -64,7 +64,9 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
     ./Proxmark3GUI
 
 ***
-
+## 教程
+[1.快速上手](../tutorial/Quickstart/quickstart_zh_CN.md)
+***
 ## 更新日志:
 
 ### V0.2.2

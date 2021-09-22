@@ -3,7 +3,7 @@
 
 A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
 
-[中文介绍](README/doc/README_zh_CN.md)
+[中文介绍](doc/README/README_zh_CN.md)
 
 ***
 
@@ -26,9 +26,9 @@ A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) clie
 ***
 
 ## Preview
-![preview](README/img/preview.png)  
+![preview](doc/README/preview.png)  
 
-[more previews](README/doc/previews.md)  
+[more previews](doc/preview/previews.md)  
 
 ***
 
@@ -64,6 +64,10 @@ Great thanks to him.
     cp -r ../config ./
     ./Proxmark3GUI
 
+***
+## Tutorial
+
+[1.Quickstart](doc/tutorial/Quickstart/quickstart.md)
 ***
 
 ## Update Log:
