@@ -2613,7 +2613,11 @@ or the communication between a tag and a reader.</string>
            <enum>QLayout::SetMaximumSize</enum>
           </property>
           <item>
-           <widget class="QLineEdit" name="Raw_CMDEdit"/>
+           <widget class="QLineEdit" name="Raw_CMDEdit">
+            <property name="clearButtonEnabled">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="Raw_sendCMDButton">
