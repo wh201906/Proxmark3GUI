@@ -65,7 +65,8 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
 
 ***
 ## 教程
-[1.快速上手](../tutorial/Quickstart/quickstart_zh_CN.md)
+[1.快速上手](../tutorial/Quickstart/quickstart_zh_CN.md)  
+[2.编辑Mifare(IC)卡数据](../tutorial/Edit_Mifare_Classic_data/Edit_Mifare_Classic_data_zh_CN.md)（无需PM3硬件）  
 ***
 ## 更新日志:
 

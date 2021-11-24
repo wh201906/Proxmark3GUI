@@ -67,7 +67,8 @@ Great thanks to him.
 ***
 ## Tutorial
 
-[1.Quickstart](doc/tutorial/Quickstart/quickstart.md)
+[1.Quickstart](doc/tutorial/Quickstart/quickstart.md)  
+[2.Edit Mifare Classic data](doc/tutorial/Edit_Mifare_Classic_data/Edit_Mifare_Classic_data.md)(Proxmark3 hardware is not necessary)  
 ***
 
 ## Update Log:

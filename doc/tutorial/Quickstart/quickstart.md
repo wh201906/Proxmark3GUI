@@ -1,5 +1,6 @@
 # Quickstart
 
+[中文教程](quickstart_zh_CN.md)  
 ***
 **On Windows**
 ***

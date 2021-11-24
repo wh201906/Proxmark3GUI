@@ -1,5 +1,6 @@
 # 快速上手
 
+[English](quickstart.md)  
 ***
 **Windows用户**
 ***
