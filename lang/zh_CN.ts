@@ -271,6 +271,7 @@
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="317"/>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="113"/>
         <source>KeyA</source>
         <translation>密钥A</translation>
     </message>
@@ -281,6 +282,7 @@
     </message>
     <message>
         <location filename="../ui/mf_trailerdecoderdialog.ui" line="327"/>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="117"/>
         <source>KeyB</source>
         <translation>密钥B</translation>
     </message>
@@ -309,6 +311,21 @@ It could make the whole sector blocked irreversibly!</source>
         <location filename="../ui/mf_trailerdecoderdialog.cpp" line="52"/>
         <source>Valid</source>
         <translation>有效</translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="88"/>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="89"/>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="90"/>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="94"/>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="95"/>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="96"/>
+        <source>Block</source>
+        <translation>块</translation>
+    </message>
+    <message>
+        <location filename="../ui/mf_trailerdecoderdialog.cpp" line="121"/>
+        <source>KeyA+B</source>
+        <translation>密钥A+B</translation>
     </message>
 </context>
 <context>

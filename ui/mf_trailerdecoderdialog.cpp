@@ -85,15 +85,15 @@ void MF_trailerDecoderDialog::on_blockSizeChanged(int id, bool st)
     {
         if(id == 4)
         {
-            ui->dataBlockWidget->verticalHeaderItem(0)->setText("Block0");
-            ui->dataBlockWidget->verticalHeaderItem(1)->setText("Block1");
-            ui->dataBlockWidget->verticalHeaderItem(2)->setText("Block2");
+            ui->dataBlockWidget->verticalHeaderItem(0)->setText(tr("Block") + "0");
+            ui->dataBlockWidget->verticalHeaderItem(1)->setText(tr("Block") + "1");
+            ui->dataBlockWidget->verticalHeaderItem(2)->setText(tr("Block") + "2");
         }
         else if(id == 16)
         {
-            ui->dataBlockWidget->verticalHeaderItem(0)->setText("Block0~4");
-            ui->dataBlockWidget->verticalHeaderItem(1)->setText("Block5~9");
-            ui->dataBlockWidget->verticalHeaderItem(2)->setText("Block10~14");
+            ui->dataBlockWidget->verticalHeaderItem(0)->setText(tr("Block") + "0~4");
+            ui->dataBlockWidget->verticalHeaderItem(1)->setText(tr("Block") + "5~9");
+            ui->dataBlockWidget->verticalHeaderItem(2)->setText(tr("Block") + "10~14");
         }
 
     }
@@ -110,15 +110,15 @@ void MF_trailerDecoderDialog::setTableItem(QTableWidget* widget, int row, int co
     }
     else if(accessType == Mifare::ACC_KEY_A)
     {
-        text = "KeyA";
+        text = tr("KeyA");
     }
     else if(accessType == Mifare::ACC_KEY_B)
     {
-        text = "KeyB";
+        text = tr("KeyB");
     }
     else if(accessType == Mifare::ACC_KEY_AB)
     {
-        text = "KeyA+B";
+        text = tr("KeyA+B");
     }
     widget->item(row, column)->setText(text);
 }
