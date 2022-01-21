@@ -70,6 +70,10 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
 ***
 ## 更新日志:
 
+### V0.2.3
++ 修复 [#27](https://github.com/wh201906/Proxmark3GUI/issues/27)
++ 尝试支持中文启动路径
+
 ### V0.2.2
 + 从外部文件加载客户端命令格式  
 + 修复 [#20](https://github.com/wh201906/Proxmark3GUI/issues/20), [#21](https://github.com/wh201906/Proxmark3GUI/issues/21), [#22](https://github.com/wh201906/Proxmark3GUI/issues/22)  
