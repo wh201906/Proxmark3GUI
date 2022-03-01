@@ -67,6 +67,9 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
 ***
 ## 更新日志:
 
+### V0.2.4
++ 复制EM410x卡（一种常见的低频ID卡）  
+
 ### V0.2.3
 + 修复 [#27](https://github.com/wh201906/Proxmark3GUI/issues/27)
 + 尝试支持中文启动路径

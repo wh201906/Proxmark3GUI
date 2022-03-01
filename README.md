@@ -70,6 +70,9 @@ Great thanks to him.
 
 ## Update Log:
 
+### V0.2.4
++ Clone EM410x card to T55xx card  
+
 ### V0.2.3
 + Fix bug [#27](https://github.com/wh201906/Proxmark3GUI/issues/27)
 + Try to support Non-ASCII path
