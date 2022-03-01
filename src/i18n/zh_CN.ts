@@ -694,7 +694,7 @@ Use this to get raw data from a tag.</source>
 If the antenna voltage has a obvious drop after putting card on the antenna, it is likely that the tag is a LF tag.
 On Iceman/RRG repo, press the button on PM3 to stop measuring</source>
         <translation>测量低频天线谐振频率。
-如果天线电压在放置卡片后出现明显下降，则该卡片很可能是低频卡。
+如果天线电压在放置卡片后明显下降，则该卡片很可能是低频卡。
 在冰人版固件下，如果需要停止测量，请按下PM3侧面的按钮</translation>
     </message>
     <message>

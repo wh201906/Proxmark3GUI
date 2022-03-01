@@ -54,12 +54,9 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
     sudo apt-get install qt5-default libqt5serialport5 libqt5serialport5-dev 
     git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
     cd Proxmark3GUI
-    mkdir build
-    cd build
-    qmake ../
-    make
-    make clean
-    cp -r ../lang ./
+    mkdir build && cd build
+    qmake ../src
+    make -j4 && make clean
     cp -r ../config ./
     ./Proxmark3GUI
 

@@ -106,7 +106,7 @@ void Util::setRunningState(bool st)
 bool Util::chooseLanguage(QSettings* guiSettings, QMainWindow* window)
 {
     // make sure the GUISettings is not in any group
-    QSettings* langSettings = new QSettings("lang/languages.ini", QSettings::IniFormat);
+    QSettings* langSettings = new QSettings(":/i18n/languages.ini", QSettings::IniFormat);
     QMap<QString, QString> langMap;
     langSettings->setIniCodec("UTF-8");
     langSettings->beginGroup("Languages");
