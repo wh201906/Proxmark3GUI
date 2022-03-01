@@ -91,7 +91,6 @@ Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
 void Mifare::setConfigMap(const QVariantMap& configMap)
 {
     this->configMap = configMap;
-    qDebug() << configMap;
 }
 
 QMap<QString, QString> Mifare::info(bool isRequiringOutput)

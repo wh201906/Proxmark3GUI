@@ -78,7 +78,13 @@ QString Util::execCMDWithOutput(const QString& cmd, ReturnTrigger trigger, bool 
         }
     }
     isRequiringOutput = false;
-    return (isResultFound || trigger.expectedOutputs.isEmpty() || rawOutput ? *requiredOutput : "");
+
+    // For functions without expected outputs in the return trigger, the result is the raw output.
+    // For functions with expected outputs in the return trigger,
+    // if rawOutput=true, the result is the raw output,
+    // otherwise, if the raw output contains one of the expected outputs, the result is the raw output,
+    // otherwise, the result is empty(as a failed flag).
+    return (trigger.expectedOutputs.isEmpty() || isResultFound || rawOutput ? *requiredOutput : "");
 }
 
 void Util::delay(unsigned int msec)

@@ -199,5 +199,15 @@
             "cmd": "lf config --divisor <divisor> --bps <bits per sample> --dec <decimation> --avg <averaging> --trig <trigger threshold> --skip <samples to skip>",
             "divisor cmd": "hw setlfdivisor -d <divisor>"
         }
+    },
+    "t55xx":{
+        "clone em410x":{
+            "read":"lf em 410x reader",
+            "successful read flag":"EM 410x ID",
+            "pattern":"EM 410x ID\\s*\\K[0-9a-fA-F]{10}",
+            "clone cmd":"lf em 410x clone --id <id> <type>",
+            "t5555 flag":"--q5",
+            "t55x7 flag":""
+        }
     }
 }

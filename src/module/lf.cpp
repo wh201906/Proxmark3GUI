@@ -154,5 +154,4 @@ void LF::syncWithUI()
 void LF::setConfigMap(const QVariantMap& configMap)
 {
     this->configMap = configMap;
-    qDebug() << configMap;
 }

@@ -136,7 +136,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mifareTab">
        <attribute name="title">
@@ -524,7 +524,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="MF_File_dataBox">
+              <widget class="QRadioButton" name="MF_File_dataButton">
                <property name="text">
                 <string>Data</string>
                </property>
@@ -534,7 +534,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="MF_File_keyBox">
+              <widget class="QRadioButton" name="MF_File_keyButton">
                <property name="text">
                 <string>Key</string>
                </property>

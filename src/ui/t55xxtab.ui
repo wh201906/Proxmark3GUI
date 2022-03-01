@@ -1,7 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>T55xxTab</class>
  <widget class="QWidget" name="T55xxTab">
   <property name="geometry">
@@ -12,10 +10,98 @@
     <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
+  <layout class="QVBoxLayout">
+   <item>
+    <widget class="QGroupBox" name="cloneGroupBox">
+     <property name="title">
+      <string>Clone to T55xx</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Target Type:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="Clone_T5555Button">
+          <property name="text">
+           <string>T5555</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="Clone_T55x7Button">
+          <property name="text">
+           <string>T55x7</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="Clone_EM410xGroupBox">
+        <property name="title">
+         <string>EM410x</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="Clone_EM410xReadButton">
+           <property name="text">
+            <string>Read</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="Clone_EM410xIDEdit"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="Clone_EM410xCloneButton">
+           <property name="text">
+            <string>Clone</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
  </widget>
- <pixmapfunction/>
+ <resources/>
  <connections/>
 </ui>
