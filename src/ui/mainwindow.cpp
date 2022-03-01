@@ -39,13 +39,16 @@ MainWindow::MainWindow(QWidget *parent):
     Util::setUI(ui);
     mifare = new Mifare(ui, util, this);
     lf = new LF(ui, util, this);
+    t55xxTab = new T55xxTab(util);
+    connect(t55xxTab, &T55xxTab::setParentGUIState, this, &MainWindow::setState);
+    ui->funcTab->insertTab(2, t55xxTab, tr("T55xx"));
 
     keyEventFilter = new MyEventFilter(QEvent::KeyPress);
     resizeEventFilter = new MyEventFilter(QEvent::Resize);
 
     // hide unused tabs
 //    ui->funcTab->removeTab(1);
-    ui->funcTab->removeTab(2);
+    ui->funcTab->removeTab(3);
 
     portSearchTimer = new QTimer(this);
     portSearchTimer->setInterval(2000);
@@ -85,7 +88,7 @@ void MainWindow::loadConfig()
     QJsonDocument configJson(QJsonDocument::fromJson(configData));
     mifare->setConfigMap(configJson.object()["mifare classic"].toObject().toVariantMap());
     lf->setConfigMap(configJson.object()["lf"].toObject().toVariantMap());
-
+    t55xxTab->setConfigMap(configJson.object()["t55xx"].toObject().toVariantMap());
 }
 
 void MainWindow::initUI() // will be called by main.app
@@ -636,7 +639,7 @@ void MainWindow::on_MF_File_loadButton_clicked()
 {
     QString title = "";
     QString filename = "";
-    if(ui->MF_File_dataBox->isChecked())
+    if(ui->MF_File_dataButton->isChecked())
     {
         title = tr("Plz select the data file:");
         filename = QFileDialog::getOpenFileName(this, title, "./", tr("Binary Data Files(*.bin *.dump)") + ";;" + tr("Text Data Files(*.txt *.eml)") + ";;" + tr("All Files(*.*)"));
@@ -649,7 +652,7 @@ void MainWindow::on_MF_File_loadButton_clicked()
             }
         }
     }
-    else if(ui->MF_File_keyBox->isChecked())
+    else if(ui->MF_File_keyButton->isChecked())
     {
         title = tr("Plz select the key file:");
         filename = QFileDialog::getOpenFileName(this, title, "./", tr("Binary Key Files(*.bin *.dump)") + ";;" + tr("All Files(*.*)"));
@@ -676,7 +679,7 @@ void MainWindow::on_MF_File_saveButton_clicked()
         defaultName += "_";
     defaultName += QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
 
-    if(ui->MF_File_dataBox->isChecked())
+    if(ui->MF_File_dataButton->isChecked())
     {
         title = tr("Plz select the location to save data file:");
         filename = QFileDialog::getSaveFileName(this, title, "./data_" + defaultName, tr("Binary Data Files(*.bin *.dump)") + ";;" + tr("Text Data Files(*.txt *.eml)"), &selectedType);
@@ -689,7 +692,7 @@ void MainWindow::on_MF_File_saveButton_clicked()
             }
         }
     }
-    else if(ui->MF_File_keyBox->isChecked())
+    else if(ui->MF_File_keyButton->isChecked())
     {
         title = tr("Plz select the location to save key file:");
         filename = QFileDialog::getSaveFileName(this, title, "./key_" + defaultName, tr("Binary Key Files(*.bin *.dump)"), &selectedType);
@@ -707,12 +710,12 @@ void MainWindow::on_MF_File_saveButton_clicked()
 
 void MainWindow::on_MF_File_clearButton_clicked()
 {
-    if(ui->MF_File_keyBox->isChecked())
+    if(ui->MF_File_keyButton->isChecked())
     {
         mifare->data_clearKey();
         mifare->data_syncWithKeyWidget();
     }
-    else if(ui->MF_File_dataBox->isChecked())
+    else if(ui->MF_File_keyButton->isChecked())
     {
         mifare->data_clearData();
         mifare->data_syncWithDataWidget();

@@ -31,6 +31,7 @@
 #include "common/pm3process.h"
 #include "module/mifare.h"
 #include "module/lf.h"
+#include "module/t55xxtab.h"
 #include "common/util.h"
 #include "ui/mf_trailerdecoderdialog.h"
 
@@ -205,6 +206,7 @@ private slots:
 
     void on_Set_Client_configPathEdit_editingFinished();
 
+    void setState(bool st);
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;
@@ -235,6 +237,7 @@ private:
     QStringList clientEnv;
     QDir* clientWorkingDir;
 
+    T55xxTab* t55xxTab;
     Mifare* mifare;
     LF* lf;
     Util* util;
@@ -247,7 +250,6 @@ private:
     void signalInit();
     void MF_widgetReset();
     void setTableItem(QTableWidget *widget, int row, int column, const QString& text);
-    void setState(bool st);
     void saveClientPath(const QString& path);
     void onLFfreqConfChanged(int value, bool isCustomized);
     void dockInit();

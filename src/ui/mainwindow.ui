@@ -21,7 +21,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -524,7 +524,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="MF_File_dataBox">
+              <widget class="QRadioButton" name="MF_File_dataButton">
                <property name="text">
                 <string>Data</string>
                </property>
@@ -534,7 +534,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="MF_File_keyBox">
+              <widget class="QRadioButton" name="MF_File_keyButton">
                <property name="text">
                 <string>Key</string>
                </property>

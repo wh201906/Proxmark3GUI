@@ -54,12 +54,9 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
     sudo apt-get install qt5-default libqt5serialport5 libqt5serialport5-dev 
     git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
     cd Proxmark3GUI
-    mkdir build
-    cd build
-    qmake ../
-    make
-    make clean
-    cp -r ../lang ./
+    mkdir build && cd build
+    qmake ../src
+    make -j4 && make clean
     cp -r ../config ./
     ./Proxmark3GUI
 
@@ -69,6 +66,9 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
 [2.编辑Mifare(IC)卡数据](../tutorial/Edit_Mifare_Classic_data/Edit_Mifare_Classic_data_zh_CN.md)（无需PM3硬件）  
 ***
 ## 更新日志:
+
+### V0.2.4
++ 复制EM410x卡（一种常见的低频ID卡）  
 
 ### V0.2.3
 + 修复 [#27](https://github.com/wh201906/Proxmark3GUI/issues/27)

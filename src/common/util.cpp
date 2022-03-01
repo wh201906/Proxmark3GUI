@@ -78,7 +78,13 @@ QString Util::execCMDWithOutput(const QString& cmd, ReturnTrigger trigger, bool 
         }
     }
     isRequiringOutput = false;
-    return (isResultFound || trigger.expectedOutputs.isEmpty() || rawOutput ? *requiredOutput : "");
+
+    // For functions without expected outputs in the return trigger, the result is the raw output.
+    // For functions with expected outputs in the return trigger,
+    // if rawOutput=true, the result is the raw output,
+    // otherwise, if the raw output contains one of the expected outputs, the result is the raw output,
+    // otherwise, the result is empty(as a failed flag).
+    return (trigger.expectedOutputs.isEmpty() || isResultFound || rawOutput ? *requiredOutput : "");
 }
 
 void Util::delay(unsigned int msec)
@@ -106,7 +112,7 @@ void Util::setRunningState(bool st)
 bool Util::chooseLanguage(QSettings* guiSettings, QMainWindow* window)
 {
     // make sure the GUISettings is not in any group
-    QSettings* langSettings = new QSettings("lang/languages.ini", QSettings::IniFormat);
+    QSettings* langSettings = new QSettings(":/i18n/languages.ini", QSettings::IniFormat);
     QMap<QString, QString> langMap;
     langSettings->setIniCodec("UTF-8");
     langSettings->beginGroup("Languages");

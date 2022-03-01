@@ -22,6 +22,7 @@ SOURCES += \
     common/util.cpp \
     module/lf.cpp \
     module/mifare.cpp \
+    module/t55xxtab.cpp \
     ui/mf_trailerdecoderdialog.cpp \
     ui/mf_sim_simdialog.cpp \
     ui/mf_uid_parameterdialog.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     common/util.h \
     module/lf.h \
     module/mifare.h \
+    module/t55xxtab.h \
     ui/mf_trailerdecoderdialog.h \
     ui/mf_sim_simdialog.h \
     ui/mf_uid_parameterdialog.h \
@@ -41,6 +43,7 @@ HEADERS += \
     ui/mf_attack_hardnesteddialog.h \
 
 FORMS += \
+    ui/t55xxtab.ui \
     ui/mf_trailerdecoderdialog.ui \
     ui/mf_sim_simdialog.ui \
     ui/mf_uid_parameterdialog.ui \
@@ -48,15 +51,18 @@ FORMS += \
     ui/mf_attack_hardnesteddialog.ui
 
 TRANSLATIONS += \
-    lang/zh_CN.ts \
-    lang/en_US.ts
+    i18n/zh_CN.ts \
+    i18n/en_US.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-VERSION = 0.2.3
+VERSION = 0.2.4
 QMAKE_TARGET_PRODUCT = "Proxmark3GUI"
 QMAKE_TARGET_DESCRIPTION = "Proxmark3GUI"
 QMAKE_TARGET_COMPANY = "wh201906"
+
+RESOURCES += \
+    i18n/language.qrc

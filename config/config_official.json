@@ -191,5 +191,15 @@
             "cmd": "lf config q <divisor> b <bits per sample> d <decimation> a <averaging> t <trigger threshold> s <samples to skip>",
             "divisor cmd": "hw setlfdivisor <divisor>"
         }
+    },
+    "t55xx":{
+        "clone em410x":{
+            "read":"lf search",
+            "successful read flag":"Valid EM410x ID",
+            "pattern":"EM TAG ID\\s*:\\s\\K[0-9a-fA-F]{10}",
+            "clone cmd":"lf em 410xwrite <id> <type>",
+            "t5555 flag":"0",
+            "t55x7 flag":"1"
+        }
     }
 }
