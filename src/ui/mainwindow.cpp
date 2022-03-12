@@ -715,7 +715,7 @@ void MainWindow::on_MF_File_clearButton_clicked()
         mifare->data_clearKey();
         mifare->data_syncWithKeyWidget();
     }
-    else if(ui->MF_File_keyButton->isChecked())
+    else if(ui->MF_File_dataButton->isChecked())
     {
         mifare->data_clearData();
         mifare->data_syncWithDataWidget();

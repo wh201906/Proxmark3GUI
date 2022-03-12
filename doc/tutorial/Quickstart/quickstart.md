@@ -27,10 +27,10 @@
 (4) Go to "Settings" panel. Input the config file path which matching the client you use.  
 ![](configpath.png)  
 
-(5) If setup.bat is required, input the script path in the "Preload script path" editbox.
+(5) If setup.bat is required, input the script path in the "Preload script path" editbox.  
 ![](preloadpath.png)  
 
-(6) If using RRG/Iceman repo, input "-p \<port\> -f" in the "Start arguments" editbox.
+(6) If using RRG/Iceman repo, input "-p \<port\> -f" in the "Start arguments" editbox.  
 ![](args.png)  
 
 ***
