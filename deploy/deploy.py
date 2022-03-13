@@ -3,6 +3,8 @@ from win32api import GetFileVersionInfo
 from json import load
 from re import fullmatch, IGNORECASE
 
+compressDirList = []
+
 
 def getPEVersion(fname):
     try:
@@ -66,6 +68,7 @@ if os.path.exists(configPath):
     print(configPath, "exists, replacing...")
     shutil.rmtree(configPath)
 shutil.copytree("../config", configPath)
+compressDirList.append(dst32Dir)
 
 if os.path.exists(dst64Dir) and os.path.exists(dst64Path):
     print(dst64Path, "exists, replacing...")
@@ -79,20 +82,47 @@ if os.path.exists(configPath):
     print(configPath, "exists, replacing...")
     shutil.rmtree(configPath)
 shutil.copytree("../config", configPath)
+compressDirList.append(dst64Dir)
 
 # TODO: GUI+client
+clientList = [
+    "official-v3.1.0", "rrg_other-v4.13441", "rrg_other-v4.14434",
+    "rrg_other-v4.14831"
+]
+
+
+def generateClient(clientName):
+    global compressDirList
+    clientSrcDir = "./client/" + clientName
+    clientDstDir = "./" + ver64 + "-win64-" + clientName
+    clientDstGUIDir = clientDstDir + "/GUI"
+
+    if os.path.exists(clientDstDir) and os.path.exists(clientDstGUIDir):
+        print(clientDstGUIDir, "exists, replacing...")
+        shutil.rmtree(clientDstGUIDir)
+    elif not os.path.exists(clientDstDir):
+        print(clientDstDir, "doesn't exist, creating...")
+        shutil.copytree(clientSrcDir, clientDstDir)
+    shutil.copytree(dst64Dir, clientDstGUIDir)
+    if "official" in clientName:
+        shutil.copyfile("./client/GUIsettings_Official.ini",
+                        clientDstGUIDir + "/GUIsettings.ini")
+    elif "rrg" in clientName:
+        shutil.copyfile("./client/GUIsettings_RRG.ini",
+                        clientDstGUIDir + "/GUIsettings.ini")
+    compressDirList.append(clientDstDir)
+
+
+for cl in clientList:
+    generateClient(cl)
 
 use7z = input("Compress?(y/N)")
 if fullmatch("yes|y", use7z, IGNORECASE):
-    archive32Path = dst32Dir + ".7z"
-    archive64Path = dst64Dir + ".7z"
+    print(compressDirList)
+    for it in compressDirList:
+        archivePath = it + ".7z"
 
-    if os.path.exists(archive32Path):
-        print(archive32Path, "exists, replacing...")
-        os.remove(archive32Path)
-    os.system("7z a -t7z -mmt8 -mx9 " + archive32Path + " " + dst32Dir)
-
-    if os.path.exists(archive64Path):
-        print(archive64Path, "exists, replacing...")
-        os.remove(archive64Path)
-    os.system("7z a -t7z -mmt8 -mx9 " + archive64Path + " " + dst64Dir)
+        if os.path.exists(archivePath):
+            print(archivePath, "exists, replacing...")
+            os.remove(archivePath)
+        os.system("7z a -t7z -mmt8 -mx9 " + archivePath + " " + it)
