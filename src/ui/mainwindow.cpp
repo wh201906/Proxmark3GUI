@@ -30,7 +30,9 @@ MainWindow::MainWindow(QWidget *parent):
     settings->setIniCodec("UTF-8");
 
     pm3Thread = new QThread(this);
+    connect(QApplication::instance(), &QApplication::aboutToQuit, pm3Thread, &QThread::quit);
     pm3 = new PM3Process(pm3Thread);
+    connect(pm3Thread, &QThread::finished, pm3, &PM3Process::deleteLater);
     pm3Thread->start();
     pm3state = false;
     clientWorkingDir = new QDir;
