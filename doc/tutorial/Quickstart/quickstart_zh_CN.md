@@ -47,3 +47,25 @@
 
 (4) 若使用树莓派Raspbian系统且连接成功若干秒后PM3会自动断开，则需要在“设置”面板中勾选“在PM3断开后保持客户端运行”  
 ![](keep_zh_CN.png)  
+
+## 预加载脚本
+客户端在运行时可能需要使用某些环境变量以解决依赖问题  
+例如，Windows平台下的冰人客户端运行时需要以下环境变量
+```
+QT_PLUGIN_PATH=<客户端路径>\libs\
+QT_QPA_PLATFORM_PLUGIN_PATH=<客户端路径>\libs\
+PATH=<客户端路径>\libs\;<客户端路径>\libs\shell\;<原PATH变量>
+MSYSTEM=MINGW64
+```
+因此，GUI会在加载客户端之前先运行"\<客户端路径\>\\setup.bat"，从而在加载客户端时使用正确的环境变量。这些设置不会影响系统环境变量，仅对客户端本身有效  
+
+setup.bat的内容如下
+```
+@echo off
+set "HOME=%~dp0"
+set "QT_PLUGIN_PATH=%HOME%\libs\"
+set "QT_QPA_PLATFORM_PLUGIN_PATH=%QT_PLUGIN_PATH%"
+set "PATH=%QT_PLUGIN_PATH%;%QT_PLUGIN_PATH%shell\;%PATH%"
+set MSYSTEM=MINGW64
+```
+如果需要使用其它客户端，你可以参考此文件编写自己的脚本，然后将其填入“预加载脚本路径”当中  
