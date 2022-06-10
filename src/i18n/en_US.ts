@@ -1390,7 +1390,7 @@ Continue to write?</source>
     </message>
     <message>
         <location filename="../module/mifare.cpp" line="709"/>
-        <source>Successful!</source>
+        <source>Succeed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
