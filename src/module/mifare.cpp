@@ -706,7 +706,7 @@ void Mifare::writeSelected(TargetType targetType)
         }
     }
     if(failedBlocks.size() == 0)
-        QMessageBox::information(parent, tr("Info"), tr("Successful!"));
+        QMessageBox::information(parent, tr("Info"), tr("Succeed!"));
     else
     {
         QString suffix = "";
