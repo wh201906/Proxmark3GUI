@@ -639,7 +639,7 @@ void Mifare::writeOne(TargetType targetType)
     bool isSuccessful = _writeblk(blockId, keyType, ui->MF_RW_keyEdit->text().toUpper(), ui->MF_RW_dataEdit->text(), targetType);
     if(isSuccessful)
     {
-        QMessageBox::information(parent, tr("Info"), tr("Success!"));
+        QMessageBox::information(parent, tr("Info"), tr("Succeed!"));
     }
     else
     {
@@ -706,7 +706,7 @@ void Mifare::writeSelected(TargetType targetType)
         }
     }
     if(failedBlocks.size() == 0)
-        QMessageBox::information(parent, tr("Info"), tr("Successful!"));
+        QMessageBox::information(parent, tr("Info"), tr("Succeed!"));
     else
     {
         QString suffix = "";

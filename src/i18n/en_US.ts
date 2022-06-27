@@ -1356,7 +1356,7 @@ or the communication between a tag and a reader.</source>
     <name>Mifare</name>
     <message>
         <location filename="../module/mifare.cpp" line="642"/>
-        <source>Success!</source>
+        <source>Succeed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1390,7 +1390,7 @@ Continue to write?</source>
     </message>
     <message>
         <location filename="../module/mifare.cpp" line="709"/>
-        <source>Successful!</source>
+        <source>Succeed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
