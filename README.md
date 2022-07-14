@@ -61,6 +61,24 @@ Great thanks to him.
     cp -r ../config ./
     ./Proxmark3GUI
 
+## Build on macOS
+
+    cd ~
+    brew update
+    brew install qt@5
+    brew link qt5 --force
+    git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
+    cd Proxmark3GUI
+    mkdir build && cd build
+    qmake ../src
+    make -j4 && make clean
+    cp -r ../config ./
+    open Proxmark3GUI.app
+
+> In order for the GUI to connect to the device in macOS, you'd need to tweak the settings a little bit
+
+![macOS_settings](doc/README/macOS_settings.png)
+
 ***
 ## Tutorial
 
