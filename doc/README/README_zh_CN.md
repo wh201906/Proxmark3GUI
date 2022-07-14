@@ -1,7 +1,7 @@
 # Proxmark3GUI
 ![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total)  
 
-一个自制的[Proxmark3](https://github.com/Proxmark/proxmark3) GUI，可在Windows/Linux系统下运行
+一个自制的[Proxmark3](https://github.com/Proxmark/proxmark3) GUI，可在Windows/Linux/macOS系统下运行
 
 [English](../../README.md)
 
@@ -59,6 +59,24 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
     make -j4 && make clean
     cp -r ../config ./
     ./Proxmark3GUI
+
+## 在macOS系统下编译
+
+    cd ~
+    brew update
+    brew install qt@5
+    brew link qt5 --force
+    git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
+    cd Proxmark3GUI
+    mkdir build && cd build
+    qmake ../src
+    make -j4 && make clean
+    cp -r ../config ./
+    open Proxmark3GUI.app
+
+> 为使GUI在macOS下正确连接设备，需要更改一些设置
+
+![macOS_settings](macOS_settings.png)
 
 ***
 ## 教程
