@@ -1,7 +1,9 @@
 # Proxmark3GUI
 ![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total)  
 
-一个自制的[Proxmark3](https://github.com/Proxmark/proxmark3) GUI，可在Windows/Linux/macOS系统下运行
+一个自制的[Proxmark3](https://github.com/Proxmark/proxmark3) GUI，可在Windows/Linux/macOS系统下运行，支持[冰人版](https://github.com/RfidResearchGroup/proxmark3)客户端和固件  
+
+(目前[官方版](https://github.com/Proxmark/proxmark3)已停更超过一年，推荐使用[冰人版](https://github.com/RfidResearchGroup/proxmark3)固件和客户端)
 
 [English](../../README.md)
 

@@ -1,7 +1,9 @@
 # Proxmark3GUI
 ![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total)  
 
-A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3) client
+A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3)/[Proxmark3 Iceman fork](https://github.com/RfidResearchGroup/proxmark3) client  
+
+(The [orignal Proxmark3 repo](https://github.com/Proxmark/proxmark3) has been unmaintained for a long time. I personally suggest using the [Proxmark3 Iceman fork](https://github.com/RfidResearchGroup/proxmark3))
 
 [中文介绍](doc/README/README_zh_CN.md)
 
