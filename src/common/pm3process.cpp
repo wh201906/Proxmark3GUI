@@ -61,7 +61,10 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
             emit PM3StatedChanged(true, result);
         }
         else
+        {
+            emit HWConnectFailed();
             kill();
+        }
     }
 
     setRequiringOutput(false);

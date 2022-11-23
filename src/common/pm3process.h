@@ -48,6 +48,7 @@ signals:
     void PM3StatedChanged(bool st, const QString& info = "");
     void newOutput(const QString& output);
     void changeClientType(Util::ClientType);
+    void HWConnectFailed();
 };
 
 #endif // PM3PROCESS_H

@@ -61,6 +61,7 @@ public slots:
     void on_Raw_keyPressed(QObject *obj_addr, QEvent &event);
     void on_MF_keyWidget_resized(QObject *obj_addr, QEvent &event);
     void onPM3ErrorOccurred(QProcess::ProcessError error);
+    void onPM3HWConnectFailed();
 private slots:
 
     void on_PM3_connectButton_clicked();

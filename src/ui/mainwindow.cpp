@@ -106,18 +106,31 @@ void MainWindow::initUI() // will be called by main.app
 
 void MainWindow::on_portSearchTimer_timeout()
 {
-    QStringList newPortList;
+    QStringList newPortList; // for actural port name
+    QStringList newPortNameList; // for display name
+//    QStringList portList;
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
-//        qDebug() << info.isBusy() << info.isNull() << info.portName() << info.description();
+//        qDebug() << info.isNull() << info.portName() << info.description() << info.serialNumber() << info.manufacturer();
         if(!info.isNull())
-            newPortList << info.portName();
+        {
+            QString idString = (info.description() + info.serialNumber() + info.manufacturer()).toUpper();
+            QString portName = info.portName();
+            const QString hint = " *";
+            newPortList << portName;
+            if(info.hasProductIdentifier() && info.hasVendorIdentifier() && info.vendorIdentifier() == 0x9AC4 && info.productIdentifier() == 0x4B8F)
+                portName += hint;
+            else if(idString.contains("proxmark") || idString.contains("iceman"))
+                portName += hint;
+            newPortNameList << portName;
+        }
     }
     if(newPortList != portList) // update PM3_portBox when available ports changed
     {
         portList = newPortList;
         ui->PM3_portBox->clear();
-        ui->PM3_portBox->addItems(portList);
+        for(int i = 0; i < portList.size(); i++)
+            ui->PM3_portBox->addItem(newPortNameList[i], newPortList[i]);
     }
 }
 
@@ -125,7 +138,7 @@ void MainWindow::on_PM3_connectButton_clicked()
 {
     qDebug() << "Main:" << QThread::currentThread();
 
-    QString port = ui->PM3_portBox->currentText();
+    QString port = ui->PM3_portBox->currentData().toString();
     QString startArgs = ui->Set_Client_startArgsEdit->text();
 
     // on RRG repo, if no port is specified, the client will search the available port
@@ -200,7 +213,11 @@ void MainWindow::onPM3ErrorOccurred(QProcess::ProcessError error)
     qDebug() << "PM3 Error:" << error << pm3->errorString();
     if(error == QProcess::FailedToStart)
         QMessageBox::information(this, tr("Info"), tr("Failed to start the client"));
+}
 
+void MainWindow::onPM3HWConnectFailed()
+{
+    QMessageBox::information(this, tr("Info"), tr("Failed to connect to the hardware"));
 }
 
 void MainWindow::onPM3StateChanged(bool st, const QString& info)
@@ -1104,6 +1121,7 @@ void MainWindow::signalInit()
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
     connect(pm3, &PM3Process::PM3StatedChanged, util, &Util::setRunningState);
     connect(pm3, &PM3Process::errorOccurred, this, &MainWindow::onPM3ErrorOccurred);
+    connect(pm3, &PM3Process::HWConnectFailed, this, &MainWindow::onPM3HWConnectFailed);
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::killPM3);
     connect(this, &MainWindow::setProcEnv, pm3, &PM3Process::setProcEnv);
     connect(this, &MainWindow::setWorkingDir, pm3, &PM3Process::setWorkingDir);
