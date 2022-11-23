@@ -108,7 +108,8 @@ void MainWindow::on_portSearchTimer_timeout()
 {
     QStringList newPortList; // for actural port name
     QStringList newPortNameList; // for display name
-//    QStringList portList;
+    const QString hint = " *";
+
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
 //        qDebug() << info.isNull() << info.portName() << info.description() << info.serialNumber() << info.manufacturer();
@@ -116,7 +117,7 @@ void MainWindow::on_portSearchTimer_timeout()
         {
             QString idString = (info.description() + info.serialNumber() + info.manufacturer()).toUpper();
             QString portName = info.portName();
-            const QString hint = " *";
+
             newPortList << portName;
             if(info.hasProductIdentifier() && info.hasVendorIdentifier() && info.vendorIdentifier() == 0x9AC4 && info.productIdentifier() == 0x4B8F)
                 portName += hint;
@@ -129,8 +130,15 @@ void MainWindow::on_portSearchTimer_timeout()
     {
         portList = newPortList;
         ui->PM3_portBox->clear();
+        int selectId = -1;
         for(int i = 0; i < portList.size(); i++)
+        {
             ui->PM3_portBox->addItem(newPortNameList[i], newPortList[i]);
+            if(selectId == -1 && newPortNameList[i].endsWith(hint))
+                selectId = i;
+        }
+        if(selectId != -1)
+            ui->PM3_portBox->setCurrentIndex(selectId);
     }
 }
 
@@ -247,7 +255,8 @@ void MainWindow::on_PM3_disconnectButton_clicked()
 void MainWindow::refreshOutput(const QString& output)
 {
 //    qDebug() << "MainWindow::refresh:" << output;
-    ui->Raw_outputEdit->appendPlainText(output);
+    ui->Raw_outputEdit->moveCursor(QTextCursor::End);
+    ui->Raw_outputEdit->insertPlainText(output);
     ui->Raw_outputEdit->moveCursor(QTextCursor::End);
 }
 
