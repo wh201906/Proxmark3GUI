@@ -2763,9 +2763,33 @@ or the communication between a tag and a reader.</string>
              <item>
               <widget class="QLabel" name="label_63">
                <property name="text">
-                <string>Config file path(Reconnect to apply):</string>
+                <string>Config file(Reconnect to apply):</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_15">
+               <item>
+                <widget class="QComboBox" name="Set_Client_configFileBox">
+                 <property name="sizeAdjustPolicy">
+                  <enum>QComboBox::AdjustToContents</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_13">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="QLineEdit" name="Set_Client_configPathEdit">

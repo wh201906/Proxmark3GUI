@@ -123,13 +123,24 @@ bool Util::chooseLanguage(QSettings* guiSettings, QMainWindow* window)
     delete langSettings;
     bool isOk = false;
     QString selectedText = QInputDialog::getItem(window, "", "Choose a language:", langMap.keys(), 0, false, &isOk);
-    if(isOk)
+    if(!isOk)
+        return false;
+    if(langMap[selectedText] == "(ext)")
     {
-        guiSettings->beginGroup("lang");
-        guiSettings->setValue("language", langMap[selectedText]);
+        QString extPath = QFileDialog::getOpenFileName(nullptr, "Select the translation file:");
+        if(extPath.isEmpty())
+            return false;
+
+        guiSettings->beginGroup("language");
+        guiSettings->setValue("extPath", extPath);
         guiSettings->endGroup();
-        guiSettings->sync();
     }
+
+    guiSettings->beginGroup("language");
+    guiSettings->setValue("name", langMap[selectedText]);
+    guiSettings->endGroup();
+    guiSettings->sync();
+
     return isOk;
 }
 

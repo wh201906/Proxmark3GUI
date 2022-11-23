@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QJsonDocument>
+#include <QDirIterator>
 
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent)
@@ -79,7 +80,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadConfig()
 {
-    QFile configList(ui->Set_Client_configPathEdit->text());
+    QString filename = ui->Set_Client_configFileBox->currentData().toString();
+    if(filename == "(ext)")
+        filename = ui->Set_Client_configPathEdit->text();
+    qDebug() << "config file:" << filename;
+    QFile configList(filename);
     if(!configList.open(QFile::ReadOnly | QFile::Text))
     {
         QMessageBox::information(this, tr("Info"), tr("Failed to load config file"));
@@ -1106,11 +1111,27 @@ void MainWindow::uiInit()
     ui->Set_Client_keepClientActiveBox->setChecked(keepClientActive);
     settings->endGroup();
 
+    QDirIterator configFiles(":/config/");
+    ui->Set_Client_configFileBox->blockSignals(true);
+    while(configFiles.hasNext())
+    {
+        configFiles.next();
+        ui->Set_Client_configFileBox->addItem(configFiles.fileName(), configFiles.filePath());
+    }
+    ui->Set_Client_configFileBox->addItem(tr("External file"), "(ext)");
+
+    int configId = -1;
     settings->beginGroup("Client_Env");
     ui->Set_Client_envScriptEdit->setText(settings->value("scriptPath").toString());
     ui->Set_Client_workingDirEdit->setText(settings->value("workingDir", "../data").toString());
-    ui->Set_Client_configPathEdit->setText(settings->value("configPath", "config.json").toString());
+    configId = ui->Set_Client_configFileBox->findData(settings->value("configFile"));
+    ui->Set_Client_configPathEdit->setText(settings->value("extConfigFilePath", "config.json").toString());
     settings->endGroup();
+    if(configId != -1)
+        ui->Set_Client_configFileBox->setCurrentIndex(configId);
+    ui->Set_Client_configFileBox->blockSignals(false);
+    on_Set_Client_configFileBox_currentIndexChanged(ui->Set_Client_configFileBox->currentIndex());
+
 
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
     ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
@@ -1314,7 +1335,7 @@ void MainWindow::on_Set_Client_workingDirEdit_editingFinished()
 void MainWindow::on_Set_Client_configPathEdit_editingFinished()
 {
     settings->beginGroup("Client_Env");
-    settings->setValue("configPath", ui->Set_Client_configPathEdit->text());
+    settings->setValue("extConfigFilePath", ui->Set_Client_configPathEdit->text());
     settings->endGroup();
 }
 
@@ -1450,5 +1471,13 @@ void MainWindow::on_LF_LFConf_resetButton_clicked()
     setState(false);
     lf->resetLFConfig();
     setState(true);
+}
+
+void MainWindow::on_Set_Client_configFileBox_currentIndexChanged(int index)
+{
+    ui->Set_Client_configPathEdit->setVisible(ui->Set_Client_configFileBox->itemData(index).toString() == "(ext)");
+    settings->beginGroup("Client_Env");
+    settings->setValue("configFile", ui->Set_Client_configFileBox->currentData());
+    settings->endGroup();
 }
 

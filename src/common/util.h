@@ -13,6 +13,7 @@
 #include <QSettings>
 #include <QMainWindow>
 #include <QInputDialog>
+#include <QFileDialog>
 #include <QDockWidget>
 
 #include "ui_mainwindow.h"

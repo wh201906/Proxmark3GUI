@@ -65,4 +65,5 @@ QMAKE_TARGET_DESCRIPTION = "Proxmark3GUI"
 QMAKE_TARGET_COMPANY = "wh201906"
 
 RESOURCES += \
-    i18n/language.qrc
+    ../i18n/language.qrc \
+    ../config/config.qrc

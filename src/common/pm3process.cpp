@@ -28,7 +28,7 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
     currArgs = args;
 
     // using "-f" option to make the client output flushed after every print.
-    // single '\r' might appears. Don't use QProcess::Text there or '\r' is ignored.
+    // single '\r' might appear. Don't use QProcess::Text there or '\r' is ignored.
     start(path, args, QProcess::Unbuffered | QProcess::ReadWrite);
     if(waitForStarted(10000))
     {

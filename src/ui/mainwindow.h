@@ -51,7 +51,7 @@ public:
     ~MainWindow();
 
     void initUI();
-    bool eventFilter(QObject *watched, QEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
 public slots:
     void refreshOutput(const QString& output);
     void refreshCMD(const QString& cmd);
@@ -209,6 +209,9 @@ private slots:
     void on_Set_Client_configPathEdit_editingFinished();
 
     void setState(bool st);
+
+    void on_Set_Client_configFileBox_currentIndexChanged(int index);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;
