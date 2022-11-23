@@ -120,12 +120,19 @@ void MainWindow::on_portSearchTimer_timeout()
 //        qDebug() << info.isNull() << info.portName() << info.description() << info.serialNumber() << info.manufacturer();
         if(!info.isNull())
         {
-            QString idString = (info.description() + info.serialNumber() + info.manufacturer()).toUpper();
+            QString idString = (info.description() + info.serialNumber() + info.manufacturer()).toLower();
             QString portName = info.portName();
 
             newPortList << portName;
-            if(info.hasProductIdentifier() && info.hasVendorIdentifier() && info.vendorIdentifier() == 0x9AC4 && info.productIdentifier() == 0x4B8F)
-                portName += hint;
+            if(info.hasVendorIdentifier() && info.hasProductIdentifier())
+            {
+                quint16 vid = info.vendorIdentifier();
+                quint16 pid = info.productIdentifier();
+                if(vid == 0x9AC4 && pid == 0x4B8F)
+                    portName += hint;
+                else if(vid == 0x2D2D && pid == 0x504D)
+                    portName += hint;
+            }
             else if(idString.contains("proxmark") || idString.contains("iceman"))
                 portName += hint;
             newPortNameList << portName;
