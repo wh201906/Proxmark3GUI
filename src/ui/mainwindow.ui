@@ -2651,6 +2651,23 @@ or the communication between a tag and a reader.</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_10">
              <item>
+              <widget class="QLabel" name="label_65">
+               <property name="text">
+                <string>GUI working directory:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="Set_Client_GUIWorkingDirLabel"/>
+             </item>
+             <item>
+              <widget class="Line" name="line_9">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="label_11">
                <property name="text">
                 <string>Preload script path(Reconnect to apply):</string>

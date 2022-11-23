@@ -1064,6 +1064,8 @@ void MainWindow::uiInit()
     ui->PM3_pathEdit->setText(settings->value("path", "proxmark3").toString());
     settings->endGroup();
 
+    ui->Set_Client_GUIWorkingDirLabel->setText(QDir::currentPath());
+
     settings->beginGroup("Client_Args");
     ui->Set_Client_startArgsEdit->setText(settings->value("args", "<port> -f").toString());
     settings->endGroup();
