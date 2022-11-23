@@ -195,6 +195,14 @@ void MainWindow::on_PM3_connectButton_clicked()
     envSetProcess.kill();
 }
 
+void MainWindow::onPM3ErrorOccurred(QProcess::ProcessError error)
+{
+    qDebug() << "PM3 Error:" << error << pm3->errorString();
+    if(error == QProcess::FailedToStart)
+        QMessageBox::information(this, tr("Info"), tr("Failed to start the client"));
+
+}
+
 void MainWindow::onPM3StateChanged(bool st, const QString& info)
 {
     pm3state = st;
@@ -1093,6 +1101,7 @@ void MainWindow::signalInit()
     connect(this, &MainWindow::reconnectPM3, pm3, &PM3Process::reconnectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
     connect(pm3, &PM3Process::PM3StatedChanged, util, &Util::setRunningState);
+    connect(pm3, &PM3Process::errorOccurred, this, &MainWindow::onPM3ErrorOccurred);
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::killPM3);
     connect(this, &MainWindow::setProcEnv, pm3, &PM3Process::setProcEnv);
     connect(this, &MainWindow::setWorkingDir, pm3, &PM3Process::setWorkingDir);

@@ -13,6 +13,8 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
     connect(serialListener, &QTimer::timeout, this, &PM3Process::onTimeout);
     connect(this, &PM3Process::readyRead, this, &PM3Process::onReadyRead);
     portInfo = nullptr;
+
+    qRegisterMetaType<QProcess::ProcessError>("QProcess::ProcessError");
 }
 
 void PM3Process::connectPM3(const QString& path, const QStringList args)
@@ -61,6 +63,8 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
         else
             kill();
     }
+
+    setRequiringOutput(false);
 }
 
 void PM3Process::reconnectPM3()
