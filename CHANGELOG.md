@@ -2,15 +2,26 @@
 
 [中文](doc/CHANGELOG/CHANGELOG_zh_CN.md)  
 
+### V0.2.6
++ Add support for Iceman/RRG repo v4.15864 [#37](https://github.com/wh201906/Proxmark3GUI/issues/37)  
++ Optimize mifare classic block writing logic  
++ Fix the default lf config  
++ Add feedback for the GUI failing to start the client  
++ Add feedback for the client failing to connect to PM3 hardware  
++ Detect PM3 hardware when searching serial ports  
++ Remove extra empty lines in raw command output  
++ Use embedded config files  
++ Remove the wait time between performing nested attack then switching to staticnested attack  
+
 ### V0.2.5
-+ Fix bug [#28](https://github.com/wh201906/Proxmark3GUI/issues/28)
++ Fix bug [#28](https://github.com/wh201906/Proxmark3GUI/issues/28)  
 
 ### V0.2.4
 + Clone EM410x card to T55xx card  
 
 ### V0.2.3
-+ Fix bug [#27](https://github.com/wh201906/Proxmark3GUI/issues/27)
-+ Try to support Non-ASCII path
++ Fix bug [#27](https://github.com/wh201906/Proxmark3GUI/issues/27)  
++ Try to support Non-ASCII path  
 
 ### V0.2.2
 + Load command format from external json file  

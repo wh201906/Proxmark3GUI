@@ -2,6 +2,17 @@
 
 [English](../../CHANGELOG.md)  
 
+### V0.2.6
++ 支持冰人版客户端 v4.15864 [#37](https://github.com/wh201906/Proxmark3GUI/issues/37)  
++ 优化Mifare Classic卡写卡逻辑  
++ 修复lf config默认配置  
++ 添加客户端无法启动的提示  
++ 添加PM3硬件连接失败的提示  
++ 为PM3对应串口添加提示，并自动选中  
++ 修复原始指令框中有多余空行的问题  
++ 内嵌不同客户端的配置文件  
++ 去除从nested attack切换到staticnested attack的等待时间  
+
 ### V0.2.5
 + 修复 [#28](https://github.com/wh201906/Proxmark3GUI/issues/28)
 
