@@ -81,8 +81,10 @@ void LF::getLFConfig()
     QVariantMap config = configMap["get config"].toMap();
     QString cmd = config["cmd"].toString();
     result = util->execCMDWithOutput(cmd, 400);
-    start = result.indexOf(config["field start"].toString());
-    end = result.indexOf(config["field end"].toString());
+    reMatch = QRegularExpression(config["field start"].toString(), QRegularExpression::MultilineOption).match(result);
+    start = reMatch.hasMatch() ? reMatch.capturedEnd() : 0;
+    reMatch = QRegularExpression(config["field end"].toString(), QRegularExpression::MultilineOption).match(result, start);
+    end = reMatch.hasMatch() ? reMatch.capturedStart() : result.length();
     result = result.mid(start, end - start);
 #if (QT_VERSION <= QT_VERSION_CHECK(5,14,0))
     resultList = result.split("\n", QString::SkipEmptyParts);

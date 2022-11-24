@@ -1,0 +1,241 @@
+{
+    "//": "Based on Proxmark3 rrg repo v4.15864, commit 1f75adc",
+    "//": "You can change this file if the command format of client changes",
+    "mifare classic": {
+        "nested": {
+            "cmd": "hf mf nested --<card type> --blk <block> -<key type> -k <key>",
+            "static cmd": "hf mf staticnested --<card type> --blk <block> -<key type> -k <key>",
+            "card type": {
+                "mini": "mini",
+                "1k": "1k",
+                "2k": "2k",
+                "4k": "4k"
+            },
+            "key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+]  Sec | Blk | key A        |res| key B        |res",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+]  000 | 003 | FFFFFFFFFFFF | 1 | FFFFFFFFFFFF | 1",
+            "//": "......",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+] ( 0:Failed / 1:Success )",
+            "key pattern": "\\s*\\d{3}\\s*\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*$",
+            "key A index": 2,
+            "key B index": 4
+        },
+        "check": {
+            "cmd": "hf mf chk --<card type>",
+            "card type": {
+                "mini": "mini",
+                "1k": "1k",
+                "2k": "2k",
+                "4k": "4k"
+            },
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+]  Sec | Blk | key A        |res| key B        |res",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+]  000 | 003 | FFFFFFFFFFFF | 1 | FFFFFFFFFFFF | 1",
+            "//": "......",
+            "//": "[+]  004 | 019 | ------------ | 0 | ------------ | 0",
+            "//": "......",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+] ( 0:Failed / 1:Success )",
+            "key pattern": "\\s*\\d{3}\\s*\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*$",
+            "key A index": 2,
+            "key B index": 4
+        },
+        "info": {
+            "cmd": "hf 14a info"
+        },
+        "sniff": {
+            "cmd": "hf sniff"
+        },
+        "sniff 14a": {
+            "cmd": "hf 14a sniff"
+        },
+        "list": {
+            "cmd": "trace list -t mf"
+        },
+        "dump": {
+            "cmd": "hf mf dump --<card type>",
+            "card type": {
+                "mini": "mini",
+                "1k": "1k",
+                "2k": "2k",
+                "4k": "4k"
+            }
+        },
+        "restore": {
+            "cmd": "hf mf restore --<card type>",
+            "card type": {
+                "mini": "mini",
+                "1k": "1k",
+                "2k": "2k",
+                "4k": "4k"
+            }
+        },
+        "emulator wipe": {
+            "cmd": "hf mf eclr"
+        },
+        "Magic Card wipe": {
+            "cmd": "hf mf cwipe"
+        },
+        "emulator read block": {
+            "cmd": "hf mf egetblk --blk <block>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "Magic Card read block": {
+            "cmd": "hf mf cgetblk --blk <block>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "normal read block": {
+            "cmd": "hf mf rdbl --blk <block> -<key type> -k <key>",
+            "key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "darkside": {
+            "cmd": "hf mf darkside"
+        },
+        "save sniff": {
+            "cmd": "trace save -f <filename>"
+        },
+        "load sniff": {
+            "cmd": "trace load -f <filename>",
+            "show cmd": "trace list --buffer -t mf"
+        },
+        "hardnested": {
+            "cmd": "hf mf hardnested --blk <known key block> -<known key type> -k <known key> --tblk <target key block> --t<target key type>",
+            "known key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "target key type": {
+                "A": "a",
+                "B": "b"
+            }
+        },
+        "normal read sector": {
+            "cmd": "hf mf rdsc --sec <sector> -<key type> -k <key>",
+            "key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "Magic Card read sector": {
+            "cmd": "hf mf cgetsc --sec <sector>",
+            "data pattern": "([0-9a-fA-F]{2} ){15}[0-9a-fA-F]{2}"
+        },
+        "//": "When writing a block, if the result is not empty and doesn't contain the failed flag, the function will return true",
+        "normal write block": {
+            "cmd": "hf mf wrbl --blk <block> -<key type> -k <key> -d <data>",
+            "key type": {
+                "A": "a",
+                "B": "b"
+            },
+            "failed flag": [
+                "fail",
+                "error"
+            ]
+        },
+        "Magic Card write block": {
+            "cmd": "hf mf csetblk --blk <block> -d <data>",
+            "failed flag": [
+                "fail",
+                "error"
+            ]
+        },
+        "emulator write block": {
+            "cmd": "hf mf esetblk --blk <block> -d <data>"
+        },
+        "Magic Card lock": {
+            "cmd": "hf 14a raw ",
+            "sequence": [
+                "-ak -b 7 40",
+                "-ak 43",
+                "-ak E0 00 39 F7",
+                "-ak E1 00 E1 EE",
+                "-ak 85 00 00 00 00 00 00 00 00 00 00 00 00 00 00 08 18 47",
+                "-a 52"
+            ]
+        },
+        "Magic Card set parameter": {
+            "cmd": "hf mf csetuid --uid <uid> --atqa <atqa> --sak <sak>"
+        }
+    },
+    "lf": {
+        "read": {
+            "cmd": "lf read -v",
+            "show cmd": "data plot"
+        },
+        "sniff": {
+            "cmd": "lf sniff -v",
+            "show cmd": "data plot"
+        },
+        "search": {
+            "cmd": "lf search -u"
+        },
+        "tune": {
+            "cmd": "lf tune --divisor <divisor>"
+        },
+        "get config": {
+            "cmd": "hw status",
+            "field start": "LF Sampling config",
+            "field end": "\\[#\\] \\S",
+            "divisor": {
+                "flag": "divisor",
+                "pattern": "\\d+"
+            },
+            "bits per sample": {
+                "flag": "bits per sample",
+                "pattern": "\\d+"
+            },
+            "decimation": {
+                "flag": "decimation",
+                "pattern": "\\d+"
+            },
+            "averaging": {
+                "flag": "averaging",
+                "pattern": "\\d+",
+                "replace": {
+                    "yes": "1",
+                    "no": "0",
+                    "Yes": "1",
+                    "No": "0"
+                }
+            },
+            "trigger threshold": {
+                "flag": "trigger threshold",
+                "pattern": "\\d+"
+            },
+            "samples to skip": {
+                "flag": "samples to skip",
+                "pattern": "\\d+"
+            },
+            "//": "execute 'cmd' then find parameters between 'field stard' and 'field end'",
+            "//": "for each line, if the line doesn't have any flag, skip",
+            "//": "otherwise, delete characters before 'flag' and 'flag' itself, then use 'pattern' to get the parameter",
+            "//": "If 'replace' dict exists, replace all keys with respective values before getting parameters"
+        },
+        "set config": {
+            "cmd": "lf config --divisor <divisor> --bps <bits per sample> --dec <decimation> --avg <averaging> --trig <trigger threshold> --skip <samples to skip>",
+            "divisor cmd": "hw setlfdivisor -d <divisor>"
+        }
+    },
+    "t55xx": {
+        "clone em410x": {
+            "read": "lf em 410x reader",
+            "successful read flag": "EM 410x ID",
+            "pattern": "EM 410x ID\\s*\\K[0-9a-fA-F]{10}",
+            "clone cmd": "lf em 410x clone --id <id> <type>",
+            "t5555 flag": "--q5",
+            "t55x7 flag": ""
+        }
+    }
+}
