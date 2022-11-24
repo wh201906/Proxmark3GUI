@@ -119,15 +119,16 @@ bool Util::chooseLanguage(QSettings* guiSettings, QMainWindow* window)
     QStringList langList = langSettings->allKeys();
     for(int i = 0; i < langList.size(); i++)
         langMap.insert(langSettings->value(langList[i]).toString(), langList[i]);
+    langMap.insert(tr("Load from external file"), "(ext)");
     langSettings->endGroup();
     delete langSettings;
     bool isOk = false;
-    QString selectedText = QInputDialog::getItem(window, "", "Choose a language:", langMap.keys(), 0, false, &isOk);
+    QString selectedText = QInputDialog::getItem(window, "", tr("Choose a language:"), langMap.keys(), 0, false, &isOk);
     if(!isOk)
         return false;
     if(langMap[selectedText] == "(ext)")
     {
-        QString extPath = QFileDialog::getOpenFileName(nullptr, "Select the translation file:");
+        QString extPath = QFileDialog::getOpenFileName(nullptr, tr("Select the translation file:"));
         if(extPath.isEmpty())
             return false;
 

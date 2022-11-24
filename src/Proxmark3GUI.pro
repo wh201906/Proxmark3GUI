@@ -51,8 +51,8 @@ FORMS += \
     ui/mf_attack_hardnesteddialog.ui
 
 TRANSLATIONS += \
-    i18n/zh_CN.ts \
-    i18n/en_US.ts
+    ../i18n/zh_CN.ts \
+    ../i18n/en_US.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
