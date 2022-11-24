@@ -13,6 +13,8 @@ PM3Process::PM3Process(QThread* thread, QObject* parent): QProcess(parent)
     connect(serialListener, &QTimer::timeout, this, &PM3Process::onTimeout);
     connect(this, &PM3Process::readyRead, this, &PM3Process::onReadyRead);
     portInfo = nullptr;
+
+    qRegisterMetaType<QProcess::ProcessError>("QProcess::ProcessError");
 }
 
 void PM3Process::connectPM3(const QString& path, const QStringList args)
@@ -26,7 +28,8 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
     currArgs = args;
 
     // using "-f" option to make the client output flushed after every print.
-    start(path, args, QProcess::Unbuffered | QProcess::ReadWrite | QProcess::Text);
+    // single '\r' might appear. Don't use QProcess::Text there or '\r' is ignored.
+    start(path, args, QProcess::Unbuffered | QProcess::ReadWrite);
     if(waitForStarted(10000))
     {
         waitForReadyRead(10000);
@@ -59,8 +62,13 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
             emit PM3StatedChanged(true, result);
         }
         else
+        {
+            emit HWConnectFailed();
             kill();
+        }
     }
+
+    setRequiringOutput(false);
 }
 
 void PM3Process::reconnectPM3()

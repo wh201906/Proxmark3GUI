@@ -51,18 +51,19 @@ FORMS += \
     ui/mf_attack_hardnesteddialog.ui
 
 TRANSLATIONS += \
-    i18n/zh_CN.ts \
-    i18n/en_US.ts
+    ../i18n/zh_CN.ts \
+    ../i18n/en_US.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-VERSION = 0.2.5
+VERSION = 0.2.6
 QMAKE_TARGET_PRODUCT = "Proxmark3GUI"
 QMAKE_TARGET_DESCRIPTION = "Proxmark3GUI"
 QMAKE_TARGET_COMPANY = "wh201906"
 
 RESOURCES += \
-    i18n/language.qrc
+    ../i18n/language.qrc \
+    ../config/config.qrc

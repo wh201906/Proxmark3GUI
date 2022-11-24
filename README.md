@@ -60,7 +60,6 @@ Great thanks to him.
     mkdir build && cd build
     qmake ../src
     make -j4 && make clean
-    cp -r ../config ./
     ./Proxmark3GUI
 
 ## Build on macOS

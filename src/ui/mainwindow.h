@@ -51,7 +51,7 @@ public:
     ~MainWindow();
 
     void initUI();
-    bool eventFilter(QObject *watched, QEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
 public slots:
     void refreshOutput(const QString& output);
     void refreshCMD(const QString& cmd);
@@ -60,6 +60,8 @@ public slots:
     void MF_onMFCardTypeChanged(int id, bool st);
     void on_Raw_keyPressed(QObject *obj_addr, QEvent &event);
     void on_MF_keyWidget_resized(QObject *obj_addr, QEvent &event);
+    void onPM3ErrorOccurred(QProcess::ProcessError error);
+    void onPM3HWConnectFailed();
 private slots:
 
     void on_PM3_connectButton_clicked();
@@ -207,6 +209,9 @@ private slots:
     void on_Set_Client_configPathEdit_editingFinished();
 
     void setState(bool st);
+
+    void on_Set_Client_configFileBox_currentIndexChanged(int index);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;

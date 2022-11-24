@@ -59,7 +59,6 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
     mkdir build && cd build
     qmake ../src
     make -j4 && make clean
-    cp -r ../config ./
     ./Proxmark3GUI
 
 ## 在macOS系统下编译

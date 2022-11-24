@@ -27,33 +27,34 @@ int main(int argc, char *argv[])
 
     QSettings* settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
     settings->setIniCodec("UTF-8");
-    settings->beginGroup("lang");
-    QString currLang = settings->value("language", "").toString();
+    settings->beginGroup("language");
+    QString languageFile = settings->value("extPath").toString();
+    QString languageName = settings->value("name").toString();
     settings->endGroup();
-    if(currLang == "")
+    if(languageName == "")
     {
         if(Util::chooseLanguage(settings, &w))
         {
-            settings->beginGroup("lang");
-            currLang = settings->value("language", "").toString();
+            settings->beginGroup("language");
+            languageName = settings->value("name").toString();
             settings->endGroup();
         }
         else
-            currLang = "en_US";
+            languageName = "en_US";
     }
-    if(currLang == "ext")
-        currLang = QFileDialog::getOpenFileName(nullptr, "Select the translation file:");
+    if(languageName == "(ext)")
+    {
+        settings->beginGroup("language");
+        languageFile = settings->value("extPath").toString();
+        settings->endGroup();
+    }
     else
-        currLang = ":/i18n/" + currLang + ".qm";
+        languageFile = ":/i18n/" + languageName + ".qm";
     QTranslator* translator = new QTranslator(&w);
-    if(translator->load(currLang))
-    {
+    if(translator->load(languageFile))
         a.installTranslator(translator);
-    }
     else
-    {
-        QMessageBox::information(&w, "Error", "Can't load " + currLang + " as translation file.");
-    }
+        QMessageBox::information(&w, "Error", "Can't load " + languageFile + " as translation file.");
     delete settings;
     w.initUI();
     w.show();

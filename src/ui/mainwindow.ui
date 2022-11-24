@@ -1454,8 +1454,8 @@ When setting the freq, the &quot;hw setlfdivisor&quot; will also be called.</str
                  </item>
                  <item row="2" column="1">
                   <widget class="QCheckBox" name="LF_LFConf_averagingBox">
-                   <property name="text">
-                    <string/>
+                   <property name="checked">
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -2651,6 +2651,23 @@ or the communication between a tag and a reader.</string>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_10">
              <item>
+              <widget class="QLabel" name="label_65">
+               <property name="text">
+                <string>GUI working directory:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="Set_Client_GUIWorkingDirLabel"/>
+             </item>
+             <item>
+              <widget class="Line" name="line_9">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="label_11">
                <property name="text">
                 <string>Preload script path(Reconnect to apply):</string>
@@ -2746,9 +2763,33 @@ or the communication between a tag and a reader.</string>
              <item>
               <widget class="QLabel" name="label_63">
                <property name="text">
-                <string>Config file path(Reconnect to apply):</string>
+                <string>Config file(Reconnect to apply):</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_15">
+               <item>
+                <widget class="QComboBox" name="Set_Client_configFileBox">
+                 <property name="sizeAdjustPolicy">
+                  <enum>QComboBox::AdjustToContents</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_13">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="QLineEdit" name="Set_Client_configPathEdit">

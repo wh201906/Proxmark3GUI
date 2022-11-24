@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QJsonDocument>
+#include <QDirIterator>
 
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent)
@@ -30,7 +31,9 @@ MainWindow::MainWindow(QWidget *parent):
     settings->setIniCodec("UTF-8");
 
     pm3Thread = new QThread(this);
+    connect(QApplication::instance(), &QApplication::aboutToQuit, pm3Thread, &QThread::quit);
     pm3 = new PM3Process(pm3Thread);
+    connect(pm3Thread, &QThread::finished, pm3, &PM3Process::deleteLater);
     pm3Thread->start();
     pm3state = false;
     clientWorkingDir = new QDir;
@@ -77,7 +80,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::loadConfig()
 {
-    QFile configList(ui->Set_Client_configPathEdit->text());
+    QString filename = ui->Set_Client_configFileBox->currentData().toString();
+    if(filename == "(ext)")
+        filename = ui->Set_Client_configPathEdit->text();
+    qDebug() << "config file:" << filename;
+    QFile configList(filename);
     if(!configList.open(QFile::ReadOnly | QFile::Text))
     {
         QMessageBox::information(this, tr("Info"), tr("Failed to load config file"));
@@ -104,18 +111,46 @@ void MainWindow::initUI() // will be called by main.app
 
 void MainWindow::on_portSearchTimer_timeout()
 {
-    QStringList newPortList;
+    QStringList newPortList; // for actural port name
+    QStringList newPortNameList; // for display name
+    const QString hint = " *";
+
     foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
-//        qDebug() << info.isBusy() << info.isNull() << info.portName() << info.description();
+//        qDebug() << info.isNull() << info.portName() << info.description() << info.serialNumber() << info.manufacturer();
         if(!info.isNull())
-            newPortList << info.portName();
+        {
+            QString idString = (info.description() + info.serialNumber() + info.manufacturer()).toLower();
+            QString portName = info.portName();
+
+            newPortList << portName;
+            if(info.hasVendorIdentifier() && info.hasProductIdentifier())
+            {
+                quint16 vid = info.vendorIdentifier();
+                quint16 pid = info.productIdentifier();
+                if(vid == 0x9AC4 && pid == 0x4B8F)
+                    portName += hint;
+                else if(vid == 0x2D2D && pid == 0x504D)
+                    portName += hint;
+            }
+            else if(idString.contains("proxmark") || idString.contains("iceman"))
+                portName += hint;
+            newPortNameList << portName;
+        }
     }
     if(newPortList != portList) // update PM3_portBox when available ports changed
     {
         portList = newPortList;
         ui->PM3_portBox->clear();
-        ui->PM3_portBox->addItems(portList);
+        int selectId = -1;
+        for(int i = 0; i < portList.size(); i++)
+        {
+            ui->PM3_portBox->addItem(newPortNameList[i], newPortList[i]);
+            if(selectId == -1 && newPortNameList[i].endsWith(hint))
+                selectId = i;
+        }
+        if(selectId != -1)
+            ui->PM3_portBox->setCurrentIndex(selectId);
     }
 }
 
@@ -123,7 +158,7 @@ void MainWindow::on_PM3_connectButton_clicked()
 {
     qDebug() << "Main:" << QThread::currentThread();
 
-    QString port = ui->PM3_portBox->currentText();
+    QString port = ui->PM3_portBox->currentData().toString();
     QString startArgs = ui->Set_Client_startArgsEdit->text();
 
     // on RRG repo, if no port is specified, the client will search the available port
@@ -193,6 +228,18 @@ void MainWindow::on_PM3_connectButton_clicked()
     envSetProcess.kill();
 }
 
+void MainWindow::onPM3ErrorOccurred(QProcess::ProcessError error)
+{
+    qDebug() << "PM3 Error:" << error << pm3->errorString();
+    if(error == QProcess::FailedToStart)
+        QMessageBox::information(this, tr("Info"), tr("Failed to start the client"));
+}
+
+void MainWindow::onPM3HWConnectFailed()
+{
+    QMessageBox::information(this, tr("Info"), tr("Failed to connect to the hardware"));
+}
+
 void MainWindow::onPM3StateChanged(bool st, const QString& info)
 {
     pm3state = st;
@@ -220,7 +267,8 @@ void MainWindow::on_PM3_disconnectButton_clicked()
 void MainWindow::refreshOutput(const QString& output)
 {
 //    qDebug() << "MainWindow::refresh:" << output;
-    ui->Raw_outputEdit->appendPlainText(output);
+    ui->Raw_outputEdit->moveCursor(QTextCursor::End);
+    ui->Raw_outputEdit->insertPlainText(output);
     ui->Raw_outputEdit->moveCursor(QTextCursor::End);
 }
 
@@ -1054,6 +1102,8 @@ void MainWindow::uiInit()
     ui->PM3_pathEdit->setText(settings->value("path", "proxmark3").toString());
     settings->endGroup();
 
+    ui->Set_Client_GUIWorkingDirLabel->setText(QDir::currentPath());
+
     settings->beginGroup("Client_Args");
     ui->Set_Client_startArgsEdit->setText(settings->value("args", "<port> -f").toString());
     settings->endGroup();
@@ -1068,11 +1118,27 @@ void MainWindow::uiInit()
     ui->Set_Client_keepClientActiveBox->setChecked(keepClientActive);
     settings->endGroup();
 
+    QDirIterator configFiles(":/config/");
+    ui->Set_Client_configFileBox->blockSignals(true);
+    while(configFiles.hasNext())
+    {
+        configFiles.next();
+        ui->Set_Client_configFileBox->addItem(configFiles.fileName(), configFiles.filePath());
+    }
+    ui->Set_Client_configFileBox->addItem(tr("External file"), "(ext)");
+
+    int configId = -1;
     settings->beginGroup("Client_Env");
     ui->Set_Client_envScriptEdit->setText(settings->value("scriptPath").toString());
     ui->Set_Client_workingDirEdit->setText(settings->value("workingDir", "../data").toString());
-    ui->Set_Client_configPathEdit->setText(settings->value("configPath", "config.json").toString());
+    configId = ui->Set_Client_configFileBox->findData(settings->value("configFile"));
+    ui->Set_Client_configPathEdit->setText(settings->value("extConfigFilePath", "config.json").toString());
     settings->endGroup();
+    if(configId != -1)
+        ui->Set_Client_configFileBox->setCurrentIndex(configId);
+    ui->Set_Client_configFileBox->blockSignals(false);
+    on_Set_Client_configFileBox_currentIndexChanged(ui->Set_Client_configFileBox->currentIndex());
+
 
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
     ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
@@ -1091,6 +1157,8 @@ void MainWindow::signalInit()
     connect(this, &MainWindow::reconnectPM3, pm3, &PM3Process::reconnectPM3);
     connect(pm3, &PM3Process::PM3StatedChanged, this, &MainWindow::onPM3StateChanged);
     connect(pm3, &PM3Process::PM3StatedChanged, util, &Util::setRunningState);
+    connect(pm3, &PM3Process::errorOccurred, this, &MainWindow::onPM3ErrorOccurred);
+    connect(pm3, &PM3Process::HWConnectFailed, this, &MainWindow::onPM3HWConnectFailed);
     connect(this, &MainWindow::killPM3, pm3, &PM3Process::killPM3);
     connect(this, &MainWindow::setProcEnv, pm3, &PM3Process::setProcEnv);
     connect(this, &MainWindow::setWorkingDir, pm3, &PM3Process::setWorkingDir);
@@ -1274,7 +1342,7 @@ void MainWindow::on_Set_Client_workingDirEdit_editingFinished()
 void MainWindow::on_Set_Client_configPathEdit_editingFinished()
 {
     settings->beginGroup("Client_Env");
-    settings->setValue("configPath", ui->Set_Client_configPathEdit->text());
+    settings->setValue("extConfigFilePath", ui->Set_Client_configPathEdit->text());
     settings->endGroup();
 }
 
@@ -1410,5 +1478,13 @@ void MainWindow::on_LF_LFConf_resetButton_clicked()
     setState(false);
     lf->resetLFConfig();
     setState(true);
+}
+
+void MainWindow::on_Set_Client_configFileBox_currentIndexChanged(int index)
+{
+    ui->Set_Client_configPathEdit->setVisible(ui->Set_Client_configFileBox->itemData(index).toString() == "(ext)");
+    settings->beginGroup("Client_Env");
+    settings->setValue("configFile", ui->Set_Client_configFileBox->currentData());
+    settings->endGroup();
 }
 

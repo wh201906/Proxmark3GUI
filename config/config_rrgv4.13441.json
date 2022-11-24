@@ -15,6 +15,13 @@
                 "A": "a",
                 "B": "b"
             },
+            "//": "[+] |-----|----------------|---|----------------|---|",
+            "//": "[+] | Sec | key A          |res| key B          |res|",
+            "//": "[+] |-----|----------------|---|----------------|---|",
+            "//": "[+] | 000 | ffffffffffff   | 1 | ffffffffffff   | 1 |",
+            "//": "......",
+            "//": "[+] |-----|----------------|---|----------------|---|",
+            "//": "[+] ( 0:Failed / 1:Success )",
             "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|",
             "key A index": 2,
             "key B index": 4
@@ -27,6 +34,15 @@
                 "2k": "2k",
                 "4k": "4k"
             },
+            "//": "[+] |-----|----------------|---|----------------|---|",
+            "//": "[+] | Sec | key A          |res| key B          |res|",
+            "//": "[+] |-----|----------------|---|----------------|---|",
+            "//": "[+] | 000 | ffffffffffff   | 1 | ffffffffffff   | 1 |",
+            "//": "......",
+            "//": "[+] | 004 | ------------   | 0 | ------------   | 0 |",
+            "//": "......",
+            "//": "[+] |-----|----------------|---|----------------|---|",
+            "//": "[+] ( 0:Failed / 1:Success )",
             "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|",
             "key A index": 2,
             "key B index": 4
@@ -44,10 +60,22 @@
             "cmd": "trace list -t mf"
         },
         "dump": {
-            "cmd": "hf mf dump"
+            "cmd": "hf mf dump --<card type>",
+            "card type": {
+                "mini": "mini",
+                "1k": "1k",
+                "2k": "2k",
+                "4k": "4k"
+            }
         },
         "restore": {
-            "cmd": "hf mf restore"
+            "cmd": "hf mf restore --<card type>",
+            "card type": {
+                "mini": "mini",
+                "1k": "1k",
+                "2k": "2k",
+                "4k": "4k"
+            }
         },
         "emulator wipe": {
             "cmd": "hf mf eclr"
@@ -200,14 +228,14 @@
             "divisor cmd": "hw setlfdivisor -d <divisor>"
         }
     },
-    "t55xx":{
-        "clone em410x":{
-            "read":"lf em 410x reader",
-            "successful read flag":"EM 410x ID",
-            "pattern":"EM 410x ID\\s*\\K[0-9a-fA-F]{10}",
-            "clone cmd":"lf em 410x clone --id <id> <type>",
-            "t5555 flag":"--q5",
-            "t55x7 flag":""
+    "t55xx": {
+        "clone em410x": {
+            "read": "lf em 410x reader",
+            "successful read flag": "EM 410x ID",
+            "pattern": "EM 410x ID\\s*\\K[0-9a-fA-F]{10}",
+            "clone cmd": "lf em 410x clone --id <id> <type>",
+            "t5555 flag": "--q5",
+            "t55x7 flag": ""
         }
     }
 }

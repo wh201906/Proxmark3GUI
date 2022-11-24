@@ -130,7 +130,7 @@ void Mifare::chk()
     QString cmd = config["cmd"].toString();
     int keyAindex = config["key A index"].toInt();
     int keyBindex = config["key B index"].toInt();
-    QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString());
+    QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString(), QRegularExpression::MultilineOption);
     cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
 
     result = util->execCMDWithOutput(
@@ -169,7 +169,7 @@ void Mifare::nested(bool isStaticNested)
         cmd = config["cmd"].toString();
     int keyAindex = config["key A index"].toInt();
     int keyBindex = config["key B index"].toInt();
-    QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString());
+    QRegularExpression keyPattern = QRegularExpression(config["key pattern"].toString(), QRegularExpression::MultilineOption);
     QRegularExpressionMatch reMatch;
     QString result;
     int offset = 0;
@@ -212,7 +212,7 @@ void Mifare::nested(bool isStaticNested)
     }
     result = util->execCMDWithOutput(
                  cmd,
-                 Util::ReturnTrigger(15000, {"Can't found", "Can't authenticate", keyPattern_res->pattern()}),
+                 Util::ReturnTrigger(15000, {"Quit", "Can't found", "Can't authenticate", keyPattern_res->pattern()}),
                  true);
 
     if(result.contains("static") && !isStaticNested)
@@ -691,9 +691,13 @@ void Mifare::writeSelected(TargetType targetType)
             {
                 result = _writeblk(item, KEY_B, keyBList->at(data_b2s(item)), dataList->at(item), TARGET_MIFARE);
             }
-            if(!result)
+            if(!result && keyAList->at(data_b2s(item)) != "FFFFFFFFFFFF")
             {
                 result = _writeblk(item, KEY_A, "FFFFFFFFFFFF", dataList->at(item), TARGET_MIFARE);
+            }
+            if(!result && keyBList->at(data_b2s(item)) != "FFFFFFFFFFFF") // for access bits like "80 f7 87", the block can only be written with keyB
+            {
+                result = _writeblk(item, KEY_B, "FFFFFFFFFFFF", dataList->at(item), TARGET_MIFARE);
             }
         }
         else // key doesn't matter when writing to Chinese Magic Card and Emulator Memory
@@ -743,14 +747,20 @@ void Mifare::writeSelected(TargetType targetType)
 void Mifare::dump()
 {
     QVariantMap config = configMap["dump"].toMap();
-    util->execCMD(config["cmd"].toString());
+    QString cmd = config["cmd"].toString();
+    if(cmd.contains("<card type>"))
+        cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
+    util->execCMD(cmd);
     Util::gotoRawTab();
 }
 
 void Mifare::restore()
 {
     QVariantMap config = configMap["restore"].toMap();
-    util->execCMD(config["cmd"].toString());
+    QString cmd = config["cmd"].toString();
+    if(cmd.contains("<card type>"))
+        cmd.replace("<card type>", config["card type"].toMap()[cardType.typeText].toString());
+    util->execCMD(cmd);
     Util::gotoRawTab();
 }
 

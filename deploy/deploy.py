@@ -1,17 +1,19 @@
 import os, sys, shutil
 from win32api import GetFileVersionInfo
 from json import load
-from re import fullmatch, IGNORECASE
+from re import fullmatch, sub, IGNORECASE
 
 compressDirList = []
 
 
 def getPEVersion(fname):
     try:
-        fileInfo = GetFileVersionInfo(fname, '\\')
-        version = "V%d.%d.%d" % (fileInfo['FileVersionMS'] / 65536,
-                                 fileInfo['FileVersionMS'] % 65536,
-                                 fileInfo['FileVersionLS'] / 65536)
+        fileInfo = GetFileVersionInfo(fname, "\\")
+        version = "V%d.%d.%d" % (
+            fileInfo["FileVersionMS"] / 65536,
+            fileInfo["FileVersionMS"] % 65536,
+            fileInfo["FileVersionLS"] / 65536,
+        )
     except Exception:
         print("Cannot get version number of", fname)
     return version
@@ -19,7 +21,7 @@ def getPEVersion(fname):
 
 os.chdir(sys.path[0])
 print("Current Directory:", os.getcwd())
-targetName = os.path.abspath(os.getcwd()).split('\\')[-2]
+targetName = os.path.abspath(os.getcwd()).split("\\")[-2]
 print("Target Name", targetName)
 
 src32Dir = ""
@@ -63,11 +65,6 @@ elif not os.path.exists(dst32Dir):
     print(dst32Dir, "doesn't exist, creating...")
     shutil.copytree("./32", dst32Dir)
 shutil.copyfile(src32Path, dst32Path)
-configPath = dst32Dir + "/config"
-if os.path.exists(configPath):
-    print(configPath, "exists, replacing...")
-    shutil.rmtree(configPath)
-shutil.copytree("../config", configPath)
 compressDirList.append(dst32Dir)
 
 if os.path.exists(dst64Dir) and os.path.exists(dst64Path):
@@ -77,18 +74,22 @@ elif not os.path.exists(dst64Dir):
     print(dst64Dir, "doesn't exist, creating...")
     shutil.copytree("./64", dst64Dir)
 shutil.copyfile(src64Path, dst64Path)
-configPath = dst64Dir + "/config"
-if os.path.exists(configPath):
-    print(configPath, "exists, replacing...")
-    shutil.rmtree(configPath)
-shutil.copytree("../config", configPath)
 compressDirList.append(dst64Dir)
 
 # TODO: GUI+client
 clientList = [
-    "official-v3.1.0", "rrg_other-v4.13441", "rrg_other-v4.14434",
-    "rrg_other-v4.14831"
+    "official-v3.1.0",
+    "rrg_other-v4.13441",
+    "rrg_other-v4.14434",
+    "rrg_other-v4.14831",
+    "rrg_other-v4.15864",
 ]
+
+configList = []
+for config in os.listdir("../config"):
+    configPath = os.path.join("../config", config)
+    if os.path.isfile(configPath) and config.endswith(".json"):
+        configList.append(config)
 
 
 def generateClient(clientName):
@@ -105,12 +106,34 @@ def generateClient(clientName):
         shutil.copytree(clientSrcDir, clientDstDir)
     shutil.copytree(dst64Dir, clientDstGUIDir)
     if "official" in clientName:
-        shutil.copyfile("./client/GUIsettings_Official.ini",
-                        clientDstGUIDir + "/GUIsettings.ini")
+        shutil.copyfile(
+            "./client/GUIsettings_Official.ini", clientDstGUIDir + "/GUIsettings.ini"
+        )
     elif "rrg" in clientName:
-        shutil.copyfile("./client/GUIsettings_RRG.ini",
-                        clientDstGUIDir + "/GUIsettings.ini")
+        shutil.copyfile(
+            "./client/GUIsettings_RRG.ini", clientDstGUIDir + "/GUIsettings.ini"
+        )
+        # Use exactly matched configFile if possible
+        version = clientName[clientName.find("v") :]
+        for config in configList:
+            if version in config:
+                print("Find matched config file", config)
+                with open(
+                    clientDstGUIDir + "/GUIsettings.ini", "r", encoding="utf-8"
+                ) as f:
+                    data = f.read()
+                    data = sub(
+                        "configFile=:/config/.+\\.json",
+                        "configFile=:/config/" + config,
+                        data,
+                    )
+                with open(
+                    clientDstGUIDir + "/GUIsettings.ini", "w", encoding="utf-8"
+                ) as f:
+                    f.write(data)
+
     compressDirList.append(clientDstDir)
+    return clientDstDir
 
 
 for cl in clientList:
