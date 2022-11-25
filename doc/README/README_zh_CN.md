@@ -1,7 +1,8 @@
 # Proxmark3GUI
-![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total)  
+[![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total?label=GitHub%E4%B8%8B%E8%BD%BD%E9%87%8F)](https://github.com/wh201906/Proxmark3GUI/releases)  
+[![downloads](https://img.shields.io/sourceforge/dt/proxmark3gui.svg?label=SourceForge%E4%B8%8B%E8%BD%BD%E9%87%8F)](https://sourceforge.net/projects/proxmark3gui/)  
 
-一个自制的[Proxmark3](https://github.com/Proxmark/proxmark3) GUI，可在Windows/Linux/macOS系统下运行，支持[冰人版](https://github.com/RfidResearchGroup/proxmark3)客户端和固件  
+一个自制的[Proxmark3](https://github.com/Proxmark/proxmark3) GUI，可在Windows/Linux/macOS系统下运行，支持[官方版](https://github.com/Proxmark/proxmark3)/[冰人版](https://github.com/RfidResearchGroup/proxmark3)客户端和固件  
 
 (目前[官方版](https://github.com/Proxmark/proxmark3)已停更超过一年，推荐使用[冰人版](https://github.com/RfidResearchGroup/proxmark3)固件和客户端)
 
@@ -36,7 +37,7 @@
 
  ## 关于冰人版
  [冰人版](https://github.com/RfidResearchGroup/proxmark3)(Iceman/RRG)的客户端和固件更新更为激进，相比官方版具有更多的功能  
- 此GUI所有功能均兼容冰人版（在v4.13441上测试通过）  
+ 此GUI所有功能均兼容冰人版（在v4.13441, v4.15864上测试通过）  
 
 ***
 
@@ -48,6 +49,14 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
 感谢大佬  
 
 ***
+
+## 下载Windows版本
+[release](https://github.com/wh201906/Proxmark3GUI/releases) 页面当中包含了编译好的Windows程序，解压后即可使用  
+`Vx.x.x-win64.7z`是不带客户端的纯GUI程序，可配合已有的客户端使用  
+`Vx.x.x-win64-xxxxxxx.7z`包含了对应的客户端，打开`Vx.x.x-win64-xxxxxxx\GUI\Proxmark3GUI.exe`即可使用  
+
+SourceForge平台上也可下载  
+[![Download Proxmark3GUI](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/proxmark3gui/files/latest/download)  
 
 ## 在Linux系统下编译
 
@@ -72,7 +81,6 @@ release页面中有含客户端的GUI。这个GUI也可以搭配你自己的客�
     mkdir build && cd build
     qmake ../src
     make -j4 && make clean
-    cp -r ../config ./
     open Proxmark3GUI.app
 
 > 为使GUI在macOS下正确连接设备，需要更改一些设置

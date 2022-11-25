@@ -1,5 +1,6 @@
 # Proxmark3GUI
-![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total)  
+[![downloads](https://img.shields.io/github/downloads/wh201906/Proxmark3GUI/total?label=GitHub%20release%20downloads)](https://github.com/wh201906/Proxmark3GUI/releases)  
+[![downloads](https://img.shields.io/sourceforge/dt/proxmark3gui.svg?label=SourceForge%20downloads)](https://sourceforge.net/projects/proxmark3gui/)  
 
 A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3)/[Proxmark3 Iceman fork](https://github.com/RfidResearchGroup/proxmark3) client  
 
@@ -37,7 +38,7 @@ A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3)/[Pro
 ## About Iceman fork/repo
 
 The [Iceman fork/repo](https://github.com/RfidResearchGroup/proxmark3) has more powerful functions. These guys even developed a new hardware called Proxmark3 RDV4 with smart card support. But the official repo and the Iceman repo is not fully compatible.  
-This GUI is compatible with Iceman/RRG repo(tested on v4.13441)  
+This GUI is compatible with Iceman/RRG repo(tested on v4.13441, v4.15864)  
 
 ***
 
@@ -49,6 +50,14 @@ I included his compiled client in my releases so you can use the GUI on the fly,
 Great thanks to him.  
 
 ***
+
+## Download binaries for Windows 
+You can download pre-built Windows binaries in [release](https://github.com/wh201906/Proxmark3GUI/releases) page  
+`Vx.x.x-win64.7z` only contains the GUI  
+`Vx.x.x-win64-xxxxxxx.7z` contains the GUI and corresponding client. You just need to open `Vx.x.x-win64-xxxxxxx\GUI\Proxmark3GUI.exe`  
+
+You can also download them in SourceForge  
+[![Download Proxmark3GUI](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/proxmark3gui/files/latest/download)  
 
 ## Build on Linux
 
@@ -73,7 +82,6 @@ Great thanks to him.
     mkdir build && cd build
     qmake ../src
     make -j4 && make clean
-    cp -r ../config ./
     open Proxmark3GUI.app
 
 > In order for the GUI to connect to the device in macOS, you'd need to tweak the settings a little bit
