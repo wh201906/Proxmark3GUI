@@ -134,7 +134,7 @@
         },
         "//": "When writing a block, if the result is not empty and doesn't contain the failed flag, the function will return true",
         "normal write block": {
-            "cmd": "hf mf wrbl --blk <block> -<key type> -k <key> -d <data>",
+            "cmd": "hf mf wrbl --blk <block> -<key type> -k <key> -d <data> --force",
             "key type": {
                 "A": "a",
                 "B": "b"
