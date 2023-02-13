@@ -1113,8 +1113,16 @@ void MainWindow::uiInit()
     ui->Set_Client_forceEnabledBox->setChecked(keepButtonsEnabled);
     settings->endGroup();
 
+    // the disconnect detection doesn't work well on Linux/macOS
+    // So it should be disabled on these platforms
+    // https://github.com/wh201906/Proxmark3GUI/issues/22
+    // #22, #26, #40, #41
     settings->beginGroup("Client_keepClientActive");
+#ifdef Q_OS_WIN
     keepClientActive = settings->value("state", false).toBool();
+#else
+    keepClientActive = settings->value("state", true).toBool();
+#endif
     ui->Set_Client_keepClientActiveBox->setChecked(keepClientActive);
     settings->endGroup();
 
