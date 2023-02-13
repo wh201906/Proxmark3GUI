@@ -22,8 +22,10 @@ MF_trailerDecoderDialog::MF_trailerDecoderDialog(QWidget *parent) :
 
     ui->dataBlockWidget->setRowCount(3);
     ui->dataBlockWidget->setColumnCount(4);
+    ui->dataBlockWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->trailerBlockWidget->setRowCount(2);
     ui->trailerBlockWidget->setColumnCount(3);
+    ui->trailerBlockWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
 
 MF_trailerDecoderDialog::~MF_trailerDecoderDialog()
@@ -39,23 +41,26 @@ void MF_trailerDecoderDialog::on_accessBitsEdit_textChanged(const QString &arg1)
     QList<quint8> ACBits = Mifare::data_getACBits(arg1);
     if(ACBits.size() == 0)
     {
-        ui->isAccessBitsValidLabel->setStyleSheet("color:rgb(200, 0, 0)");
+        ui->isAccessBitsValidLabel->setStyleSheet("color:rgb(200, 20, 20)");
         ui->isAccessBitsValidLabel->setText(tr("Invalid!\nIt could make the whole sector blocked irreversibly!"));
     }
     else
     {
+        // if keyB may be read by keyA, it cannot serve for authentication.
+        // {C33, C23, C13}=3'b000, 3'b010 or 3'b100
+        bool isKeyBReadable = ACBits[3] == 0 || ACBits[3] == 2 || ACBits[3] == 4;
+
         ui->C0Box->setValue(ACBits[0]);
         ui->C1Box->setValue(ACBits[1]);
         ui->C2Box->setValue(ACBits[2]);
         ui->C3Box->setValue(ACBits[3]);
-        ui->isAccessBitsValidLabel->setStyleSheet("color:rgb(0, 200, 0)");
-        ui->isAccessBitsValidLabel->setText(tr("Valid"));
-        bool isKeyBReadable = ACBits[3] == 0 || ACBits[3] == 1 || ACBits[3] == 4;
+        showCBits();
         for(int j = 0; j < 3; j++)
         {
             setTableItem(ui->trailerBlockWidget, 0, j, Mifare::trailerReadCondition[ACBits[3]][j]);
             setTableItem(ui->trailerBlockWidget, 1, j, Mifare::trailerWriteCondition[ACBits[3]][j]);
         }
+
         for(int i = 0; i < 3; i++)
         {
             for(int j = 0; j < 4; j++)
@@ -72,6 +77,18 @@ void MF_trailerDecoderDialog::on_accessBitsEdit_textChanged(const QString &arg1)
                 setTableItem(ui->dataBlockWidget, i, j, type);
             }
         }
+        ui->isAccessBitsValidLabel->setStyleSheet("color:rgb(20, 200, 20)");
+        if(isKeyBReadable)
+        {
+            ui->isAccessBitsValidLabel->setText(tr("Valid") + "\n" + tr("KeyB cannot serve for authentication"));
+            ui->trailerBlockWidget->item(0, 2)->setBackground(QBrush(Qt::lightGray));
+        }
+        else
+        {
+            ui->isAccessBitsValidLabel->setText(tr("Valid"));
+            ui->trailerBlockWidget->item(0, 2)->setBackground(QBrush(QColor(1, 0, 0, 0), Qt::NoBrush)); // default Background
+        }
+
     }
     ui->C0Box->blockSignals(false);
     ui->C1Box->blockSignals(false);
@@ -150,5 +167,27 @@ void MF_trailerDecoderDialog::on_boxChanged()
     }
     result = result.toUpper();
     ui->accessBitsEdit->setText(result);
+    showCBits();
+}
 
+void MF_trailerDecoderDialog::showCBits()
+{
+    const QSpinBox* CxBox[4] =
+    {
+        ui->C0Box,
+        ui->C1Box,
+        ui->C2Box,
+        ui->C3Box
+    };
+    for(int i = 0; i < 4; i++)
+    {
+        quint8 val = CxBox[i]->value();
+        for(int j = 0; j < 3; j++)
+        {
+            if((val >> j) & 0x1)
+                ui->CBitsGridLayout->itemAtPosition(j, i)->widget()->setStyleSheet("background-color:rgb(20, 200, 20)");
+            else
+                ui->CBitsGridLayout->itemAtPosition(j, i)->widget()->setStyleSheet("");
+        }
+    }
 }

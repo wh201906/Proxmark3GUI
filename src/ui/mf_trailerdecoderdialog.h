@@ -33,7 +33,7 @@ private:
     QRegularExpressionValidator* validator;
     QButtonGroup* sizeGroup;
     void setTableItem(QTableWidget *widget, int row, int column, Mifare::AccessType accessType);
-
+    void showCBits();
 };
 
 #endif // MF_TRAILERDECODERDIALOG_H

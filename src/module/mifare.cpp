@@ -40,36 +40,39 @@ const Mifare::CardType Mifare::card_4k =
 
 const Mifare::AccessType Mifare::dataCondition[8][4] =
 {
-    {ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB},
-    {ACC_KEY_AB, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_AB, ACC_KEY_B, ACC_KEY_B, ACC_KEY_AB},
-    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_KEY_AB},
-    {ACC_KEY_B, ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_B, ACC_KEY_B, ACC_NEVER, ACC_NEVER},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    // {read, write, increment, decrement/transfer/restore}
+    {ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB, ACC_KEY_AB}, // {C3x, C2x, C1x} = 0
+    {ACC_KEY_AB, ACC_KEY_B, ACC_NEVER, ACC_NEVER}, // {C3x, C2x, C1x} = 1
+    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_NEVER}, // {C3x, C2x, C1x} = 2
+    {ACC_KEY_AB, ACC_KEY_B, ACC_KEY_B, ACC_KEY_AB}, // {C3x, C2x, C1x} = 3
+    {ACC_KEY_AB, ACC_NEVER, ACC_NEVER, ACC_KEY_AB}, // {C3x, C2x, C1x} = 4
+    {ACC_KEY_B, ACC_NEVER, ACC_NEVER, ACC_NEVER}, // {C3x, C2x, C1x} = 5
+    {ACC_KEY_B, ACC_KEY_B, ACC_NEVER, ACC_NEVER}, // {C3x, C2x, C1x} = 6
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER, ACC_NEVER}, // {C3x, C2x, C1x} = 7
 };
 const Mifare::AccessType Mifare::trailerReadCondition[8][3] =
 {
-    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
-    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER},
+    // {KEYA, Access bits, KEYB}
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A}, // {C33, C23, C13} = 0
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER}, // {C33, C23, C13} = 1
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A}, // {C33, C23, C13} = 2
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER}, // {C33, C23, C13} = 3
+    {ACC_NEVER, ACC_KEY_A, ACC_KEY_A}, // {C33, C23, C13} = 4
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER}, // {C33, C23, C13} = 5
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER}, // {C33, C23, C13} = 6
+    {ACC_NEVER, ACC_KEY_AB, ACC_NEVER}, // {C33, C23, C13} = 7
 };
 const Mifare::AccessType Mifare::trailerWriteCondition[8][3] =
 {
-    {ACC_KEY_A, ACC_NEVER, ACC_KEY_A},
-    {ACC_KEY_B, ACC_NEVER, ACC_KEY_B},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
-    {ACC_KEY_A, ACC_KEY_A, ACC_KEY_A},
-    {ACC_NEVER, ACC_KEY_B, ACC_NEVER},
-    {ACC_KEY_B, ACC_KEY_B, ACC_KEY_B},
-    {ACC_NEVER, ACC_NEVER, ACC_NEVER},
+    // {KEYA, Access bits, KEYB}
+    {ACC_KEY_A, ACC_NEVER, ACC_KEY_A}, // {C33, C23, C13} = 0
+    {ACC_KEY_B, ACC_NEVER, ACC_KEY_B}, // {C33, C23, C13} = 1
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER}, // {C33, C23, C13} = 2
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER}, // {C33, C23, C13} = 3
+    {ACC_KEY_A, ACC_KEY_A, ACC_KEY_A}, // {C33, C23, C13} = 4
+    {ACC_NEVER, ACC_KEY_B, ACC_NEVER}, // {C33, C23, C13} = 5
+    {ACC_KEY_B, ACC_KEY_B, ACC_KEY_B}, // {C33, C23, C13} = 6
+    {ACC_NEVER, ACC_NEVER, ACC_NEVER}, // {C33, C23, C13} = 7
 };
 
 Mifare::Mifare(Ui::MainWindow *ui, Util *addr, QWidget *parent): QObject(parent)
@@ -1312,9 +1315,13 @@ bool Mifare::data_isACBitsValid(const QString& text, QList<quint8>* returnHalfBy
     QList<quint8> halfBytes;
     for(int i = 0; i < 6; i++)
     {
+        // 6  7  8
+        // AB CD EF->
+        // {0xA, 0xB, 0xC, 0xD, 0xE, 0xF}
+        // {~C2x, ~C1x, C1x, ~C3x, C3, C2}
         halfBytes.append((val >> ((5 - i) * 4)) & 0xf);
     }
-    qDebug() << val;
+    // qDebug() << val;
     if((~halfBytes[0] & 0xf) == halfBytes[5] && (~halfBytes[1] & 0xf) == halfBytes[2] && (~halfBytes[3] & 0xf) == halfBytes[4])
     {
         if(returnHalfBytes != nullptr)
@@ -1330,9 +1337,12 @@ QList<quint8> Mifare::data_getACBits(const QString& text) //return empty QList i
     QList<quint8> halfBytes, result;
     if(data_isACBitsValid(text, &halfBytes))
     {
+        // data in halfbits:
+        // {~C2x, ~C1x, C1x, ~C3x, C3, C2}
         for(int i = 0; i < 4; i++)
         {
             result.append((((halfBytes[4] >> i) & 1) << 2) | (((halfBytes[5] >> i) & 1) << 1) | (((halfBytes[2] >> i) & 1) << 0));
+            // {Cx0, Cx1, Cx2, Cx3} (Cx0={C30, C20, C10})
         }
     }
     return result;
