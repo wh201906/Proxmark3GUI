@@ -66,4 +66,6 @@ QMAKE_TARGET_COMPANY = "wh201906"
 
 RESOURCES += \
     ../i18n/language.qrc \
-    ../config/config.qrc
+    ../config/config.qrc \
+    qdarkstyle/dark/darkstyle.qrc \
+    qdarkstyle/light/lightstyle.qrc
