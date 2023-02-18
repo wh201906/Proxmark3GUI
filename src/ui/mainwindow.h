@@ -172,7 +172,7 @@ private slots:
 
     void on_Set_Client_forceEnabledBox_stateChanged(int arg1);
 
-    void on_Set_GUI_setLanguageButton_clicked();
+    void on_Set_UI_setLanguageButton_clicked();
 
     void setButtonsEnabled(bool st);
 

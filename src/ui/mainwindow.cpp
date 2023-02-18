@@ -1322,7 +1322,7 @@ void MainWindow::on_Set_Client_forceEnabledBox_stateChanged(int arg1)
         setButtonsEnabled(true);
 }
 
-void MainWindow::on_Set_GUI_setLanguageButton_clicked()
+void MainWindow::on_Set_UI_setLanguageButton_clicked()
 {
     Util::chooseLanguage(settings, this);
 }
