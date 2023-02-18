@@ -128,8 +128,6 @@ private slots:
 
     void on_MF_keyWidget_itemChanged(QTableWidgetItem *item);
 
-    void on_MF_fontButton_clicked();
-
     void on_MF_UID_wipeButton_clicked();
 
     void on_MF_UID_aboutUIDButton_clicked();
@@ -211,6 +209,16 @@ private slots:
     void setState(bool st);
 
     void on_Set_Client_configFileBox_currentIndexChanged(int index);
+
+    void on_Set_UI_Opacity_Box_valueChanged(int arg1);
+
+    void on_Set_UI_Theme_setButton_clicked();
+
+    void on_Set_UI_Font_setButton_clicked();
+
+    void on_Set_UI_DataFont_setButton_clicked();
+
+    void on_Set_UI_CMDFont_setButton_clicked();
 
 private:
     Ui::MainWindow* ui;

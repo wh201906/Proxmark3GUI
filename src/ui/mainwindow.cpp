@@ -528,18 +528,6 @@ void MainWindow::on_MF_trailerDecoderButton_clicked()
     decDialog->show();
 }
 
-void MainWindow::on_MF_fontButton_clicked()
-{
-    bool isOK = false;
-    QFont font = QFontDialog::getFont(&isOK, ui->MF_keyWidget->font(), this, tr("Plz select the font of data widget and key widget"));
-
-    if(isOK)
-    {
-        ui->MF_keyWidget->setFont(font);
-        ui->MF_dataWidget->setFont(font);
-    }
-}
-
 void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
 {
     ui->MF_dataWidget->blockSignals(true);
@@ -1076,6 +1064,10 @@ void MainWindow::uiInit()
     ui->MF_keyWidget->installEventFilter(this);
     ui->MF_dataWidget->installEventFilter(this);
 
+    ui->Set_UI_Theme_nameBox->addItem(tr("(None)"), "(none)");
+    ui->Set_UI_Theme_nameBox->addItem(tr("Dark"), "qdss_dark");
+    ui->Set_UI_Theme_nameBox->addItem(tr("Light"), "qdss_light");
+
     settings->beginGroup("UI_grpbox_preference");
 
     QStringList boxNames = settings->allKeys();
@@ -1147,6 +1139,49 @@ void MainWindow::uiInit()
     ui->Set_Client_configFileBox->blockSignals(false);
     on_Set_Client_configFileBox_currentIndexChanged(ui->Set_Client_configFileBox->currentIndex());
 
+    settings->beginGroup("UI");
+    ui->Set_UI_Opacity_Box->setValue(settings->value("Opacity", 100).toInt());
+    int themeId = ui->Set_UI_Theme_nameBox->findData(settings->value("Theme_Name", "(none)").toString());
+    ui->Set_UI_Theme_nameBox->setCurrentIndex((themeId == -1) ? 0 : themeId);
+
+    // QApplication::font() might return wrong result
+    // If fonts are not specified in config file, don't touch them.
+    QString tmpFontName;
+    int tmpFontSize;
+    bool fontValid = false, dataFontValid = false, CMDFontValid = false;
+    tmpFontName = settings->value("Font_Name", "").toString();
+    tmpFontSize = settings->value("Font_Size", -1).toInt();
+    if(!tmpFontName.isEmpty() && tmpFontSize != -1 && tmpFontName == QFont(tmpFontName).family())
+    {
+        ui->Set_UI_Font_nameBox->setCurrentFont(QFont(tmpFontName));
+        ui->Set_UI_Font_sizeBox->setValue(tmpFontSize);
+        fontValid = true;
+    }
+    // The default values should be the same as MF_dataWidget's and MF_keyWidget's.
+    tmpFontName = settings->value("DataFont_Name", "Consolas").toString();
+    tmpFontSize = settings->value("DataFont_Size", 12).toInt();
+    if(!tmpFontName.isEmpty() && tmpFontSize != -1 && tmpFontName == QFont(tmpFontName).family())
+    {
+        ui->Set_UI_DataFont_nameBox->setCurrentFont(QFont(tmpFontName));
+        ui->Set_UI_DataFont_sizeBox->setValue(tmpFontSize);
+        dataFontValid = true;
+    }
+    tmpFontName = settings->value("CMDFont_Name", "").toString();
+    tmpFontSize = settings->value("CMDFont_Size", -1).toInt();
+    if(!tmpFontName.isEmpty() && tmpFontSize != -1 && tmpFontName == QFont(tmpFontName).family())
+    {
+        ui->Set_UI_CMDFont_nameBox->setCurrentFont(QFont(tmpFontName));
+        ui->Set_UI_CMDFont_sizeBox->setValue(tmpFontSize);
+        CMDFontValid = true;
+    }
+    settings->endGroup();
+
+    if(fontValid)
+        on_Set_UI_Font_setButton_clicked();
+    if(dataFontValid)
+        on_Set_UI_DataFont_setButton_clicked();
+    if(CMDFontValid)
+        on_Set_UI_CMDFont_setButton_clicked();
 
     ui->MF_RW_keyTypeBox->addItem("A", Mifare::KEY_A);
     ui->MF_RW_keyTypeBox->addItem("B", Mifare::KEY_B);
@@ -1184,6 +1219,8 @@ void MainWindow::signalInit()
     connect(ui->MF_sniffGroupBox, &QGroupBox::clicked, this, &MainWindow::on_GroupBox_clicked);
 
     connect(stopButton, &QPushButton::clicked, this, &MainWindow::on_stopButton_clicked);
+
+    connect(ui->Set_UI_Opacity_slider, &QSlider::valueChanged, ui->Set_UI_Opacity_Box, &QSpinBox::setValue);
 }
 
 void MainWindow::setStatusBar(QLabel * target, const QString& text)
@@ -1493,6 +1530,66 @@ void MainWindow::on_Set_Client_configFileBox_currentIndexChanged(int index)
     ui->Set_Client_configPathEdit->setVisible(ui->Set_Client_configFileBox->itemData(index).toString() == "(ext)");
     settings->beginGroup("Client_Env");
     settings->setValue("configFile", ui->Set_Client_configFileBox->currentData());
+    settings->endGroup();
+}
+
+
+void MainWindow::on_Set_UI_Opacity_Box_valueChanged(int arg1)
+{
+    ui->Set_UI_Opacity_slider->blockSignals(true);
+    ui->Set_UI_Opacity_slider->setValue(arg1);
+    setWindowOpacity(arg1 / 100.0);
+    settings->beginGroup("UI");
+    settings->setValue("Opacity", ui->Set_UI_Opacity_Box->value());
+    settings->endGroup();
+    ui->Set_UI_Opacity_slider->blockSignals(false);
+}
+
+
+void MainWindow::on_Set_UI_Theme_setButton_clicked()
+{
+    settings->beginGroup("UI");
+    settings->setValue("Theme_Name", ui->Set_UI_Theme_nameBox->currentData().toString());
+    settings->endGroup();
+}
+
+
+void MainWindow::on_Set_UI_Font_setButton_clicked()
+{
+    QFont font = ui->Set_UI_Font_nameBox->currentFont();
+    font.setPointSize(ui->Set_UI_Font_sizeBox->value());
+    QApplication::setFont(font, "QWidget");
+
+    settings->beginGroup("UI");
+    settings->setValue("Font_Name", ui->Set_UI_Font_nameBox->currentFont().family());
+    settings->setValue("Font_Size", ui->Set_UI_Font_sizeBox->value());
+    settings->endGroup();
+}
+
+
+void MainWindow::on_Set_UI_DataFont_setButton_clicked()
+{
+    QFont font = ui->Set_UI_DataFont_nameBox->currentFont();
+    font.setPointSize(ui->Set_UI_DataFont_sizeBox->value());
+    ui->MF_dataWidget->setFont(font);
+    ui->MF_keyWidget->setFont(font);
+
+    settings->beginGroup("UI");
+    settings->setValue("DataFont_Name", ui->Set_UI_DataFont_nameBox->currentFont().family());
+    settings->setValue("DataFont_Size", ui->Set_UI_DataFont_sizeBox->value());
+    settings->endGroup();
+}
+
+
+void MainWindow::on_Set_UI_CMDFont_setButton_clicked()
+{
+    QFont font = ui->Set_UI_CMDFont_nameBox->currentFont();
+    font.setPointSize(ui->Set_UI_CMDFont_sizeBox->value());
+    ui->Raw_outputEdit->setFont(font);
+
+    settings->beginGroup("UI");
+    settings->setValue("CMDFont_Name", ui->Set_UI_CMDFont_nameBox->currentFont().family());
+    settings->setValue("CMDFont_Size", ui->Set_UI_CMDFont_sizeBox->value());
     settings->endGroup();
 }
 

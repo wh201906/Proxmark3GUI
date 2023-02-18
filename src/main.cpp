@@ -31,6 +31,9 @@ int main(int argc, char *argv[])
     QString languageFile = settings->value("extPath").toString();
     QString languageName = settings->value("name").toString();
     settings->endGroup();
+    settings->beginGroup("UI");
+    QString theme = settings->value("Theme_Name").toString();
+    settings->endGroup();
     if(languageName == "")
     {
         if(Util::chooseLanguage(settings, &w))
@@ -55,7 +58,35 @@ int main(int argc, char *argv[])
         a.installTranslator(translator);
     else
         QMessageBox::information(&w, "Error", "Can't load " + languageFile + " as translation file.");
+
+    QFile* themeFile = new QFile();
+    QTextStream* themeStream = new QTextStream();
+    QString qssString = a.styleSheet(); // default behavior
+    if(theme == "(none)")
+        ;
+    else if(theme == "qdss_dark")
+    {
+        themeFile->setFileName(":/qdarkstyle/dark/darkstyle.qss");
+        themeFile->open(QFile::ReadOnly | QFile::Text);
+        themeStream->setDevice(themeFile);
+        qssString = themeStream->readAll();
+    }
+    else if(theme == "qdss_light")
+    {
+        themeFile->setFileName(":/qdarkstyle/light/lightstyle.qss");
+        themeFile->open(QFile::ReadOnly | QFile::Text);
+        themeStream->setDevice(themeFile);
+        qssString = themeStream->readAll();
+    }
+    a.setStyleSheet(qssString);
+    delete themeFile;
+    delete themeStream;
+    themeFile = nullptr;
+    themeStream = nullptr;
+
     delete settings;
+    settings = nullptr;
+
     w.initUI();
     w.show();
     return a.exec();

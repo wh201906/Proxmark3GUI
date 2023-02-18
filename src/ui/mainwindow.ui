@@ -316,19 +316,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="MF_fontButton">
-              <property name="minimumSize">
-               <size>
-                <width>40</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Set Fonts</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <spacer name="verticalSpacer_2">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
