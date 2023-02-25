@@ -1102,8 +1102,8 @@ void MainWindow::uiInit()
 
     settings->beginGroup("Client_forceButtonsEnabled");
     keepButtonsEnabled = settings->value("state", false).toBool();
-    ui->Set_Client_forceEnabledBox->setChecked(keepButtonsEnabled);
     settings->endGroup();
+    ui->Set_Client_forceEnabledBox->setChecked(keepButtonsEnabled);
 
     // the disconnect detection doesn't work well on Linux/macOS
     // So it should be disabled on these platforms
@@ -1115,8 +1115,8 @@ void MainWindow::uiInit()
 #else
     keepClientActive = settings->value("state", true).toBool();
 #endif
-    ui->Set_Client_keepClientActiveBox->setChecked(keepClientActive);
     settings->endGroup();
+    ui->Set_Client_keepClientActiveBox->setChecked(keepClientActive);
 
     QDirIterator configFiles(":/config/");
     ui->Set_Client_configFileBox->blockSignals(true);
@@ -1139,11 +1139,17 @@ void MainWindow::uiInit()
     ui->Set_Client_configFileBox->blockSignals(false);
     on_Set_Client_configFileBox_currentIndexChanged(ui->Set_Client_configFileBox->currentIndex());
 
+    // setValue() will trigger valueChanged()
+    // setValue(settings->value()) will create a nested group
+    // call endGroup() before apply the value
     settings->beginGroup("UI");
-    ui->Set_UI_Opacity_Box->setValue(settings->value("Opacity", 100).toInt());
+    int opacity = settings->value("Opacity", 100).toInt();
     int themeId = ui->Set_UI_Theme_nameBox->findData(settings->value("Theme_Name", "(none)").toString());
+    settings->endGroup();
+    ui->Set_UI_Opacity_Box->setValue(opacity);
     ui->Set_UI_Theme_nameBox->setCurrentIndex((themeId == -1) ? 0 : themeId);
 
+    settings->beginGroup("UI");
     // QApplication::font() might return wrong result
     // If fonts are not specified in config file, don't touch them.
     QString tmpFontName;
@@ -1157,7 +1163,7 @@ void MainWindow::uiInit()
         ui->Set_UI_Font_sizeBox->setValue(tmpFontSize);
         fontValid = true;
     }
-    // The default values should be the same as MF_dataWidget's and MF_keyWidget's.
+    // The default font should be the same as MF_dataWidget's and MF_keyWidget's.
     tmpFontName = settings->value("DataFont_Name", "Consolas").toString();
     tmpFontSize = settings->value("DataFont_Size", 12).toInt();
     if(!tmpFontName.isEmpty() && tmpFontSize != -1 && tmpFontName == QFont(tmpFontName).family())
