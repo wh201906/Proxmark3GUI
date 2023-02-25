@@ -108,11 +108,11 @@ QMap<QString, QString> Mifare::info(bool isRequiringOutput)
         for(auto line = lineList.begin(); line != lineList.end(); line++)
         {
             if(line->contains("UID"))
-                map["UID"] = line->replace("UID", "").replace(QRegularExpression("[^0-9a-fA-F]"), "").trimmed();
+                map["UID"] = line->remove("UID").remove(QRegularExpression("[^0-9a-fA-F]")).trimmed();
             else if(line->contains("ATQA"))
-                map["ATQA"] = line->replace("ATQA", "").replace(QRegularExpression("[^0-9a-fA-F]"), "").trimmed();
+                map["ATQA"] = line->remove("ATQA").remove(QRegularExpression("[^0-9a-fA-F]")).trimmed();
             else if(line->contains("SAK"))
-                map["SAK"] = line->replace("SAK", "").replace(QRegularExpression("\\[.+?\\]"), "").replace(QRegularExpression("[^0-9a-fA-F]"), "").trimmed();
+                map["SAK"] = line->remove("SAK").remove(QRegularExpression("\\[.+?\\]")).remove(QRegularExpression("[^0-9a-fA-F]")).trimmed();
         }
     }
     else

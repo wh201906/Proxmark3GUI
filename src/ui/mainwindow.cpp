@@ -625,7 +625,7 @@ void MainWindow::on_MF_dataWidget_itemChanged(QTableWidgetItem *item)
     }
     else if(item->column() == 2)
     {
-        QString data = item->text().replace(" ", "").toUpper();
+        QString data = item->text().remove(" ").toUpper();
         if(data == "" || mifare->data_isDataValid(data) == Mifare::DATA_NOSPACE)
         {
             mifare->data_setData(item->row(), data);
@@ -645,7 +645,7 @@ void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
 {
     if(item->column() == 1)
     {
-        QString key = item->text().replace(" ", "").toUpper();
+        QString key = item->text().remove(" ").toUpper();
         if(key == "" || mifare->data_isKeyValid(key))
         {
             mifare->data_setKey(item->row(), Mifare::KEY_A, key);
@@ -658,7 +658,7 @@ void MainWindow::on_MF_keyWidget_itemChanged(QTableWidgetItem *item)
     }
     else if(item->column() == 2)
     {
-        QString key = item->text().replace(" ", "").toUpper();
+        QString key = item->text().remove(" ").toUpper();
         if(key == "" || mifare->data_isKeyValid(key))
         {
             mifare->data_setKey(item->row(), Mifare::KEY_B, key);
