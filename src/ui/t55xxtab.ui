@@ -29,14 +29,14 @@
         <item>
          <widget class="QRadioButton" name="Clone_T5555Button">
           <property name="text">
-           <string>T5555</string>
+           <string notr="true">T5555</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QRadioButton" name="Clone_T55x7Button">
           <property name="text">
-           <string>T55x7</string>
+           <string notr="true">T55x7</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -61,7 +61,7 @@
       <item>
        <widget class="QGroupBox" name="Clone_EM410xGroupBox">
         <property name="title">
-         <string>EM410x</string>
+         <string notr="true">EM410x</string>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>

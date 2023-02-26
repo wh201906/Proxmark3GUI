@@ -25,7 +25,7 @@
         <item>
          <widget class="QRadioButton" name="size4Button">
           <property name="text">
-           <string>4</string>
+           <string notr="true">4</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -35,7 +35,7 @@
         <item>
          <widget class="QRadioButton" name="size16Button">
           <property name="text">
-           <string>16</string>
+           <string notr="true">16</string>
           </property>
          </widget>
         </item>
@@ -131,7 +131,7 @@
            <item>
             <widget class="QLabel" name="label_6">
              <property name="text">
-              <string>Cx0</string>
+              <string notr="true">Cx0</string>
              </property>
             </widget>
            </item>
@@ -152,7 +152,7 @@
            <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>Cx1</string>
+              <string notr="true">Cx1</string>
              </property>
             </widget>
            </item>
@@ -173,7 +173,7 @@
            <item>
             <widget class="QLabel" name="label_8">
              <property name="text">
-              <string>Cx2</string>
+              <string notr="true">Cx2</string>
              </property>
             </widget>
            </item>
@@ -194,7 +194,7 @@
            <item>
             <widget class="QLabel" name="label_9">
              <property name="text">
-              <string>Cx3</string>
+              <string notr="true">Cx3</string>
              </property>
             </widget>
            </item>
@@ -214,84 +214,84 @@
          <item row="0" column="0">
           <widget class="QLabel" name="C10Label">
            <property name="text">
-            <string>C10</string>
+            <string notr="true">C10</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
           <widget class="QLabel" name="C11Label">
            <property name="text">
-            <string>C11</string>
+            <string notr="true">C11</string>
            </property>
           </widget>
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="C12Label">
            <property name="text">
-            <string>C12</string>
+            <string notr="true">C12</string>
            </property>
           </widget>
          </item>
          <item row="0" column="3">
           <widget class="QLabel" name="C13Label">
            <property name="text">
-            <string>C13</string>
+            <string notr="true">C13</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="C20Label">
            <property name="text">
-            <string>C20</string>
+            <string notr="true">C20</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
           <widget class="QLabel" name="C21Label">
            <property name="text">
-            <string>C21</string>
+            <string notr="true">C21</string>
            </property>
           </widget>
          </item>
          <item row="1" column="2">
           <widget class="QLabel" name="C22Label">
            <property name="text">
-            <string>C22</string>
+            <string notr="true">C22</string>
            </property>
           </widget>
          </item>
          <item row="1" column="3">
           <widget class="QLabel" name="C23Label">
            <property name="text">
-            <string>C23</string>
+            <string notr="true">C23</string>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="C30Label">
            <property name="text">
-            <string>C30</string>
+            <string notr="true">C30</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
           <widget class="QLabel" name="C31Label">
            <property name="text">
-            <string>C31</string>
+            <string notr="true">C31</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2">
           <widget class="QLabel" name="C32Label">
            <property name="text">
-            <string>C32</string>
+            <string notr="true">C32</string>
            </property>
           </widget>
          </item>
          <item row="2" column="3">
           <widget class="QLabel" name="C33Label">
            <property name="text">
-            <string>C33</string>
+            <string notr="true">C33</string>
            </property>
           </widget>
          </item>

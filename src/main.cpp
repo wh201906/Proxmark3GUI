@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     QApplication a(argc, argv);
-    MainWindow w;
 
     QSettings* settings = new QSettings("GUIsettings.ini", QSettings::IniFormat);
     settings->setIniCodec("UTF-8");
@@ -36,7 +35,7 @@ int main(int argc, char *argv[])
     settings->endGroup();
     if(languageName == "")
     {
-        if(Util::chooseLanguage(settings, &w))
+        if(Util::chooseLanguage(settings))
         {
             settings->beginGroup("language");
             languageName = settings->value("name").toString();
@@ -53,11 +52,13 @@ int main(int argc, char *argv[])
     }
     else
         languageFile = ":/i18n/" + languageName + ".qm";
-    QTranslator* translator = new QTranslator(&w);
+
+    // Note that the translator must be created before the application's widgets.
+    QTranslator* translator = new QTranslator();
     if(translator->load(languageFile))
         a.installTranslator(translator);
     else
-        QMessageBox::information(&w, "Error", "Can't load " + languageFile + " as translation file.");
+        QMessageBox::information(nullptr, "Error", "Can't load " + languageFile + " as translation file.");
 
     QFile* themeFile = new QFile();
     QTextStream* themeStream = new QTextStream();
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
     delete settings;
     settings = nullptr;
 
+    MainWindow w;
     w.initUI();
     w.show();
     return a.exec();

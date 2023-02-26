@@ -128,7 +128,7 @@ bool Util::chooseLanguage(QSettings* guiSettings, QMainWindow* window)
         return false;
     if(langMap[selectedText] == "(ext)")
     {
-        QString extPath = QFileDialog::getOpenFileName(nullptr, tr("Select the translation file:"));
+        QString extPath = QFileDialog::getOpenFileName(window, tr("Select the translation file:"));
         if(extPath.isEmpty())
             return false;
 

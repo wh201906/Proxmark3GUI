@@ -59,7 +59,7 @@ public:
     static ClientType getClientType();
     static int rawTabIndex;
     static QDockWidget* rawDockPtr;
-    static bool chooseLanguage(QSettings *guiSettings, QMainWindow *window);
+    static bool chooseLanguage(QSettings *guiSettings, QMainWindow *window = nullptr);
 public slots:
     void processOutput(const QString& output);
     static void setClientType(Util::ClientType clientType);

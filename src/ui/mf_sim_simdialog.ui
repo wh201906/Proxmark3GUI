@@ -35,7 +35,7 @@
       <item>
        <widget class="QCheckBox" name="uBox">
         <property name="text">
-         <string>u</string>
+         <string notr="true">u</string>
         </property>
        </widget>
       </item>
@@ -102,7 +102,7 @@
       <item>
        <widget class="QCheckBox" name="atqaBox">
         <property name="text">
-         <string>--atqa</string>
+         <string notr="true">--atqa</string>
         </property>
        </widget>
       </item>
@@ -169,7 +169,7 @@
       <item>
        <widget class="QCheckBox" name="sakBox">
         <property name="text">
-         <string>--sak</string>
+         <string notr="true">--sak</string>
         </property>
        </widget>
       </item>
@@ -236,7 +236,7 @@
       <item>
        <widget class="QCheckBox" name="nBox">
         <property name="text">
-         <string>n</string>
+         <string notr="true">n</string>
         </property>
        </widget>
       </item>
@@ -303,7 +303,7 @@
       <item>
        <widget class="QCheckBox" name="iBox">
         <property name="text">
-         <string>i</string>
+         <string notr="true">i</string>
         </property>
        </widget>
       </item>
@@ -354,7 +354,7 @@
       <item>
        <widget class="QCheckBox" name="xBox">
         <property name="text">
-         <string>x</string>
+         <string notr="true">x</string>
         </property>
        </widget>
       </item>
@@ -405,7 +405,7 @@
       <item>
        <widget class="QCheckBox" name="eBox">
         <property name="text">
-         <string>e</string>
+         <string notr="true">e</string>
         </property>
        </widget>
       </item>
@@ -456,7 +456,7 @@
       <item>
        <widget class="QCheckBox" name="fBox">
         <property name="text">
-         <string>f</string>
+         <string notr="true">f</string>
         </property>
        </widget>
       </item>
@@ -523,7 +523,7 @@
       <item>
        <widget class="QCheckBox" name="rBox">
         <property name="text">
-         <string>r</string>
+         <string notr="true">r</string>
         </property>
        </widget>
       </item>
@@ -574,7 +574,7 @@
       <item>
        <widget class="QCheckBox" name="vBox">
         <property name="text">
-         <string>-v</string>
+         <string notr="true">-v</string>
         </property>
        </widget>
       </item>

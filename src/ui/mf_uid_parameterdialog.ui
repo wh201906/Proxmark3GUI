@@ -19,7 +19,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="uIDLabel">
        <property name="text">
-        <string>UID:</string>
+        <string notr="true">UID:</string>
        </property>
       </widget>
      </item>
@@ -29,7 +29,7 @@
      <item row="1" column="0">
       <widget class="QLabel" name="ATQALabel">
        <property name="text">
-        <string>ATQA:</string>
+        <string notr="true">ATQA:</string>
        </property>
       </widget>
      </item>
@@ -39,7 +39,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="SAKLabel">
        <property name="text">
-        <string>SAK:</string>
+        <string notr="true">SAK:</string>
        </property>
       </widget>
      </item>
