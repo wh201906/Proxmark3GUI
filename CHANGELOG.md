@@ -2,6 +2,16 @@
 
 [中文](doc/CHANGELOG/CHANGELOG_zh_CN.md)  
 
+### V0.2.7
++ Fix writing to Block 0 failure when using with RRG repo v4.15864  
++ Disable disconnection detection on Linux/macOS by default  
++ Fix a little bug in the config file  
++ Fix the Trailer Decoder  
++ Show more details in the Trailer Decoder  
++ Add dark theme(from https://github.com/ColinDuquesnoy/QDarkStyleSheet)  
++ Add support for customizable theme, opacity and fonts  
++ Fix translations  
+
 ### V0.2.6
 + Add support for Iceman/RRG repo v4.15864 [#37](https://github.com/wh201906/Proxmark3GUI/issues/37)  
 + Optimize mifare classic block writing logic  

@@ -2,6 +2,16 @@
 
 [English](../../CHANGELOG.md)  
 
+### V0.2.7
++ 修复使用冰人版v4.15864时无法写入块0的问题  
++ 默认关闭Linux/macOS系统下对PM3硬件断连的检测  
++ 修复配置文件中的小Bug  
++ 修复访问控制位解码器  
++ 在访问控制位解码器中显示更多细节  
++ 添加暗黑主题(源于https://github.com/ColinDuquesnoy/QDarkStyleSheet)  
++ 支持自定义主题，透明度，字体  
++ 修复若干翻译问题  
+
 ### V0.2.6
 + 支持冰人版客户端 v4.15864 [#37](https://github.com/wh201906/Proxmark3GUI/issues/37)  
 + 优化Mifare Classic卡写卡逻辑  
