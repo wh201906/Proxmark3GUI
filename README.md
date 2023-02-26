@@ -35,13 +35,6 @@ A cross-platform GUI for [Proxmark3](https://github.com/Proxmark/proxmark3)/[Pro
 
 ***
 
-## About Iceman fork/repo
-
-The [Iceman fork/repo](https://github.com/RfidResearchGroup/proxmark3) has more powerful functions. These guys even developed a new hardware called Proxmark3 RDV4 with smart card support. But the official repo and the Iceman repo is not fully compatible.  
-This GUI is compatible with Iceman/RRG repo(tested on v4.13441, v4.15864)  
-
-***
-
 ## About Compiled Windows clients
 
 A cool guy [Gator96100](https://github.com/Gator96100) creates [ProxSpace](https://github.com/Gator96100/ProxSpace) and makes it possible to compile both the firmware and the client on Windows.  
@@ -60,29 +53,32 @@ You can also download them in SourceForge
 [![Download Proxmark3GUI](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/proxmark3gui/files/latest/download)  
 
 ## Build on Linux
-
-    cd ~
-    sudo apt-get update
-    sudo apt-get install qt5-default libqt5serialport5 libqt5serialport5-dev 
-    git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
-    cd Proxmark3GUI
-    mkdir build && cd build
-    qmake ../src
-    make -j4 && make clean
-    ./Proxmark3GUI
+```
+cd ~
+sudo apt-get update
+sudo apt-get install git build-essential
+sudo apt-get install qt5-default libqt5serialport5-dev
+git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
+cd Proxmark3GUI
+mkdir build && cd build
+qmake ../src
+make -j4 && make clean
+./Proxmark3GUI
+```
 
 ## Build on macOS
-
-    cd ~
-    brew update
-    brew install qt@5
-    brew link qt5 --force
-    git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
-    cd Proxmark3GUI
-    mkdir build && cd build
-    qmake ../src
-    make -j4 && make clean
-    open Proxmark3GUI.app
+```
+cd ~
+brew update
+brew install qt@5
+brew link qt5 --force
+git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
+cd Proxmark3GUI
+mkdir build && cd build
+qmake ../src
+make -j4 && make clean
+open Proxmark3GUI.app
+```
 
 > In order for the GUI to connect to the device in macOS, you'd need to tweak the settings a little bit
 

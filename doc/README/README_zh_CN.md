@@ -31,13 +31,7 @@
 ## 预览图
 ![preview](preview_zh_CN.png)  
 
- [更多预览](../preview/previews.md)  
-
-***
-
- ## 关于冰人版
- [冰人版](https://github.com/RfidResearchGroup/proxmark3)(Iceman/RRG)的客户端和固件更新更为激进，相比官方版具有更多的功能  
- 此GUI所有功能均兼容冰人版（在v4.13441, v4.15864上测试通过）  
+[更多预览](../preview/previews.md)  
 
 ***
 
@@ -59,29 +53,32 @@ SourceForge平台上也可下载
 [![Download Proxmark3GUI](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/proxmark3gui/files/latest/download)  
 
 ## 在Linux系统下编译
-
-    cd ~
-    sudo apt-get update
-    sudo apt-get install qt5-default libqt5serialport5 libqt5serialport5-dev 
-    git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
-    cd Proxmark3GUI
-    mkdir build && cd build
-    qmake ../src
-    make -j4 && make clean
-    ./Proxmark3GUI
+```
+cd ~
+sudo apt-get update
+sudo apt-get install git build-essential
+sudo apt-get install qt5-default libqt5serialport5-dev 
+git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
+cd Proxmark3GUI
+mkdir build && cd build
+qmake ../src
+make -j4 && make clean
+./Proxmark3GUI
+```
 
 ## 在macOS系统下编译
-
-    cd ~
-    brew update
-    brew install qt@5
-    brew link qt5 --force
-    git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
-    cd Proxmark3GUI
-    mkdir build && cd build
-    qmake ../src
-    make -j4 && make clean
-    open Proxmark3GUI.app
+```
+cd ~
+brew update
+brew install qt@5
+brew link qt5 --force
+git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
+cd Proxmark3GUI
+mkdir build && cd build
+qmake ../src
+make -j4 && make clean
+open Proxmark3GUI.app
+```
 
 > 为使GUI在macOS下正确连接设备，需要更改一些设置
 
