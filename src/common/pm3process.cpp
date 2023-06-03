@@ -63,6 +63,7 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
         }
         else
         {
+            qDebug() << "unexpected output:" << (result.isEmpty() ? "(empty)" : result);
             emit HWConnectFailed();
             kill();
         }

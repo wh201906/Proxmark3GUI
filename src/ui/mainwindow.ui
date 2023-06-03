@@ -2714,7 +2714,8 @@ or the communication between a tag and a reader.</string>
                  <item>
                   <widget class="QLabel" name="label_13">
                    <property name="text">
-                    <string>If the client requires some enviroment variables, you can make a script file(*.bat on Windows or *.sh on Linux) to configure them, then put the path of the script there.</string>
+                    <string>If the client requires some enviroment variables, you can make a script file(*.bat on Windows or *.sh on Linux) to configure them, then put the path of the script there.
+The &quot;&lt;client dir&gt;&quot; will be replaced by the directory of the &quot;Client Path&quot;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>

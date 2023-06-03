@@ -160,6 +160,14 @@ void MainWindow::on_PM3_connectButton_clicked()
 
     QString port = ui->PM3_portBox->currentData().toString();
     QString startArgs = ui->Set_Client_startArgsEdit->text();
+    QString clientPath = ui->PM3_pathEdit->text();
+    QFileInfo clientFile(clientPath);
+
+    if(!clientFile.exists())
+    {
+        QMessageBox::information(this, tr("Info"), tr("The client path is invalid"), QMessageBox::Ok);
+        return;
+    }
 
     // on RRG repo, if no port is specified, the client will search the available port
     if(port == "" && startArgs.contains("<port>")) // has <port>, no port
@@ -172,25 +180,29 @@ void MainWindow::on_PM3_connectButton_clicked()
         port = ""; // a symbol
 
     QStringList args = startArgs.replace("<port>", port).split(' ');
-    saveClientPath(ui->PM3_pathEdit->text());
+    saveClientPath(clientPath);
 
     QProcess envSetProcess;
-    QFileInfo envScriptPath(ui->Set_Client_envScriptEdit->text());
-    if(envScriptPath.exists())
+    QString envScriptPath = ui->Set_Client_envScriptEdit->text();
+    if(envScriptPath.contains("<client dir>"))
+        envScriptPath.replace("<client dir>", clientFile.absoluteDir().absolutePath());
+
+    QFileInfo envScript(envScriptPath);
+    if(envScript.exists())
     {
-        qDebug() << envScriptPath.absoluteFilePath();
+        qDebug() << envScript.absoluteFilePath();
         // use the shell session to keep the environment then read it
 #ifdef Q_OS_WIN
         // cmd /c "<path>">>nul && set
         envSetProcess.start("cmd", {}, QProcess::Unbuffered | QProcess::ReadWrite | QProcess::Text);
-        envSetProcess.write(QString("\"" + envScriptPath.absoluteFilePath() + "\">>nul\n").toLatin1());
+        envSetProcess.write(QString("\"" + envScript.absoluteFilePath() + "\">>nul\n").toLatin1());
         envSetProcess.waitForReadyRead(10000);
         envSetProcess.readAll();
         envSetProcess.write("set\n");
 #else
         // need implementation(or test if space works)
         // sh -c '. "<path>">>/dev/null && env'
-        envSetProcess.start("sh -c \' . \"" + envScriptPath.absoluteFilePath() + "\">>/dev/null && env");
+        envSetProcess.start("sh -c \' . \"" + envScript.absoluteFilePath() + "\">>/dev/null && env");
 #endif
         envSetProcess.waitForReadyRead(10000);
         QString envSetResult = QString(envSetProcess.readAll());
@@ -219,7 +231,7 @@ void MainWindow::on_PM3_connectButton_clicked()
     emit setWorkingDir(clientWorkingDir->absolutePath());
 
     loadConfig();
-    emit connectPM3(ui->PM3_pathEdit->text(), args);
+    emit connectPM3(clientPath, args);
     if(port != "" && !keepClientActive)
         emit setSerialListener(port, true);
     else if(!keepClientActive)
@@ -232,7 +244,7 @@ void MainWindow::onPM3ErrorOccurred(QProcess::ProcessError error)
 {
     qDebug() << "PM3 Error:" << error << pm3->errorString();
     if(error == QProcess::FailedToStart)
-        QMessageBox::information(this, tr("Info"), tr("Failed to start the client"));
+        QMessageBox::information(this, tr("Info"), tr("Failed to start the client") + "\n" + pm3->errorString());
 }
 
 void MainWindow::onPM3HWConnectFailed()
