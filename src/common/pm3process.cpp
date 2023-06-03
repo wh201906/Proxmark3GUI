@@ -35,7 +35,7 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
         waitForReadyRead(10000);
         setRequiringOutput(false);
         result = *requiredOutput;
-        if(result.indexOf("[=]") != -1)
+        if(result.contains("[=]"))
         {
             clientType = Util::CLIENTTYPE_ICEMAN;
             setRequiringOutput(true);
@@ -44,7 +44,7 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
             {
                 waitForReadyRead(200);
                 result += *requiredOutput;
-                if(result.indexOf("os: ") != -1)
+                if(result.contains("os: "))
                     break;
             }
             setRequiringOutput(false);
@@ -53,7 +53,7 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
         {
             clientType = Util::CLIENTTYPE_OFFICIAL;
         }
-        if(result.indexOf("os: ") != -1) // make sure the PM3 is connected
+        if(result.contains("os: ")) // make sure the PM3 is connected
         {
             emit changeClientType(clientType);
             result = result.mid(result.indexOf("os: "));
