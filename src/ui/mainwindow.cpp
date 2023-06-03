@@ -160,7 +160,7 @@ void MainWindow::on_PM3_connectButton_clicked()
 
     QString port = ui->PM3_portBox->currentData().toString();
     QString startArgs = ui->Set_Client_startArgsEdit->text();
-    QString clientPath = ui->PM3_pathEdit->text();
+    QString clientPath = ui->PM3_pathBox->currentText();
     QFileInfo clientFile(clientPath);
 
     if(!clientFile.exists())
@@ -180,7 +180,7 @@ void MainWindow::on_PM3_connectButton_clicked()
         port = ""; // a symbol
 
     QStringList args = startArgs.replace("<port>", port).split(' ');
-    saveClientPath(clientPath);
+    addClientPath(clientPath);
 
     QProcess envSetProcess;
     QString envScriptPath = ui->Set_Client_envScriptEdit->text();
@@ -1102,9 +1102,7 @@ void MainWindow::uiInit()
     }
     settings->endGroup();
 
-    settings->beginGroup("Client_Path");
-    ui->PM3_pathEdit->setText(settings->value("path", "proxmark3").toString());
-    settings->endGroup();
+    loadClientPathList();
 
     ui->Set_Client_GUIWorkingDirLabel->setText(QDir::currentPath());
 
@@ -1343,10 +1341,67 @@ void MainWindow::on_GroupBox_clicked(bool checked)
     settings->endGroup();
 }
 
-void MainWindow::saveClientPath(const QString& path)
+void MainWindow::addClientPath(const QString& path)
+{
+    m_clientPathList.removeAll(path);
+    m_clientPathList.prepend(path);
+    while(m_clientPathList.size() > 32) // the maximum count of path items
+        m_clientPathList.removeLast();
+    // sync to the storage
+    saveClientPathList();
+    // sync to the UI
+    loadClientPathList();
+}
+
+void MainWindow::loadClientPathList()
+{
+    m_clientPathList.clear();
+    settings->beginGroup("Client_Path");
+    int len = settings->beginReadArray("pathList");
+    settings->endArray();
+    if(settings->contains("path") && len == 0)
+    {
+        qDebug() << "Using old client path storage";
+        m_clientPathList += settings->value("path", "proxmark3").toString();
+    }
+    else
+    {
+        int arrayLen = settings->beginReadArray("pathList");
+        for(int i = 0; i < arrayLen; i++)
+        {
+            settings->setArrayIndex(i);
+            QString path = settings->value("path").toString();
+            if(!path.isEmpty())
+                m_clientPathList += path;
+        }
+        settings->endArray();
+    }
+    settings->endGroup();
+
+    ui->PM3_pathBox->clear();
+    for(const QString& clientPath : qAsConst(m_clientPathList))
+        ui->PM3_pathBox->addItem(clientPath);
+}
+
+void MainWindow::saveClientPathList()
 {
     settings->beginGroup("Client_Path");
-    settings->setValue("path", path);
+    if(settings->contains("path"))
+    {
+        qDebug() << "Upgrading client path storage";
+        QString oldPath = settings->value("path").toString();
+        if(!oldPath.isEmpty() && !m_clientPathList.contains(oldPath))
+            m_clientPathList.append(oldPath);
+        settings->remove("path");
+    }
+
+    settings->beginWriteArray("pathList");
+    for(int i = 0; i < m_clientPathList.size(); i++)
+    {
+        settings->setArrayIndex(i);
+        settings->setValue("path", m_clientPathList[i]);
+    }
+    settings->endArray();
     settings->endGroup();
 }
 // ***********************************************

@@ -260,10 +260,14 @@ private:
 
     MF_trailerDecoderDialog* decDialog;
 
+    QStringList m_clientPathList;
+
     void signalInit();
     void MF_widgetReset();
     void setTableItem(QTableWidget *widget, int row, int column, const QString& text);
-    void saveClientPath(const QString& path);
+    void addClientPath(const QString& path);
+    void loadClientPathList();
+    void saveClientPathList();
     void onLFfreqConfChanged(int value, bool isCustomized);
     void dockInit();
     void loadConfig();
