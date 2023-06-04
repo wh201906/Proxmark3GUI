@@ -158,7 +158,15 @@ void MainWindow::on_PM3_connectButton_clicked()
 {
     qDebug() << "Main:" << QThread::currentThread();
 
-    QString port = ui->PM3_portBox->currentData().toString();
+    const QComboBox* portBox = ui->PM3_portBox;
+    QString port;
+    if(portBox->currentText() == portBox->itemText(portBox->currentIndex()))
+        // in the list
+        port = portBox->currentData().toString();
+    else
+        // not in the list
+        port = portBox->currentText();
+    qDebug() << "port:" << port;
     QString startArgs = ui->Set_Client_startArgsEdit->text();
     QString clientPath = ui->PM3_pathBox->currentText();
     QFileInfo clientFile(clientPath);
