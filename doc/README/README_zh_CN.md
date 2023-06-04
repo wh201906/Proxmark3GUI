@@ -87,7 +87,8 @@ open Proxmark3GUI.app
 ***
 ## 教程
 [1.快速上手](../tutorial/Quickstart/quickstart_zh_CN.md)  
-[2.编辑Mifare(IC)卡数据](../tutorial/Edit_Mifare_Classic_data/Edit_Mifare_Classic_data_zh_CN.md)（无需PM3硬件）  
+[2.使用ProxSpace编译的客户端](../tutorial/Work_With_ProxSpace/work_with_proxspace_zh_CN.md)  
+[3.编辑Mifare(IC)卡数据](../tutorial/Edit_Mifare_Classic_data/Edit_Mifare_Classic_data_zh_CN.md)（无需PM3硬件）  
 ***
 
 ## 更新日志

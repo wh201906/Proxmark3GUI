@@ -85,10 +85,13 @@ open Proxmark3GUI.app
 ![macOS_settings](doc/README/macOS_settings.png)
 
 ***
+
 ## Tutorial
 
 [1.Quickstart](doc/tutorial/Quickstart/quickstart.md)  
-[2.Edit Mifare Classic data](doc/tutorial/Edit_Mifare_Classic_data/Edit_Mifare_Classic_data.md)(Proxmark3 hardware is not necessary)  
+[2.Work with ProxSpace](doc/tutorial/Work_With_ProxSpace/work_with_proxspace.md)  
+[3.Edit Mifare Classic data](doc/tutorial/Edit_Mifare_Classic_data/Edit_Mifare_Classic_data.md)(Proxmark3 hardware is not necessary)  
+
 ***
 
 ## Change Log
