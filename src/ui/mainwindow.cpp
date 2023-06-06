@@ -170,8 +170,29 @@ void MainWindow::on_PM3_connectButton_clicked()
     QString startArgs = ui->Set_Client_startArgsEdit->text();
     QString clientPath = ui->PM3_pathBox->currentText();
     QFileInfo clientFile(clientPath);
+    bool clientExist = false;
 
-    if(!clientFile.exists())
+    QStringList extList = {""};
+#ifdef Q_OS_WIN
+    if(clientFile.suffix().isEmpty())
+    {
+        QString pathExt = QProcessEnvironment::systemEnvironment().value("pathext");
+        extList += pathExt.split(";", Qt::SkipEmptyParts);
+        if(extList.size() == 1)
+            extList += ".exe";
+    }
+#endif
+    for(const QString& ext : extList)
+    {
+        QFileInfo executable(clientFile.filePath() + ext);
+        if(executable.isFile())
+        {
+            clientExist = true;
+            break;
+        }
+    }
+
+    if(!clientExist)
     {
         QMessageBox::information(this, tr("Info"), tr("The client path is invalid"), QMessageBox::Ok);
         return;
