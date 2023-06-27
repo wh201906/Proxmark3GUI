@@ -53,7 +53,7 @@ private:
     void syncWithUI();
     bool getLFConfig_helper(const QVariantMap& map, QString& str, int* result);
 signals:
-
+    void LFfreqConfChanged(int divisor, bool isCustomized);
 };
 
 #endif // LF_H

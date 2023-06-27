@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent):
     mifare = new Mifare(ui, util, this);
     lf = new LF(ui, util, this);
     t55xxTab = new T55xxTab(util);
+    connect(lf, &LF::LFfreqConfChanged, this, &MainWindow::onLFfreqConfChanged);
     connect(t55xxTab, &T55xxTab::setParentGUIState, this, &MainWindow::setState);
     ui->funcTab->insertTab(2, t55xxTab, tr("T55xx"));
 
@@ -1511,16 +1512,20 @@ void MainWindow::on_LF_LFConf_freqSlider_valueChanged(int value)
     onLFfreqConfChanged(value, true);
 }
 
-void MainWindow::onLFfreqConfChanged(int value, bool isCustomized)
+void MainWindow::onLFfreqConfChanged(int divisor, bool isCustomized)
 {
     ui->LF_LFConf_freqDivisorBox->blockSignals(true);
     ui->LF_LFConf_freqSlider->blockSignals(true);
 
     if(isCustomized)
         ui->LF_LFConf_freqOtherButton->setChecked(true);
-    ui->LF_LFConf_freqLabel->setText(tr("Actural Freq: ") + QString("%1kHz").arg(LF::divisor2Freq(value), 0, 'f', 3));
-    ui->LF_LFConf_freqDivisorBox->setValue(value);
-    ui->LF_LFConf_freqSlider->setValue(value);
+    else if(divisor == 95)
+        ui->LF_LFConf_freq125kButton->setChecked(true);
+    else if(divisor == 88)
+        ui->LF_LFConf_freq134kButton->setChecked(true);
+    ui->LF_LFConf_freqLabel->setText(tr("Actural Freq: ") + QString("%1kHz").arg(LF::divisor2Freq(divisor), 0, 'f', 3));
+    ui->LF_LFConf_freqDivisorBox->setValue(divisor);
+    ui->LF_LFConf_freqSlider->setValue(divisor);
 
     ui->LF_LFConf_freqDivisorBox->blockSignals(false);
     ui->LF_LFConf_freqSlider->blockSignals(false);

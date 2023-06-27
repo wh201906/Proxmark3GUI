@@ -220,6 +220,8 @@ private slots:
 
     void on_Set_UI_CMDFont_setButton_clicked();
 
+    void onLFfreqConfChanged(int divisor, bool isCustomized);
+
 private:
     Ui::MainWindow* ui;
     QButtonGroup* MFCardTypeBtnGroup;
@@ -268,7 +270,6 @@ private:
     void addClientPath(const QString& path);
     void loadClientPathList();
     void saveClientPathList();
-    void onLFfreqConfChanged(int value, bool isCustomized);
     void dockInit();
     void loadConfig();
 protected:

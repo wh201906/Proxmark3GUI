@@ -151,6 +151,7 @@ void LF::syncWithUI()
     ui->LF_LFConf_averagingBox->setChecked(currLFConfig.averaging);
     ui->LF_LFConf_thresholdBox->setValue(currLFConfig.triggerThreshold);
     ui->LF_LFConf_skipsBox->setValue(currLFConfig.samplesToSkip);
+    emit LFfreqConfChanged(currLFConfig.divisor, false);
 }
 
 void LF::setConfigMap(const QVariantMap& configMap)
