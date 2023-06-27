@@ -1,5 +1,5 @@
 {
-    "//": "Based on Proxmark3 rrg repo v4.13441, commit 35ddebc03c",
+    "//": "Based on Proxmark3 rrg repo v4.16717, commit adfebd6510",
     "//": "You can change this file if the command format of client changes",
     "mifare classic": {
         "nested": {
@@ -15,14 +15,14 @@
                 "A": "a",
                 "B": "b"
             },
-            "//": "[+] |-----|----------------|---|----------------|---|",
-            "//": "[+] | Sec | key A          |res| key B          |res|",
-            "//": "[+] |-----|----------------|---|----------------|---|",
-            "//": "[+] | 000 | ffffffffffff   | 1 | ffffffffffff   | 1 |",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+]  Sec | Blk | key A        |res| key B        |res",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+]  000 | 003 | FFFFFFFFFFFF | 1 | FFFFFFFFFFFF | 1",
             "//": "......",
-            "//": "[+] |-----|----------------|---|----------------|---|",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
             "//": "[+] ( 0:Failed / 1:Success )",
-            "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|",
+            "key pattern": "\\s*\\d{3}\\s*\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*$",
             "key A index": 2,
             "key B index": 4
         },
@@ -34,21 +34,21 @@
                 "2k": "2k",
                 "4k": "4k"
             },
-            "//": "[+] |-----|----------------|---|----------------|---|",
-            "//": "[+] | Sec | key A          |res| key B          |res|",
-            "//": "[+] |-----|----------------|---|----------------|---|",
-            "//": "[+] | 000 | ffffffffffff   | 1 | ffffffffffff   | 1 |",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+]  Sec | Blk | key A        |res| key B        |res",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
+            "//": "[+]  000 | 003 | FFFFFFFFFFFF | 1 | FFFFFFFFFFFF | 1",
             "//": "......",
-            "//": "[+] | 004 | ------------   | 0 | ------------   | 0 |",
+            "//": "[+]  004 | 019 | ------------ | 0 | ------------ | 0",
             "//": "......",
-            "//": "[+] |-----|----------------|---|----------------|---|",
+            "//": "[+] -----+-----+--------------+---+--------------+----",
             "//": "[+] ( 0:Failed / 1:Success )",
-            "key pattern": "\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|",
+            "key pattern": "\\s*\\d{3}\\s*\\|\\s*\\d{3}\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*\\|\\s*.+?\\s*$",
             "key A index": 2,
             "key B index": 4
         },
         "info": {
-            "cmd": "hf 14a info"
+            "cmd": "hf 14a info -nsv"
         },
         "sniff": {
             "cmd": "hf sniff"
@@ -69,7 +69,7 @@
             }
         },
         "restore": {
-            "cmd": "hf mf restore --<card type>",
+            "cmd": "hf mf restore --<card type> --force",
             "card type": {
                 "mini": "mini",
                 "1k": "1k",
@@ -134,7 +134,7 @@
         },
         "//": "When writing a block, if the result is not empty and doesn't contain the failed flag, the function will return true",
         "normal write block": {
-            "cmd": "hf mf wrbl --blk <block> -<key type> -k <key> -d <data>",
+            "cmd": "hf mf wrbl --blk <block> -<key type> -k <key> -d <data> --force",
             "key type": {
                 "A": "a",
                 "B": "b"
@@ -187,7 +187,7 @@
         "get config": {
             "cmd": "hw status",
             "field start": "LF Sampling config",
-            "field end": "LF Sampling Stack",
+            "field end": "\\[#\\] \\S",
             "divisor": {
                 "flag": "divisor",
                 "pattern": "\\d+"

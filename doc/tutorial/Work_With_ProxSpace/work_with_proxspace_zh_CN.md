@@ -1,4 +1,6 @@
 # 使用ProxSpace编译的客户端
+
+[English](work_with_proxspace.md)  
 此GUI可以和ProxSpace编译出来的客户端配合运行，满足一部分用户使用最新版客户端的需求  
 
 ## 1. 搭建ProxSpace环境  

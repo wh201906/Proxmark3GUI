@@ -1,4 +1,6 @@
 # Work with ProxSpace
+
+[中文教程](work_with_proxspace_zh_CN.md)  
 This GUI supports clients built from ProxSpace, making it easier to use the latest client with this GUI.  
 
 ## 1. Set up ProxSpace  

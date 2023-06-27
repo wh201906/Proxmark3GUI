@@ -1157,13 +1157,17 @@ void MainWindow::uiInit()
     settings->endGroup();
     ui->Set_Client_keepClientActiveBox->setChecked(keepClientActive);
 
-    QDirIterator configFiles(":/config/");
+    QDir configFiles(":/config/");
+    configFiles.setSorting(QDir::Name);
+    const QFileInfoList configFileList = configFiles.entryInfoList();
     ui->Set_Client_configFileBox->blockSignals(true);
-    while(configFiles.hasNext())
+    for(const auto& file : configFileList)
     {
-        configFiles.next();
-        ui->Set_Client_configFileBox->addItem(configFiles.fileName(), configFiles.filePath());
+        ui->Set_Client_configFileBox->addItem(file.fileName(), file.filePath());
     }
+
+    // Use the last one as the default one
+    ui->Set_Client_configFileBox->setCurrentIndex(ui->Set_Client_configFileBox->count() - 1);
     ui->Set_Client_configFileBox->addItem(tr("External file"), "(ext)");
 
     int configId = -1;

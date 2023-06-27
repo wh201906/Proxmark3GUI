@@ -1,5 +1,5 @@
 {
-    "//": "Based on Proxmark3 official repo v3.1.0, commit 6116334",
+    "//": "Based on Proxmark3 official repo v3.1.0, commit 6116334485",
     "//": "You can change this file if the command format of client changes",
     "mifare classic": {
         "nested": {

@@ -1,5 +1,5 @@
 {
-    "//": "Based on Proxmark3 rrg repo v4.15864, commit 1f75adc",
+    "//": "Based on Proxmark3 rrg repo v4.15864, commit 1f75adcf6d",
     "//": "You can change this file if the command format of client changes",
     "mifare classic": {
         "nested": {
