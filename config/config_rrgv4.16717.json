@@ -104,7 +104,9 @@
             "cmd": "hf mf darkside"
         },
         "save sniff": {
-            "cmd": "trace save -f <filename>"
+            "cmd": "trace save -f <filename>",
+            "path cmd":"prefs show",
+            "path pattern":"trace save path\\.+\\s*(.+)$"
         },
         "load sniff": {
             "cmd": "trace load -f <filename>",

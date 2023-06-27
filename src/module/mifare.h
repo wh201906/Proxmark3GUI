@@ -115,6 +115,7 @@ public:
     QString data_getUID();
     quint16 getTrailerBlockId(quint8 sectorId, qint8 cardTypeId = -1); // -1: use current cardtype
     void setConfigMap(const QVariantMap& configMap);
+    QString getTraceSavePath();
 public slots:
 signals:
 

@@ -1375,3 +1375,18 @@ quint16 Mifare::getTrailerBlockId(quint8 sectorId, qint8 cardTypeId)
         // other cardTypeId: use current cardtype(include default -1)
         return (cardType.blks[sectorId] + cardType.blk[sectorId] - 1);
 }
+
+QString Mifare::getTraceSavePath()
+{
+    QVariantMap config = configMap["save sniff"].toMap();
+    QString pathCmd = config["path cmd"].toString();
+    QString patternText = config["path pattern"].toString();
+    QRegularExpression pattern = QRegularExpression(patternText, QRegularExpression::MultilineOption);
+    if(pathCmd.isEmpty() || patternText.isEmpty())
+        return QString();
+    QString result = util->execCMDWithOutput(pathCmd, 500);
+    QRegularExpressionMatch reMatch = pattern.match(result);
+    if(!reMatch.hasMatch())
+        return QString();
+    return reMatch.captured(1).trimmed();
+}

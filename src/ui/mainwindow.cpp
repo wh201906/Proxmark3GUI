@@ -956,18 +956,31 @@ void MainWindow::on_MF_Sniff_loadButton_clicked() // use a tmp file to support c
 {
     QString title = "";
     QString filename = "";
+    QString defaultExtension;
+    QDir clientTracePath;
+
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        defaultExtension = ".trc";
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        defaultExtension = ".trace";
+
+    QString userTraceSavePath = mifare->getTraceSavePath();
+    if(userTraceSavePath.isEmpty())
+        clientTracePath = *clientWorkingDir;
+    else
+        clientTracePath = QDir(userTraceSavePath); // For v4.16717 and later
 
     title = tr("Plz select the trace file:");
-    filename = QFileDialog::getOpenFileName(this, title, clientWorkingDir->absolutePath(), tr("Trace Files(*.trc)") + ";;" + tr("All Files(*.*)"));
+    filename = QFileDialog::getOpenFileName(this, title, clientTracePath.absolutePath(), tr("Trace Files") + "(*" + defaultExtension + ")" + ";;" + tr("All Files(*.*)"));
     qDebug() << filename;
     if(filename != "")
     {
-        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
-        if(QFile::copy(filename, clientWorkingDir->absolutePath() + "/" + tmpFile))
+        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTimeUtc().toTime_t()) + defaultExtension;
+        if(QFile::copy(filename, clientTracePath.absolutePath() + "/" + tmpFile))
         {
             mifare->loadSniff(tmpFile);
             util->delay(3000);
-            QFile::remove(clientWorkingDir->absolutePath() + "/" + tmpFile);
+            QFile::remove(clientTracePath.absolutePath() + "/" + tmpFile);
         }
         else
         {
@@ -980,25 +993,41 @@ void MainWindow::on_MF_Sniff_saveButton_clicked()
 {
     QString title = "";
     QString filename = "";
+    QString defaultExtension;
+    QDir clientTracePath;
+
+    if(Util::getClientType() == Util::CLIENTTYPE_OFFICIAL)
+        defaultExtension = ".trc";
+    else if(Util::getClientType() == Util::CLIENTTYPE_ICEMAN)
+        defaultExtension = ".trace";
+
+    QString userTraceSavePath = mifare->getTraceSavePath();
+    if(userTraceSavePath.isEmpty())
+        clientTracePath = *clientWorkingDir;
+    else
+        clientTracePath = QDir(userTraceSavePath); // For v4.16717 and later
 
     title = tr("Plz select the location to save trace file:");
-    filename = QFileDialog::getSaveFileName(this, title, clientWorkingDir->absolutePath(), tr("Trace Files(*.trc)"));
+    filename = QFileDialog::getSaveFileName(this, title, clientTracePath.absolutePath(), tr("Trace Files") + "(*" + defaultExtension + ")");
     qDebug() << filename;
     if(filename != "")
     {
-        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTime().toTime_t()) + ".trc";
+        QString tmpFile = "tmp" + QString::number(QDateTime::currentDateTimeUtc().toTime_t()) + defaultExtension;
         mifare->saveSniff(tmpFile);
         for(int i = 0; i < 100; i++)
         {
             util->delay(100);
-            if(QFile::exists(clientWorkingDir->absolutePath() + "/" + tmpFile))
+            if(QFile::exists(clientTracePath.absolutePath() + "/" + tmpFile))
                 break;
         }
-        if(!QFile::copy(clientWorkingDir->absolutePath() + "/" + tmpFile, filename))
+        // filename is not empty -> the user has chosen to overwrite the existing file
+        if(QFile::exists(filename))
+            QFile::remove(filename);
+        if(!QFile::copy(clientTracePath.absolutePath() + "/" + tmpFile, filename))
         {
             QMessageBox::information(this, tr("Info"), tr("Failed to save to") + "\n" + filename);
         }
-        QFile::remove(clientWorkingDir->absolutePath() + "/" + tmpFile);
+        QFile::remove(clientTracePath.absolutePath() + "/" + tmpFile);
     }
 
 }
