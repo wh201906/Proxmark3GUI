@@ -2,6 +2,12 @@
 
 [中文](doc/CHANGELOG/CHANGELOG_zh_CN.md)  
 
+### V0.2.8
++ Add support for Iceman/RRG repo v4.16717  
++ Fix some bugs  
++ Make it easier for testing this GUI across multiple clients  
++ Add support for Bluetooth and TCP connection  
+
 ### V0.2.7
 + Fix writing to Block 0 failure when using with RRG repo v4.15864  
 + Disable disconnection detection on Linux/macOS by default  

@@ -59,9 +59,9 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-VERSION = 0.2.7
+VERSION = 0.2.8
 QMAKE_TARGET_PRODUCT = "Proxmark3GUI"
-QMAKE_TARGET_DESCRIPTION = "Proxmark3GUI"
+QMAKE_TARGET_DESCRIPTION = "A cross-platform GUI for Proxmark3 client"
 QMAKE_TARGET_COMPANY = "wh201906"
 
 RESOURCES += \
