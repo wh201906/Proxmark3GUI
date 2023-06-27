@@ -48,7 +48,8 @@
             "key B index": 4
         },
         "info": {
-            "cmd": "hf 14a info -nsv"
+            "cmd": "hf 14a info -nsv",
+            "basic cmd": "hf 14a info"
         },
         "sniff": {
             "cmd": "hf sniff"

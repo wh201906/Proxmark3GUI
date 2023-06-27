@@ -102,7 +102,12 @@ QMap<QString, QString> Mifare::info(bool isRequiringOutput)
     QVariantMap config = configMap["info"].toMap();
     if(isRequiringOutput)
     {
-        QString result = util->execCMDWithOutput(config["cmd"].toString(), 500);
+        QString cmd = config["basic cmd"].toString();
+
+        // for official client
+        if(cmd.isEmpty())
+            cmd = config["cmd"].toString();
+        QString result = util->execCMDWithOutput(cmd, 500);
         QStringList lineList = result.split("\n");
 
         for(auto line = lineList.begin(); line != lineList.end(); line++)
