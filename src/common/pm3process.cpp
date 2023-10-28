@@ -35,19 +35,19 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
         waitForReadyRead(10000);
         setRequiringOutput(false);
         result = *requiredOutput;
+        // Workaround for wayland system, e.g. Ubuntu 22.04
+        // The issue is that the warning is read and nothing else, hence the process is killed.
+        if(result.contains("Warning: Ignoring XDG_SESSION_TYPE=wayland on Gnome. Use QT_QPA_PLATFORM=wayland to run on Wayland anyway."))
+        {
+            setRequiringOutput(true);
+            readWaitForConnection(&result);
+        }
         if(result.contains("[=]"))
         {
             clientType = Util::CLIENTTYPE_ICEMAN;
             setRequiringOutput(true);
             write("hw version\n");
-            for(int i = 0; i < 50; i++)
-            {
-                waitForReadyRead(200);
-                result += *requiredOutput;
-                if(result.contains("os: "))
-                    break;
-            }
-            setRequiringOutput(false);
+            readWaitForConnection(&result);
         }
         else
         {
@@ -69,6 +69,18 @@ void PM3Process::connectPM3(const QString& path, const QStringList args)
         }
     }
 
+    setRequiringOutput(false);
+}
+
+void PM3Process::readWaitForConnection(QString *result)
+{
+    for(int i = 0; i < 50; i++)
+    {
+        waitForReadyRead(200);
+        (*result) += *requiredOutput;
+        if(result->contains("os: "))
+            break;
+    }
     setRequiringOutput(false);
 }
 
