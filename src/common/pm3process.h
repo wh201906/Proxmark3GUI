@@ -38,6 +38,7 @@ private:
     bool isRequiringOutput;
     QString* requiredOutput; // It only works in this class now
     void setRequiringOutput(bool st);// It only works in this class now
+    void readWaitForConnection(QString *result);
     QTimer* serialListener;
     QSerialPortInfo* portInfo;
     QString currPath;
