@@ -53,21 +53,23 @@ SourceForge平台上也可下载
 [![Download Proxmark3GUI](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/proxmark3gui/files/latest/download)  
 
 ## 在Linux系统下编译
-```
+```bash
 cd ~
+# sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get install git build-essential
-sudo apt-get install qt5-default libqt5serialport5-dev 
+# sudo apt-get install git build-essential
+sudo apt-get install qtbase5-dev qt5-qmake libqt5serialport5-dev
 git clone https://github.com/wh201906/Proxmark3GUI.git --depth=1
 cd Proxmark3GUI
 mkdir build && cd build
+export QT_SELECT=qt5
 qmake ../src
 make -j4 && make clean
 ./Proxmark3GUI
 ```
 
 ## 在macOS系统下编译
-```
+```zsh
 cd ~
 brew update
 brew install qt@5
