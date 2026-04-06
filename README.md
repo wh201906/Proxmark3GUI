@@ -82,6 +82,8 @@ open Proxmark3GUI.app
 
 > In order for the GUI to connect to the device in macOS, you'd need to tweak the settings a little bit
 
+Client Path must be path to pm3 console client like "/usr/local/bin/pm3/"
+
 ![macOS_settings](doc/README/macOS_settings.png)
 
 ***
